@@ -1,0 +1,188 @@
+<template>
+    <Template>
+        <table>
+            <tr>
+                <td class="sub-echo">角色名称</td>
+                <td style="width: 67%">
+                    <el-select v-model="name" placeholder="Select" size="large" style="width: 100%;">
+                        <el-option v-for="item in names" :key="item.value"
+                                   :label="item.label" :value="item.value"/>
+                    </el-select>
+                </td>
+                <td style="width: 30%;padding: 0 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                        <span>是否精确到 0.01：</span>
+                        <el-switch
+                            size="large"
+                            v-model="is_one_percent"
+                            inline-prompt
+                            active-text="是"
+                            inactive-text="否"
+                        />
+                    </div>
+                </td>
+                <td style="width: 10%">
+                    <el-button size="large" type="info" plain @click="re_fill">重置权重</el-button>
+                </td>
+                <td style="width: 10%">
+                    <el-button size="large" type="primary" plain @click="re_weights">恢复默认</el-button>
+                </td>
+                <td style="width: 10%">
+                    <el-button size="large" type="success" plain @click="set_weights">提交更改</el-button>
+                </td>
+            </tr>
+            <tr>
+                <td class="sub-echo" style="width: 15%;">副词条名称</td>
+                <td class="sub-echo" colspan="5" style="width: 85%;">权重</td>
+            </tr>
+            <tr v-for="(key, i) in keys" :key="i">
+                <td :style="set_style3(key)">{{ key }}</td>
+                <td colspan="5" :style="set_style3(key)">
+                    <div class="slider-demo-block">
+                        <el-slider v-model="weigths[key]" show-input size="large" :max="20"
+                                   :step="is_one_percent ? 0.01 : 1"/>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </Template>
+</template>
+
+
+
+<script setup>
+import Template from "@/components/module/Template.vue";
+import { ref, onMounted, watch } from "vue";
+import { get, post, POST } from "@/net/index.js";
+import { useStore } from "@/stores/index.js";
+
+
+const store = useStore()
+const keys = ref([])
+const map = ref({})
+const weigths = ref({})
+const names = ref([]), name = ref('')
+const is_one_percent = ref(true)
+
+watch(name, async (newVal) => {
+    weigths.value = await POST("/echo-scoring-system/get-weigths", {
+        name: newVal,
+        username: store.auth.user.username,
+    })
+});
+
+watch(is_one_percent, async (newVal) => {
+    weigths.value = await POST("/echo-scoring-system/get-weigths", {
+        name: name.value,
+        username: store.auth.user.username,
+    })
+    if (!newVal) {
+        for (let key of keys.value) {
+            weigths.value[key] = Math.round(weigths.value[key])
+        }
+    }
+});
+
+function set_color(key) {
+    let color, w = weigths.value[key]
+    if (w >= 15) {
+        color = "red"
+    } else if (w >= 10) {
+        color = "orange"
+    } else if (w >= 5) {
+        color = "blue"
+    } else if (w >= 2.5) {
+        color = "green"
+    } else {
+        color = "gray"
+    }
+    return `color: ${ color }`
+}
+
+const set_weights = async () => {
+    await POST("/echo-scoring-system/set-weights", {
+        name: name.value,
+        username: store.auth.user.username,
+        json: JSON.stringify(weigths.value)
+    })
+    await post("/echo-scoring-system/re-data", store.auth.user.username)
+}
+
+const re_weights = async () => {
+    await POST("echo-scoring-system/re_weights", {
+        name: name.value,
+        username: store.auth.user.username
+    })
+    weigths.value = await POST("/echo-scoring-system/get-weigths", {
+        name: name.value,
+        username: store.auth.user.username
+    })
+    if (!is_one_percent.value) {
+        for (let key of keys.value) {
+            weigths.value[key] = Math.round(weigths.value[key])
+        }
+    }
+}
+
+const re_fill = () => {
+    for (let key of keys.value) {
+        weigths.value[key] = 0
+    }
+}
+
+const set_style3 = (key) => {
+    let res = "text-align: center;"
+    res += set_color(key)
+    return res
+}
+
+
+onMounted(async () => {
+    keys.value = await get("/echo-scoring-system/get-echo-keys")
+    for (let key of keys.value) {
+        map.value[key] = []
+        weigths.value[key] = 0
+    }
+    for (let name of await get("/echo-scoring-system/get-names")) {
+        names.value.push({ value: name, label: name})
+    }
+    if (store.echo.index === -3) {
+        name.value = store.echo.name
+    } else name.value = names.value[0]['value']
+    map.value = await get("/echo-scoring-system/get-echo-values")
+    keys.value.forEach(key => {
+        map.value[key].unshift(0);
+        map.value[key].sort((a, b) => a - b);
+    })
+    weigths.value = await POST("/echo-scoring-system/get-weigths", {
+        name: name.value,
+        username: store.auth.user.username,
+    })
+})
+</script>
+
+
+
+<style scoped>
+.slider-demo-block {
+    max-width: 100%;
+}
+
+table {
+    zoom: 0.9;
+    width: 100%;
+    border-collapse: collapse;
+}
+table td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: center;
+    height: 40px;
+}
+table .sub-echo {
+    background-color: #f4f4f4;
+    color: #303133;
+    font-size: 20px;
+    font-weight: normal;
+}
+</style>
