@@ -296,7 +296,7 @@ $$
 
 **[Element Plus](https://element-plus.org/zh-CN/)**：基于 Vue 3 的 UI 组件库，提供丰富的界面组件，帮助开发者快速构建美观的后台管理系统
 
-**[iconfont](https://www.iconfont.cn/search/index?from=meibp#:~:text=5000. 阿里妈妈)**：阿里巴巴图标库，提供大量的矢量图标，可方便地集成到网页中
+**[iconfont](https://www.iconfont.cn/search/index?from=meibp#:~:text=5000)**：阿里巴巴图标库，提供大量的矢量图标，可方便地集成到网页中
 
 ### 5.3 后端
 
