@@ -49,6 +49,8 @@
 
 筛选规则：行与行之间为逻辑与，行内元素之间为逻辑或
 
+开启筛选后，角色的平均分计算规则也会改变
+
 ### 3.2 声骸列表
 
 ![](https://gitee.com/kokoachino/picture-bed/raw/master/项目/EchoScoringSystem%20项目文档-3.jpg)
@@ -59,7 +61,7 @@
 
 ### 3.3 临时列表
 
-![](https://gitee.com/kokoachino/picture-bed/raw/master/项目/EchoScoringSystem%20项目文档-5.jpg)
+![](https://gitee.com/kokoachino/picture-bed/raw/master/项目/EchoScoringSystem%20项目文档-6.jpg)
 
 最左侧为声骸数据，右侧为该声骸搭配在不同角色身上的评分情况
 
@@ -69,11 +71,13 @@
 
 选择好要给哪位角色后，可以直接将该声骸一键添加至正式的角色声骸列表中，添加后会自动将该声骸从临时声骸列表移除
 
-### 3.4 声骸属性
+特别的，开启角色筛选后，横向排序规则将会改为按角色名称进行排序
+
+### 3.4 角色声骸
 
 #### 3.4.1 声骸属性
 
-![](https://gitee.com/kokoachino/picture-bed/raw/master/项目/EchoScoringSystem%20项目文档-6.jpg)
+![](https://gitee.com/kokoachino/picture-bed/raw/master/项目/EchoScoringSystem%20项目文档-5.jpg)
 
 右侧表格的数据为：根据声骸列表中，该名角色的所有声骸的全部副词条属性的累加
 
@@ -89,6 +93,28 @@
 > * $\overline{cnt}$ ：角色的副词条平均加点次数
 > * $sum$ ：角色的该项副词条的取值之和
 > * $\overline{x}$ ：该项副词条调谐一次的期望取值
+
+#### 3.4.3 副词条标准化偏差
+
+![](https://gitee.com/kokoachino/picture-bed/raw/master/项目/EchoScoringSystem%20项目文档-13.jpg)
+
+> 副词条标准化偏差的计算公式：
+> $$
+> D = \frac{sum}{n\cdot\overline{x}}\times100\%
+> $$
+>
+> * $D$ ：副词条标准化偏差
+> * $sum$ ：该项副词条的取值之和
+>
+> * $n$ ：该项副词条的出现次数
+>
+> * $\overline{x}$ ：该项副词条调谐一次的期望取值
+
+**含义：**
+
+* 如果这个值比较低，说明你每次调谐的时候，这个副词条的取值普遍较低
+
+* 如果这个值比较高，说明你每次调谐的时候，这个副词条的取值普遍较高
 
 ### 3.5 声骸汇总
 
@@ -113,24 +139,7 @@
 
 ![](https://gitee.com/kokoachino/picture-bed/raw/master/项目/EchoScoringSystem%20项目文档-9.jpg)
 
-> 声骸词条标准化偏差的计算公式：
-> $$
-> D = \frac{sum}{n\cdot\overline{x}}\times100\%
-> $$
->
-> * $D$ ：声骸词条标准化偏差
-> * $sum$ ：该项副词条的取值之和
->
-> * $n$ ：该项副词条的出现次数
->
-> * $\overline{x}$ ：该项副词条调谐一次的期望取值
->
-
-**含义：**
-
-* 如果这个值比较低，说明你每次调谐的时候，这个副词条的取值普遍较低
-
-* 如果这个值比较高，说明你每次调谐的时候，这个副词条的取值普遍较高
+同副词条标准化偏差
 
 ### 3.6 词条权重
 
@@ -332,13 +341,27 @@ $$
 
 **[库街区](https://www.kurobbs.com/person-center?id=21357613)**     **[bilibili](https://space.bilibili.com/497982061?spm_id_from=333.1007.0.0)**     **[github](https://github.com/KokoaChino)**     **[gitee](https://gitee.com/kokoachino)**     **[力扣](https://leetcode.cn/u/xing-kai-qi-ling/)**     **[codeforces](https://codeforces.com/profile/Kokoa_Chino)**     **[我的个人博客网站](https://kokoachino.github.io/)**
 
-## 7. 后记
+## 7. 版本控制
 
-本项目为基于 Session 的前后端分离项目，前端采用 Vue3，后端采用 SpringBoot 3
+**2024-12-9：[1.0]**
+
+* 项目首次提交
+
+**2024-12-12：[1.2]**
+
+* 修复修改名称后，原数据丢失的 bug
+
+* 临时声骸列表添加按名称排序规则
+* 临时声骸列表添加实时显示声骸个数功能
+* 角色声骸数据添加标准差图像
+
+## 8. 后记
+
+本项目为基于 Session 的前后端分离项目，前端使用 Vue3，后端使用 SpringBoot 3
 
 `2024-11-22` 从零开始，不使用任何大型模板
 
-期间仅通过查询自己的 `markdown` 笔记，在线文档和 ChatGpt4 的辅助
+期间仅通过查询自己的 `markdown` 笔记和在线文档，以及 ChatGpt4 的辅助
 
 最终于 `2024-12-9` 完成了鸣潮声骸评分系统的 v1.0 版本
 
@@ -346,6 +369,8 @@ $$
 
 如果遇到了 BUG 或者有什么优化建议，可以在我的 github 仓库的 issues 模块给我留言
 
-如果这个项目有帮助到了你，那就说明可以给我打钱了：
+如果这个项目对您有所帮助，我将非常感激您的支持，以便我能够继续改善和发展这个项目
+
+感谢您的关注与支持！(*´∀`)~♥
 
 ![](https://gitee.com/kokoachino/picture-bed/raw/master/项目/EchoScoringSystem%20项目文档-12.jpg)
