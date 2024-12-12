@@ -208,7 +208,7 @@ const logout = () => {
 const signout = () => {
     post("/api/auth/signout", store.auth.user.username)
     logout()
-    location.reload();
+    setTimeout(() => location.reload(), 1000)
 }
 
 const cancel = () => {
@@ -234,7 +234,7 @@ const submit = async () => {
             if (form['email']) {
                 formRef.value.validate( (isValid) => {
                     if (isValid) {
-                         _POST('/api/auth/validate-email', {
+                        _POST('/api/auth/validate-email', {
                             email: form.email,
                             code: form.code
                         },  async () => {
@@ -242,7 +242,7 @@ const submit = async () => {
                                 oldEmail: store.auth.user.email,
                                 newEmail: form.email,
                             })
-                             is_P = false
+                            is_P = false
                         })
                     } else {
                         is_P = false
@@ -261,7 +261,7 @@ const submit = async () => {
                 }
                 ElMessage.success("用户信息修改成功，请重新登陆")
                 logout()
-                location.reload();
+                setTimeout(() => location.reload(), 1000)
             } else {
                 cancel()
             }

@@ -36,4 +36,9 @@ public interface UserMapper { // 用户相关的映射器
             "delete from ${table_name} where username = #{username}" +
             "</script>")
     void deleteAccountByUsername(String table_name, String username);
+
+    @Update("<script>" +
+            "update ${table_name} set username = #{username} where username = #{old_username}" +
+            "</script>")
+    int resetUsername(String table_name, String username, String old_username);
 }

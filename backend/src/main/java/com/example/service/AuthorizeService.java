@@ -15,7 +15,7 @@ public interface AuthorizeService extends UserDetailsService { // 用户授权�
 
     boolean resetPassword(String password, String email); // 重置密码
 
-    boolean changeUsername(String username, String email); // 重置名称
+    boolean changeUsername(String username, String oldUsername, String email); // 重置名称
 
     boolean changeEmail(String oldEmail, String newEmail); // 重置邮箱
 }

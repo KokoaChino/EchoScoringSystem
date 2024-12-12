@@ -1,6 +1,8 @@
 package com.example.controller;
 
 import com.example.entity.RestBean;
+import com.example.entity.auth.Account;
+import com.example.mapper.EchoMapper;
 import com.example.mapper.UserMapper;
 import com.example.service.AuthorizeService;
 import jakarta.annotation.Resource;
@@ -17,7 +19,10 @@ import org.springframework.web.bind.annotation.*;
 public class AuthorizeController { // 处理与身份认证和授权相关的控制器
 
     @Resource
-    UserMapper mapper;
+    UserMapper userMapper;
+
+    @Resource
+    EchoMapper echoMapper;
 
     @Resource
     AuthorizeService service; // 授权服务，用于处理注册、验证等业务逻辑
@@ -95,7 +100,8 @@ public class AuthorizeController { // 处理与身份认证和授权相关的控
     @PostMapping("/change-username")
     public RestBean<String> changeUsername(@Length(min = 2, max = 8) @RequestParam("username") String username,
                                            @Pattern(regexp = EMAIL_REGEX) @RequestParam("email") String email) { // 进行重置用户名
-        if (service.changeUsername(username, email)) {
+        String oldUsername = userMapper.findAccountByNameOrEmail(email).getUsername();
+        if (service.changeUsername(username, oldUsername, email)) {
             return RestBean.success("用户名重置成功");
         } else {
             return RestBean.failure(500, "用户名重置失败，请联系作者：'星开祈灵'");
@@ -125,8 +131,8 @@ public class AuthorizeController { // 处理与身份认证和授权相关的控
     @PostMapping("/signout")
     public void signout(@RequestBody String username) { // 注销用户
         username = username.substring(1, username.length() - 1);
-        for (String tableName : mapper.findAllTables()) {
-            mapper.deleteAccountByUsername(tableName, username);
+        for (String tableName : userMapper.findAllTables()) {
+            userMapper.deleteAccountByUsername(tableName, username);
         }
     }
 }

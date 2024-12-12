@@ -31,7 +31,7 @@
                                     </el-input>
                                 </el-col>
                                 <el-col :span="5">
-                                    <el-button type="success" @click="validateEmail"
+                                    <el-button class="fixed-size-btn" type="success" @click="validateEmail"
                                                :disabled="!isEmailValid || coldTime > 0">
                                         {{coldTime > 0 ? '请稍后 ' + coldTime + ' 秒' : '获取验证码'}}
                                     </el-button>
@@ -177,5 +177,11 @@ const doReset = () => {
 
 
 <style scoped>
-
+.fixed-size-btn {
+    width: 105px;
+    height: 32px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 </style>

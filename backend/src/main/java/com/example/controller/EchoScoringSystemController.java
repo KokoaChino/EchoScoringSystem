@@ -339,7 +339,7 @@ public class EchoScoringSystemController { // 声骸评分系统控制器
         return res;
     }
     @PostMapping("/get-echo-relative-deviation")
-    public Map<String, Integer> getEchoRelativeDeviation(@RequestBody String username) { // 获取声骸相对偏差
+    public Map<String, Integer> getEchoRelativeDeviation(@RequestBody String username) { // 获取声骸标准化偏差
         Map<String, List<Echo>> data = getData(username);
         Map<String, Integer> res = new LinkedHashMap<>();
         Map<String, Double> sum = new LinkedHashMap<>();
@@ -357,11 +357,33 @@ public class EchoScoringSystemController { // 声骸评分系统控制器
             }
         }
         for (String key : ECHO_KEYS) {
-            if (sum.get(key) == 0) {
-                res.put(key, 100);
-                continue;
+            if (sum.get(key) != 0) {
+                res.put(key, (int) Math.round(sum.get(key) * 100 / res.get(key) / ECHO_AVERAGE.get(key)) - 100);
             }
-            res.put(key, (int) Math.round(sum.get(key) * 100 / res.get(key) / ECHO_AVERAGE.get(key)) - 100);
+        }
+        return res;
+    }
+    @PostMapping("/get-echo-relative-deviation-by-name")
+    public Map<String, Integer> getEchoRelativeDeviation(@RequestParam("username") String username,
+                                                         @RequestParam("name") String name) { // 获取角色声骸标准化偏差
+        Map<String, List<Echo>> data = getData("'" + username + "'");
+        Map<String, Integer> res = new LinkedHashMap<>();
+        Map<String, Double> sum = new LinkedHashMap<>();
+        for (String key : ECHO_KEYS) {
+            res.put(key, 0);
+            sum.put(key, 0.0);
+        }
+        for (Echo echo: data.get(name)) {
+            if (echo.getScore().isEmpty()) break;
+            for (List<String> li: echo.getEcho()) {
+                res.merge(li.get(0), 1, Integer::sum);
+                sum.merge(li.get(0), Double.parseDouble(li.get(1)), Double::sum);
+            }
+        }
+        for (String key : ECHO_KEYS) {
+            if (sum.get(key) != 0) {
+                res.put(key, (int) Math.round(sum.get(key) * 100 / res.get(key) / ECHO_AVERAGE.get(key)) - 100);
+            }
         }
         return res;
     }
@@ -463,15 +485,18 @@ public class EchoScoringSystemController { // 声骸评分系统控制器
                     continue;
                 }
             }
+            Map<String, Echo> item = moto.get(i);
             if (!name.isEmpty()) {
-                for (String key : new HashSet<>(moto.get(i).keySet())) {
-                    if (!key.equals("声骸") && !name.contains(key)) {
-                        moto.get(i).remove(key);
+                item = new LinkedHashMap<>();
+                item.put("声骸", moto.get(i).get("声骸"));
+                for (String key : check.get("name")) {
+                    if (moto.get(i).containsKey(key)) {
+                        item.put(key, moto.get(i).get(key));
                     }
                 }
             }
-            if (moto.get(i).size() > 1) {
-                res.add(moto.get(i));
+            if (item.size() > 1) {
+                res.add(item);
             }
         }
         return res;

@@ -147,6 +147,14 @@
             </div>
         </div>
     </Template>
+    <div class="data-size">
+        <table>
+            <tr>
+                <td class="head">临时声骸个数</td>
+                <td class="body">{{data.length}}</td>
+            </tr>
+        </table>
+    </div>
 </template>
 
 
@@ -547,5 +555,25 @@ th:hover {
 }
 .fa:hover .grid {
     opacity: 1;
+}
+
+.data-size {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    width: 180px;
+    height: 50px;
+}
+.data-size td {
+    background-color: rgb(245, 247, 250);
+    border: 1px solid #666;
+}
+.data-size .head {
+    width: 80%;
+    color: #303133;
+}
+.data-size .body {
+    width: 20%;
+    font-size: large;
 }
 </style>

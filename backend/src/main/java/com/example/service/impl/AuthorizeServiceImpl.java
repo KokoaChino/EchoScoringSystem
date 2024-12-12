@@ -136,11 +136,12 @@ public class AuthorizeServiceImpl implements AuthorizeService { // 用户授权�
     }
 
     @Override
-    public boolean changeUsername(String username, String email) { // 重置名称
-        for (String tableName : mapper.findAllTables()) {
-            mapper.deleteAccountByUsername(tableName, username);
+    public boolean changeUsername(String username, String oldUsername, String email) { // 重置名称
+        boolean res = mapper.resetUsernameByEmail(username, email) > 0;
+        for (String table : mapper.findAllTables()) {
+            mapper.resetUsername(table, username, oldUsername);
         }
-        return mapper.resetUsernameByEmail(username, email) > 0;
+        return res;
     }
 
     @Override
