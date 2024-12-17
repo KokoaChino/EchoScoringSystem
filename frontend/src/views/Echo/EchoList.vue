@@ -6,20 +6,9 @@
                 <span class="item">条件</span>
                 <el-button class="btn" type="info" @click="re_check" round>重置</el-button>
             </div>
-            <div class="container" >
+            <div class="container">
                 <div class="btn">
                     <el-button size="large" type="success" @click="router.push('/add_echo')" plain>添加声骸</el-button>
-                </div>
-                <div class="item">
-                    <div class="a">
-                        角色：
-                    </div>
-                    <div class="b">
-                        <el-check-tag v-for="name in Object.keys(name_check)"
-                                      :checked="name_check[name]" @change="name_check[name] = !name_check[name]">
-                            {{name}}
-                        </el-check-tag>
-                    </div>
                 </div>
                 <div class="item">
                     <div class="a">
@@ -52,6 +41,25 @@
                                       :checked="echo_check[echo]" @change="echo_check[echo] = !echo_check[echo]">
                             {{echo}}
                         </el-check-tag>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="a">
+                        角色：
+                    </div>
+                    <div class="b">
+                        <el-cascader
+                            v-model="selectedValues"
+                            :options="options"
+                            :props="props"
+                            collapse-tags
+                            collapse-tags-tooltip
+                            :max-collapse-tags="15"
+                            :show-all-levels="false"
+                            @change="handleChange"
+                            style="width: 100%;padding-right: 15px"
+                            placeholder="筛选角色"
+                        />
                     </div>
                 </div>
                 <div class="item">
@@ -160,9 +168,31 @@ const scale = ref({
     '丹瑾': '90%',
     '守岸人': '67%',
     '维里奈': '98%',
-    '椿': '69%'
+    '椿': '69%',
+    '秋水': '72%',
+    '散华': '78%',
+    '折枝': '69%',
+    '忌炎': '110%',
+    '今汐': '80%',
+    '炽霞': '88%',
+    '渊武': '80%',
+    '白芷': '80%',
+    '漂泊者 - 女 - 衍射': '85%',
+    '漂泊者 - 男 - 衍射': '80%',
+    '漂泊者 - 男 - 湮灭': '80%',
+    '漂泊者 - 女 - 湮灭': '85%',
+    '吟霖': '95%',
+    '鉴心': '95%',
+    '莫特斐': '79%',
+    '釉瑚': '68%',
+    '桃祈': '91%',
+    '凌阳': '95%',
+    '灯灯': '60%',
+    '秧秧': '92%',
+    '卡卡罗': '95%',
+    '相里要': '77%',
 })
-const name_check = ref({}), cost_check = ref({1: false, 3: false, 4: false}), main_check = ref({
+const name_check = ref([]), cost_check = ref({1: false, 3: false, 4: false}), main_check = ref({
     '百分比攻击': false,
     '百分比生命': false,
     '百分比防御': false,
@@ -186,15 +216,20 @@ const name_check = ref({}), cost_check = ref({1: false, 3: false, 4: false}), ma
     "共鸣技能伤害加成": false,
     "共鸣解放伤害加成": false
 }), range = ref([0, 100])
+const props = { multiple: true }
+const options = ref([]), selectedValues = ref([])
+
+const handleChange = async (value) => {
+     name_check.value = await value.map((path) => path[path.length - 1]);
+};
 
 watch([name_check, cost_check, main_check, echo_check, range], () => {
     get_data_by_screen()
 }, { deep: true });
 
 const re_check = async () => {
-    for (let key of Object.keys(name_check.value)) {
-        name_check.value[key] = false
-    }
+    name_check.value = []
+    selectedValues.value = []
     for (let key of Object.keys(cost_check.value)) {
         cost_check.value[key] = false
     }
@@ -210,14 +245,11 @@ const re_check = async () => {
 
 const get_check = () => {
     let check = {
-        'name': [],
+        'name': name_check.value,
         'cost': [],
         'main': [],
         'echo': [],
         'range': range.value
-    }
-    for (let key of Object.keys(name_check.value)) {
-        if (name_check.value[key]) check['name'].push(key)
     }
     for (let key of Object.keys(cost_check.value)) {
         if (cost_check.value[key]) check['cost'].push(key)
@@ -358,10 +390,8 @@ onMounted(async () => {
             username: store.auth.user.username,
         })
     }
-    for (let name of await get("/echo-scoring-system/get-names")) {
-        name_check.value[name] = false
-    }
     characters.value = await POST("/echo-scoring-system/get-characters", store.auth.user.username)
+    options.value = await store.get_options()
 })
 </script>
 

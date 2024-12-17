@@ -1,68 +1,90 @@
 <template>
     <Template>
         <el-empty description="角色声骸属性为空，请先去添加声骸" v-if="Object.keys(data).length === 0"/>
-        <div class="grid-container" v-else>
-            <div class="grid-item" v-for="(item, index) in data" :key="index">
-                <el-card class="card">
-                    <table class="basic-table">
-                        <thead>
+        <div v-else>
+            <div class="screen">
+                <div class="a">
+                    <span>筛选角色：</span>
+                </div>
+                <div class="b">
+                    <el-cascader
+                        style="width: 100%;padding-right: 30px;z-index: 999"
+                        v-model="selectedValues"
+                        :options="options"
+                        :props="props"
+                        collapse-tags
+                        collapse-tags-tooltip
+                        :max-collapse-tags="15"
+                        :show-all-levels="false"
+                        @change="handleChange"
+                        placeholder="筛选角色"
+                    />
+                </div>
+            </div>
+            <div class="grid-container">
+                <div class="grid-item" v-for="(item, index) in data" :key="index"
+                     v-show="names.length === 0 || names.includes(item['角色'])">
+                    <el-card class="card">
+                        <table class="basic-table">
+                            <thead>
                             <tr>
                                 <th width="250px">角色</th>
                                 <th colspan="4">声骸属性</th>
                             </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td rowspan="5" class="img_center" style="padding: 0;">
-                                <div class="img" :style="set_background_color(characters[item['角色']], 30)"></div>
-                                <div class="txt">
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td rowspan="5" class="img_center" style="padding: 0;">
+                                    <div class="img" :style="set_background_color(characters[item['角色']], 30)"></div>
+                                    <div class="txt">
                                     <span style="width: 100%;">
                                         {{item['角色']}}
                                     </span>
-                                </div>
-                            </td>
-                            <td class="a">攻击</td>
-                            <td class="b">{{item['攻击']}}</td>
-                            <td class="a">共鸣效率</td>
-                            <td class="b">{{item['共鸣效率']}}</td>
-                        </tr>
-                        <tr>
-                            <td class="a">生命</td>
-                            <td class="b">{{item['生命']}}</td>
-                            <td class="a">普攻伤害加成</td>
-                            <td class="b">{{item['普攻伤害加成']}}</td>
-                        </tr>
-                        <tr>
-                            <td class="a">防御</td>
-                            <td class="b">{{item['防御']}}</td>
-                            <td class="a">重击伤害加成</td>
-                            <td class="b">{{item['重击伤害加成']}}</td>
-                        </tr>
-                        <tr>
-                            <td class="a">暴击率</td>
-                            <td class="b">{{item['暴击率']}}</td>
-                            <td class="a">共鸣技能伤害加成</td>
-                            <td class="b">{{item['共鸣技能伤害加成']}}</td>
-                        </tr>
-                        <tr>
-                            <td class="a">暴击伤害</td>
-                            <td class="b">{{item['暴击伤害']}}</td>
-                            <td class="a">共鸣解放伤害加成</td>
-                            <td class="b">{{item['共鸣解放伤害加成']}}</td>
-                        </tr>
-                        </tbody>
-                        <tr>
-                            <td colspan="5" class="img_data" style="height: 470px;">
-                                <el-radio-group class="select" v-model="select_show[item['角色']]">
-                                    <el-radio-button label="加点次数" value="加点次数"/>
-                                    <el-radio-button label="标准化偏差" value="标准化偏差"/>
-                                </el-radio-group>
-                                <v-chart v-if="select_show[item['角色']] === '加点次数'" class="chart" :option="pies[item['角色']]"/>
-                                <v-chart v-else class="chart" :option="bars[item['角色']]"/>
-                            </td>
-                        </tr>
-                    </table>
-                </el-card>
+                                    </div>
+                                </td>
+                                <td class="a">攻击</td>
+                                <td class="b">{{item['攻击']}}</td>
+                                <td class="a">共鸣效率</td>
+                                <td class="b">{{item['共鸣效率']}}</td>
+                            </tr>
+                            <tr>
+                                <td class="a">生命</td>
+                                <td class="b">{{item['生命']}}</td>
+                                <td class="a">普攻伤害加成</td>
+                                <td class="b">{{item['普攻伤害加成']}}</td>
+                            </tr>
+                            <tr>
+                                <td class="a">防御</td>
+                                <td class="b">{{item['防御']}}</td>
+                                <td class="a">重击伤害加成</td>
+                                <td class="b">{{item['重击伤害加成']}}</td>
+                            </tr>
+                            <tr>
+                                <td class="a">暴击率</td>
+                                <td class="b">{{item['暴击率']}}</td>
+                                <td class="a">共鸣技能伤害加成</td>
+                                <td class="b">{{item['共鸣技能伤害加成']}}</td>
+                            </tr>
+                            <tr>
+                                <td class="a">暴击伤害</td>
+                                <td class="b">{{item['暴击伤害']}}</td>
+                                <td class="a">共鸣解放伤害加成</td>
+                                <td class="b">{{item['共鸣解放伤害加成']}}</td>
+                            </tr>
+                            </tbody>
+                            <tr>
+                                <td colspan="5" class="img_data" style="height: 470px;">
+                                    <el-radio-group class="select" v-model="select_show[item['角色']]">
+                                        <el-radio-button label="加点次数" value="加点次数"/>
+                                        <el-radio-button label="标准化偏差" value="标准化偏差"/>
+                                    </el-radio-group>
+                                    <v-chart v-if="select_show[item['角色']] === '加点次数'" class="chart" :option="pies[item['角色']]"/>
+                                    <v-chart v-else class="chart" :option="bars[item['角色']]"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </el-card>
+                </div>
             </div>
         </div>
     </Template>
@@ -109,7 +131,7 @@ const base_bar = {
         left: 'center'
     },
     tooltip: {
-        trigger: 'item'
+        trigger: 'item',
     },
     xAxis: {
         type: 'category',
@@ -125,7 +147,7 @@ const base_bar = {
     series: [
         {
             data: [],
-            type: 'bar',
+            type: 'bar'
         }
     ],
     grid: {
@@ -135,6 +157,12 @@ const base_bar = {
 }
 const pies = ref({}), bars = ref({})
 const data = ref([]), select_show = ref({}), characters = ref({})
+const props = { multiple: true }
+const options = ref([]), selectedValues = ref([]), names = ref([])
+
+const handleChange = async (value) => {
+    names.value = await value.map((path) => path[path.length - 1]);
+};
 
 function set_background_color(item, num) {
     if (item['lv'] === 5) return {
@@ -195,6 +223,7 @@ onMounted( async () => {
             item[key] += '%'
         }
     }
+    options.value = await store.get_options()
 })
 </script>
 
@@ -206,14 +235,12 @@ onMounted( async () => {
     grid-template-columns: repeat(2, 1fr);
     justify-items: center;
     align-items: start;
-    flex-direction: row;
 }
 .grid-item {
     width: 97%;
     text-align: center;
     font-size: 16px;
     font-weight: bold;
-    flex-shrink: 0;
 }
 
 .card {
@@ -291,5 +318,20 @@ tr>.b {
     right: 8px;
     top: 8px;
     z-index: 10;
+}
+
+.screen {
+    display: flex;
+    justify-items: center;
+    align-items: center;
+    height: 50px;
+    padding-left: 20px;
+}
+.screen .a {
+    flex: 1;
+    font-size: 25px;
+}
+.screen .b {
+    flex: 10;
 }
 </style>

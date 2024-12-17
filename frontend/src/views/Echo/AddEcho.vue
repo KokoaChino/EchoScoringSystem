@@ -32,10 +32,16 @@
                         <tr>
                             <th style="border-left: none;width: 30%;">角色</th>
                             <th style="border-right: none;width: 70%">
-                                <el-select v-model="name" placeholder="Select" size="large" style="width: 100%;">
-                                    <el-option v-for="item in names" :key="item.value"
-                                               :label="item.label" :value="item.value"/>
-                                </el-select>
+                                <el-cascader
+                                    v-model="selectedValues"
+                                    :options="options"
+                                    collapse-tags
+                                    collapse-tags-tooltip
+                                    :show-all-levels="false"
+                                    style="width: 100%"
+                                    placeholder="筛选角色"
+                                    size="large"
+                                />
                             </th>
                         </tr>
                         </thead>
@@ -112,7 +118,8 @@ const weigths = ref({})
 const percent = ref({
     "总得分": 0
 })
-const names = ref([]), name = ref("")
+const name = ref("")
+const options = ref([]), selectedValues = ref([])
 const costs = [
     { value: 1, label: 1 },
     { value: 3, label: 3 },
@@ -146,6 +153,10 @@ const list = ref([['', ''], ['', ''], ['', ''], ['', ''], ['', '']]), len = ref(
 watch(cost, (newVal) => {
     main.value = mains[newVal][0].value
 });
+
+watch(selectedValues, (newVal) => {
+    name.value = newVal[1]
+})
 
 watch(name, async (newVal) => {
     weigths.value = await POST("/echo-scoring-system/get-weigths", {
@@ -353,10 +364,7 @@ onMounted(async () => {
         map.value[key] = []
         weigths.value[key] = 0
     }
-    for (let key of await get("/echo-scoring-system/get-names")) {
-        names.value.push({ value: key, label: key })
-    }
-    name.value = names.value[0]['value']
+    selectedValues.value = ['热熔', '长离']
     map.value = await get("/echo-scoring-system/get-echo-values")
     keys.value.forEach(key => {
         map.value[key].unshift(0);
@@ -383,6 +391,7 @@ onMounted(async () => {
         username: store.auth.user.username,
         values: JSON.stringify(to_map())
     })
+    options.value = await store.get_options()
 })
 </script>
 

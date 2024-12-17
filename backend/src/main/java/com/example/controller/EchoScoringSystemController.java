@@ -68,8 +68,7 @@ public class EchoScoringSystemController { // 声骸评分系统控制器
     @PostMapping("/get-characters")
     public Map<String, Character> getCharacters(@RequestBody String username) { // 获取角色
         username = username.substring(1, username.length() - 1);
-        Map<String, Character> res = JSON.parseObject(JSON.toJSONString(CHARACTERS),
-                new TypeReference<LinkedHashMap<String, Character>>() {});
+        Map<String, Character> res = EchoUtil.getCharacters();
         for (Character c: res.values()) {
             String weapon = mapper.selectWeapon(username, c.getName());
             if (weapon != null) {
@@ -78,9 +77,39 @@ public class EchoScoringSystemController { // 声骸评分系统控制器
         }
         return res;
     }
+    @PostMapping("/get-characters-by-screen")
+    public Map<String, Character> getCharactersByScreen(@RequestParam("username") String username,
+                                                        @RequestParam("names") String json) { // 获取筛选后的角色
+        List<String> names = JSON.parseObject(json, new TypeReference<List<String>>() {});
+        Map<String, Character> characters = getCharacters("'" + username + "'");
+        if (names.isEmpty()) return characters;
+        Map<String, Character> res = new LinkedHashMap<>();
+        for (String name : names) {
+            res.put(name, characters.get(name));
+        }
+        return res;
+    }
     @GetMapping("/get-names")
     public List<String> getNames() { // 获取角色名称列表
         return CHARACTERS.keySet().stream().sorted(Comparator.comparing(EchoUtil::getPinyin)).toList();
+    }
+    @GetMapping("/get-character-groups")
+    public static Map<String, List<String>> getCharacterGroupsByType() { // 获取角色分组
+        Map<String, List<String>> res = new LinkedHashMap<>(){{
+            put("气动", new ArrayList<>());
+            put("导电", new ArrayList<>());
+            put("冷凝", new ArrayList<>());
+            put("热熔", new ArrayList<>());
+            put("衍射", new ArrayList<>());
+            put("湮灭", new ArrayList<>());
+        }};
+        for (Character character : CHARACTERS.values()) {
+            res.get(character.getType()).add(character.getName());
+        }
+        for (List<String> list : res.values()) {
+            list.sort(Comparator.comparing(a -> CHARACTERS.get(a).getPinyin()));
+        }
+        return res;
     }
     @GetMapping("/get-character-stats")
     public Map<String, int[]> getCharacterStats() { // 获取角色三维属性

@@ -4,10 +4,16 @@
             <tr>
                 <td class="sub-echo">角色名称</td>
                 <td style="width: 67%">
-                    <el-select v-model="name" placeholder="Select" size="large" style="width: 100%;">
-                        <el-option v-for="item in names" :key="item.value"
-                                   :label="item.label" :value="item.value"/>
-                    </el-select>
+                    <el-cascader
+                        v-model="selectedValues"
+                        :options="options"
+                        collapse-tags
+                        collapse-tags-tooltip
+                        :show-all-levels="false"
+                        style="width: 100%"
+                        placeholder="筛选角色"
+                        size="large"
+                    />
                 </td>
                 <td style="width: 30%;padding: 0 20px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
@@ -61,8 +67,13 @@ const store = useStore()
 const keys = ref([])
 const map = ref({})
 const weigths = ref({})
-const names = ref([]), name = ref('')
+const name = ref('')
 const is_one_percent = ref(true)
+const options = ref([]), selectedValues = ref([])
+
+watch(selectedValues, (newVal) => {
+    name.value = newVal[1]
+})
 
 watch(name, async (newVal) => {
     weigths.value = await POST("/echo-scoring-system/get-weigths", {
@@ -138,17 +149,17 @@ const set_style3 = (key) => {
 
 
 onMounted(async () => {
+    options.value = await store.get_options()
     keys.value = await get("/echo-scoring-system/get-echo-keys")
     for (let key of keys.value) {
         map.value[key] = []
         weigths.value[key] = 0
     }
-    for (let name of await get("/echo-scoring-system/get-names")) {
-        names.value.push({ value: name, label: name})
-    }
     if (store.echo.index === -3) {
         name.value = store.echo.name
-    } else name.value = names.value[0]['value']
+        let characters = await post("/echo-scoring-system/get-characters", store.auth.user.username)
+        selectedValues.value = [characters[name.value]['type'], name.value]
+    }
     map.value = await get("/echo-scoring-system/get-echo-values")
     keys.value.forEach(key => {
         map.value[key].unshift(0);

@@ -30,23 +30,18 @@
                         <tr>
                             <th style="border-left: none;width: 30%;">角色列表</th>
                             <th style="border-right: none;width: 70%">
-                                <el-select
-                                    v-model="name_list"
-                                    multiple
+                                <el-cascader
+                                    :options="name_options"
+                                    :props="props"
                                     collapse-tags
                                     collapse-tags-tooltip
-                                    :max-collapse-tags="3"
-                                    placeholder="角色列表"
-                                    style="width: 100%;"
+                                    :max-collapse-tags="2"
+                                    :show-all-levels="false"
+                                    @change="handleChange"
+                                    style="width: 100%"
+                                    placeholder="筛选角色"
                                     size="large"
-                                >
-                                    <el-option
-                                        v-for="item in name_options"
-                                        :key="item.value"
-                                        :label="item.label"
-                                        :value="item.value"
-                                    />
-                                </el-select>
+                                />
                             </th>
                         </tr>
                         </thead>
@@ -110,6 +105,7 @@ const store = useStore()
 const keys = ref([])
 const map = ref({})
 const name_options = ref([]), name_list = ref([])
+const props = { multiple: true }
 const costs = [
     { value: 1, label: 1 },
     { value: 3, label: 3 },
@@ -139,6 +135,10 @@ const mains = {
 }, main = ref('暴击率 22%')
 const radios = ref([])
 const list = ref([['', ''], ['', ''], ['', ''], ['', ''], ['', '']]), len = ref(0)
+
+const handleChange = async (value) => {
+    name_list.value = await value.map((path) => path[path.length - 1]);
+};
 
 watch(cost, (newVal) => {
     main.value = mains[newVal][0].value
@@ -277,6 +277,7 @@ onMounted(async () => {
         }
         len.value = 5
     }
+    name_options.value = await store.get_options()
 })
 </script>
 

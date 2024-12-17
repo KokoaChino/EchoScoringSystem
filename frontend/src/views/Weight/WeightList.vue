@@ -1,6 +1,26 @@
 <template>
     <Template>
-        <el-card class="item" v-for="(name, index) in Object.keys(data)" :key="index">
+        <div class="screen">
+            <div class="a">
+                <span>筛选角色：</span>
+            </div>
+            <div class="b">
+                <el-cascader
+                    style="width: 100%;padding-right: 30px;"
+                    v-model="selectedValues"
+                    :options="options"
+                    :props="props"
+                    collapse-tags
+                    collapse-tags-tooltip
+                    :max-collapse-tags="15"
+                    :show-all-levels="false"
+                    @change="handleChange"
+                    placeholder="筛选角色"
+                />
+            </div>
+        </div>
+        <el-card class="item" v-for="(name, index) in Object.keys(data)" :key="index"
+                    v-show="names.length === 0 || names.includes(name)">
             <table>
                 <tr>
                     <td colspan="13" class="a sub-echo">
@@ -136,6 +156,12 @@ const base_bar = {
 }
 const pies = ref({}), bars = ref({}), kurtosis = ref({})
 const el_kurtosis = ref({})
+const props = { multiple: true }
+const options = ref([]), selectedValues = ref([]), names = ref([])
+
+const handleChange = async (value) => {
+    names.value = await value.map((path) => path[path.length - 1]);
+};
 
 function set_color(w) {
     let color = ''
@@ -193,6 +219,7 @@ onMounted( async () => {
         }
         pie['series'][0]['data'].sort((a, b) => b.value - a.value)
     }
+    options.value = await store.get_options()
 })
 </script>
 
@@ -265,5 +292,19 @@ table .sub-echo {
     width: 0;
     border-left: 1px dashed #303133;
     height: 100%;
+}
+
+.screen {
+    display: flex;
+    justify-items: center;
+    align-items: center;
+    height: 50px;
+}
+.screen .a {
+    flex: 1;
+    font-size: 25px;
+}
+.screen .b {
+    flex: 10;
 }
 </style>

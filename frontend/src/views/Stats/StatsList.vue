@@ -1,5 +1,24 @@
 <template>
     <Template>
+        <div class="screen">
+            <div class="a">
+                <span>筛选角色：</span>
+            </div>
+            <div class="b">
+                <el-cascader
+                    style="width: 100%;padding-right: 30px;z-index: 999"
+                    v-model="selectedValues"
+                    :options="options"
+                    :props="props"
+                    collapse-tags
+                    collapse-tags-tooltip
+                    :max-collapse-tags="15"
+                    :show-all-levels="false"
+                    @change="handleChange"
+                    placeholder="筛选角色"
+                />
+            </div>
+        </div>
         <div class="grid-container">
             <div class="grid-item" v-for="(character, index) in Object.values(characters)" :key="index">
                 <el-card class="card">
@@ -22,10 +41,10 @@
                                 </div>
                             </td>
                             <td rowspan="3" class="img_center" style="padding: 0;">
-
                                 <div class="img" :style="set_weapons_img_and_color(character['weapon'], 30)"
                                      title="点击设置角色武器"
-                                     @click="drawer = true;select = character['weapon'];select_character=character"></div>
+                                     @click="drawer = true;select = character['weapon'];select_character=character">
+                                </div>
                                 <div class="txt">
                                     <span style="width: 100%;">
                                         {{ character['weapon']['name'] }}
@@ -113,6 +132,16 @@ const check = ref({
 })
 const select = ref({type: ''}), screen_weapons = ref([]),
     select_weapon = ref(''), select_character = ref('')
+const props = { multiple: true }
+const options = ref([]), selectedValues = ref([]), names = ref([])
+
+const handleChange = async (value) => {
+    names.value = await value.map((path) => path[path.length - 1]);
+    characters.value = await POST("/echo-scoring-system/get-characters-by-screen", {
+        username: store.auth.user.username,
+        names: JSON.stringify(names.value)
+    })
+};
 
 watch(check,async () => {
     screen_weapons.value = await POST("/echo-scoring-system/get-weapons-by-screen", {
@@ -150,7 +179,10 @@ const close_drawer = async () => {
         name: select_character.value['name'],
         weapon: select_weapon.value
     })
-    characters.value = await post("/echo-scoring-system/get-characters", store.auth.user.username)
+    characters.value = await POST("/echo-scoring-system/get-characters-by-screen", {
+        username: store.auth.user.username,
+        names: JSON.stringify(names.value)
+    })
     await POST("echo-scoring-system/re_weights", {
         name: select_character.value['name'],
         username: store.auth.user.username
@@ -204,7 +236,11 @@ function set_weapons_img_and_color(item, num) {
 }
 
 onMounted( async () => {
-    characters.value = await post("/echo-scoring-system/get-characters", store.auth.user.username)
+    options.value = await store.get_options()
+    characters.value = await POST("/echo-scoring-system/get-characters-by-screen", {
+        username: store.auth.user.username,
+        names: JSON.stringify(names.value)
+    })
     weapons.value = await get("/echo-scoring-system/get-weapons")
 })
 </script>
@@ -346,6 +382,21 @@ tr>.a {
     background-color: rgba(0, 0, 0, 0.2);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     transform: scale(1.02);
+}
+
+.screen {
+    display: flex;
+    justify-items: center;
+    align-items: center;
+    height: 50px;
+    padding-left: 20px;
+}
+.screen .a {
+    flex: 1;
+    font-size: 25px;
+}
+.screen .b {
+    flex: 10;
 }
 
 @media (max-width: 1000px) {

@@ -1,6 +1,6 @@
 package com.example;
 
-import com.example.mapper.UserMapper;
+import com.example.mapper.EchoMapper;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 class StudyProjectBackendApplicationTests { // SpringBoot 测试框架
 
     @Resource
-    UserMapper mapper;
+    EchoMapper mapper;
 
     @Test
     void contextLoads() {
