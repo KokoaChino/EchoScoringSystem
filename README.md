@@ -9,10 +9,10 @@
 一个声骸具有的属性如下：
 
 * 1 个主词条
-
 * 1 个 `Cost` 值
-
 * 5 个副词条
+
+![](https://gitee.com/kokoachino/picture-bed/raw/master/项目/EchoScoringSystem%20项目文档-14.jpg)
 
 系统会根据其属性值与角色的匹配程度（相对应的词条权重）来为其评分
 
@@ -27,15 +27,14 @@
 ### 1.3 项目说明
 
 1. 项目只关心声骸的副词条属性，并且以此为依据作出评分
-
 2. 项目不关心声骸的技能，主词条属性，套装效果等等
-
 3. 项目默认属性：
 
    * 角色：90 级，0 共鸣链，满技能
    * 武器：对应角色专武 90 级（武器可以去角色基础属性模块设置），谐振 1 阶
+* 声骸：5 星的满调谐声骸
 
-   * 声骸：5 星的满调谐声骸
+4. 目前有绝大部分的角色默认权重还没有配置，等我养到了再配
 
 ## 2. 系统架构
 
@@ -65,9 +64,7 @@
 
 最左侧为声骸数据，右侧为该声骸搭配在不同角色身上的评分情况
 
-临时声骸列表中的数据，不计入后面的数据统计模块，相当于一个暂存区
-
-玩家可以在这里对声骸进行横向比对
+临时声骸列表中的数据，不计入后面的数据统计模块，相当于一个暂存区，玩家可以在这里对声骸进行横向比对
 
 选择好要给哪位角色后，可以直接将该声骸一键添加至正式的角色声骸列表中，添加后会自动将该声骸从临时声骸列表移除
 
@@ -277,6 +274,29 @@ $$
    > 副词条对评分的贡献百分比 = \frac{该项副词条的得分点数}{总的得分点数} \times 100\%
    > $$
 
+### 4.3 理论基础支撑
+
+鸣潮总伤害计算公式：[【鸣潮】伤害论 伤害乘区与稀释详解 怎么样才能最大化输出？《鸣潮》底层机制系列01](https://www.bilibili.com/video/BV1VZ42147px/?spm_id_from=333.999.0.0&vd_source=50647b976189fed7c41a37586097b659)
+
+![](https://gitee.com/kokoachino/picture-bed/raw/master/项目/EchoScoringSystem%20项目文档-15.jpg)
+
+角色默认词条权重：
+
+* [【鸣潮】最新全角色声骸养成作业 武器&共鸣链收益计算 含声骸词条思路规则_哔哩哔哩bilibili](https://www.bilibili.com/video/BV1Tf421X7fm/?spm_id_from=333.999.0.0)
+
+* [【鸣潮】长离强度解析+养成作业 声骸词条/共鸣链/武器分析](https://www.bilibili.com/video/BV1nM4m1y718/?spm_id_from=333.999.0.0)
+
+* [【鸣潮】守岸人解析 百搭暴力人权拐！强度解析＋养成作业：声骸词条 共鸣链 武器分析](https://www.bilibili.com/video/BV1RqxBepEs7/?spm_id_from=333.999.0.0&vd_source=50647b976189fed7c41a37586097b659)
+
+* [【鸣潮】椿解析 首位常态双形态！养成作业+进阶技巧：声骸词条 共鸣链 武器分析_哔哩哔哩bilibili](https://www.bilibili.com/video/BV1RmU3YnEMF/?spm_id_from=333.999.0.0&vd_source=50647b976189fed7c41a37586097b659)
+* ......
+
+在此感谢这两位 B 站 UP 主：
+
+* [叫我棉被-哔哩哔哩_bilibili](https://space.bilibili.com/6014992?spm_id_from=333.337.0.0)
+
+* [金铃子攻略组-哔哩哔哩_bilibili](https://search.bilibili.com/all?keyword=金铃子攻略组&from_source=webtop_search&spm_id_from=333.1007&search_source=2)
+
 ## 5. 技术栈介绍
 
 ### 5.1 开发工具
@@ -288,6 +308,8 @@ $$
 **[Typora](https://typoraio.cn/)**：用于编写项目文档，提供简洁的 Markdown 编辑环境，实时预览功能让编写文档更直观
 
 **[Microsoft Edge](https://www.microsoft.com/zh-cn/edge/?form=MA13FJ)**：用于网页预览和调试，提供强大的开发者工具，帮助开发者进行页面调试、性能分析和网页兼容性测试
+
+**[ChatGPT](https://chat.openai.com/)**：用于快速解答技术问题、生成代码片段、以及对开发过程中遇到的 bug 给出解决方案
 
 ### 5.2 前端
 
