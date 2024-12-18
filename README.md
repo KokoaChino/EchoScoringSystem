@@ -361,7 +361,7 @@ $$
 
 ## 6. 关于作者
 
-**[库街区](https://www.kurobbs.com/person-center?id=21357613)**     **[bilibili](https://space.bilibili.com/497982061?spm_id_from=333.1007.0.0)**     **[github](https://github.com/KokoaChino)**     **[gitee](https://gitee.com/kokoachino)**     **[力扣](https://leetcode.cn/u/xing-kai-qi-ling/)**     **[codeforces](https://codeforces.com/profile/Kokoa_Chino)**     **[我的个人博客网站](https://kokoachino.github.io/)**
+**[库街区](https://www.kurobbs.com/person-center?id=21357613)**     **[bilibili](https://space.bilibili.com/497982061?spm_id_from=333.1007.0.0)**     **[github](https://github.com/KokoaChino)**     **[gitee](https://gitee.com/kokoachino)**     **[力扣](https://leetcode.cn/u/xing-kai-qi-ling/)**     **[codeforces](https://codeforces.com/profile/Kokoa_Chino)**
 
 ## 7. 版本控制
 
