@@ -4,16 +4,18 @@ import com.example.entity.auth.Account;
 import com.example.mapper.UserMapper;
 import com.example.service.AuthorizeService;
 import jakarta.annotation.Resource;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.mail.MailException;
-import org.springframework.mail.MailSender;
-import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.io.UnsupportedEncodingException;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -29,7 +31,7 @@ public class AuthorizeServiceImpl implements AuthorizeService { // 用户授权�
     String from; // 邮件发送者的邮箱地址
 
     @Resource
-    MailSender mailSender; // 邮件发送组件
+    JavaMailSender mailSender; // 邮件发送组件
 
     @Resource
     StringRedisTemplate template; // Redis 字符串模板，用于存取数据
@@ -62,16 +64,17 @@ public class AuthorizeServiceImpl implements AuthorizeService { // 用户授权�
         if (!hasAccount && account != null) return "此邮箱已被其他用户注册";
         Random random = new Random();
         String code = String.format("%06d", random.nextInt(1000000)); // 创建验证码
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(from);
-        message.setTo(email);
-        message.setSubject("【声骸评分系统的验证邮件】");
-        message.setText("您的验证码是：" + code);
         try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, false, "UTF-8");
+            helper.setFrom(from, "声骸评分系统");
+            helper.setTo(email);
+            helper.setSubject("【声骸评分系统的验证邮件】");
+            helper.setText("您的验证码是：" + code);
             mailSender.send(message);
             template.opsForValue().set(key, code, 3, TimeUnit.MINUTES); // 在 Redis 中保存验证码，有效期为 3 分钟
             return null;
-        } catch (MailException e) {
+        } catch (MessagingException | UnsupportedEncodingException e) {
             e.printStackTrace();
             return "邮件发送失败，请检查邮件地址是否有效";
         }

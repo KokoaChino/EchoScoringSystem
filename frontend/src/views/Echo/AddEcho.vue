@@ -41,6 +41,7 @@
                                     style="width: 100%"
                                     placeholder="筛选角色"
                                     size="large"
+                                    :disabled="store.echo.name"
                                 />
                             </th>
                         </tr>
@@ -385,6 +386,8 @@ onMounted(async () => {
             radios.value[keys.value.indexOf(echo[i][0])] = Number(echo[i][1])
         }
         len.value = 5
+        let characters = await post("/echo-scoring-system/get-characters", store.auth.user.username)
+        selectedValues.value = [characters[name.value]['type'], name.value]
     }
     percent.value = await POST("/echo-scoring-system/get-echo-percent", {
         name: name.value,
