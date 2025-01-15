@@ -1,6 +1,6 @@
 <template>
     <el-backtop :right="100" :bottom="100" />
-    <el-container>
+    <el-container style="width: 1680px;">
         <el-header class="header">
             <Header />
         </el-header>
@@ -9,7 +9,9 @@
                 <Sidebar />
             </el-aside>
             <el-main style="margin-left: 200px; padding: 20px">
-                <slot></slot>
+                <div class="main">
+                    <slot></slot>
+                </div>
             </el-main>
         </el-container>
     </el-container>
@@ -29,6 +31,10 @@ body {
     margin: 0;
     padding: 0;
     font-family: Arial, Helvetica, sans-serif;
+}
+
+.main {
+    width: 1430px;
 }
 
 .header {

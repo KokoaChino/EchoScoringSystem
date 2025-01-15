@@ -52,6 +52,7 @@ public class EchoUtil { // 声骸工具类
         put("裁春", new Weapon("裁春", "迅刀", 5, 587));
         put("赫奕流明", new Weapon("赫奕流明", "迅刀", 5, 587));
         put("千古洑流", new Weapon("千古洑流", "迅刀", 5, 587));
+        put("死与舞", new Weapon("死与舞", "佩枪", 5, 500));
         put("停驻之烟", new Weapon("停驻之烟", "佩枪", 5, 587));
         put("星序协响", new Weapon("星序协响", "音感仪", 5, 412));
         put("琼枝冰绡", new Weapon("琼枝冰绡", "音感仪", 5, 500));
@@ -64,6 +65,7 @@ public class EchoUtil { // 声骸工具类
         put("重破刃-41型", new Weapon("重破刃-41型", "长刃", 4, 412));
         put("永夜长明", new Weapon("永夜长明", "长刃", 4, 337));
         put("东落", new Weapon("东落", "长刃", 4, 412));
+        put("容赦的沉思录", new Weapon("容赦的沉思录", "长刃", 4, 462));
 
         put("尘云旋臂", new Weapon("尘云旋臂", "臂铠", 4, 462));
         put("金掌", new Weapon("金掌", "臂铠", 4, 412));
@@ -71,6 +73,7 @@ public class EchoUtil { // 声骸工具类
         put("钢影拳-21丁型", new Weapon("钢影拳-21丁型", "臂铠", 4, 387));
         put("袍泽之固", new Weapon("袍泽之固", "臂铠", 4, 337));
         put("骇行", new Weapon("骇行", "臂铠", 4, 412));
+        put("酩酊的英雄志", new Weapon("酩酊的英雄志", "臂铠", 4, 462));
 
         put("心之锚", new Weapon("心之锚", "迅刀", 4, 462));
         put("永续坍缩", new Weapon("永续坍缩", "迅刀", 4, 462));
@@ -79,6 +82,7 @@ public class EchoUtil { // 声骸工具类
         put("瞬斩刀-18型", new Weapon("瞬斩刀-18型", "迅刀", 4, 387));
         put("不归孤军", new Weapon("不归孤军", "迅刀", 4, 412));
         put("西升", new Weapon("西升", "迅刀", 4, 412));
+        put("风流的寓言诗", new Weapon("风流的寓言诗", "迅刀", 4, 462));
 
         put("悖论喷流", new Weapon("悖论喷流", "佩枪", 4, 462));
         put("奔雷", new Weapon("奔雷", "佩枪", 4, 387));
@@ -86,6 +90,7 @@ public class EchoUtil { // 声骸工具类
         put("穿击枪-26型", new Weapon("穿击枪-26型", "佩枪", 4, 387));
         put("无眠烈火", new Weapon("无眠烈火", "佩枪", 4, 412));
         put("飞逝", new Weapon("飞逝", "佩枪", 4, 412));
+        put("叙别的罗曼史", new Weapon("叙别的罗曼史", "佩枪", 4, 462));
 
         put("核熔星盘", new Weapon("核熔星盘", "音感仪", 4, 462));
         put("清音", new Weapon("清音", "音感仪", 4, 412));
@@ -93,6 +98,8 @@ public class EchoUtil { // 声骸工具类
         put("鸣动仪-25型", new Weapon("鸣动仪-25型", "音感仪", 4, 337));
         put("今州守望", new Weapon("今州守望", "音感仪", 4, 387));
         put("异度", new Weapon("异度", "音感仪", 4, 412));
+        put("渊海回声", new Weapon("渊海回声", "音感仪", 4, 337));
+        put("虚饰的华尔兹", new Weapon("虚饰的华尔兹", "音感仪", 4, 462));
     }};
     public static Map<String, Character> getCharacters () {
         return new LinkedHashMap<>() {{
@@ -108,7 +115,11 @@ public class EchoUtil { // 声骸工具类
                     new int[]{287, 16712, 1099}, new int[]{2, 14, 1, 16, 20, 1, 1, 1, 10}));
             put("维里奈", new Character("维里奈", "weilinai", "衍射", WEAPONS.get("星序协响"), 5,
                     new int[]{337, 14237, 1099}, new int[]{17, 3, 3, 2, 20, 1, 1, 1, 0}));
+            put("散华", new Character("散华", "sanhua", "冷凝", WEAPONS.get("赫奕流明"), 4,
+                    new int[]{275, 10062, 941}, new int[]{11, 1, 1, 20, 2, 2, 5, 6, 4}));
             /* 下面的角色权重未设置 */
+            put("珂莱塔", new Character("珂莱塔", "kelaita", "冷凝", WEAPONS.get("死与舞"), 5,
+                    new int[]{462, 12450, 1197}, new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1}));
             put("灯灯", new Character("灯灯", "dengdeng", "导电", WEAPONS.get("浩境粼光"), 4,
                     new int[]{337, 8500, 879}, new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1}));
             put("相里要", new Character("相里要", "xiangliyao", "导电", WEAPONS.get("诸方玄枢"), 5,
@@ -143,8 +154,6 @@ public class EchoUtil { // 声骸工具类
                     new int[]{212, 12812, 1002}, new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1}));
             put("炽霞", new Character("炽霞", "chixia", "热熔", WEAPONS.get("停驻之烟"), 4,
                     new int[]{300, 9087, 953}, new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1}));
-            put("散华", new Character("散华", "sanhua", "冷凝", WEAPONS.get("赫奕流明"), 4,
-                    new int[]{275, 10062, 941}, new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1}));
             put("秋水", new Character("秋水", "qiushui", "气动", WEAPONS.get("华彩乐段"), 4,
                     new int[]{262, 9850, 1075}, new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1}));
             put("莫特斐", new Character("莫特斐", "motefei", "热熔", WEAPONS.get("停驻之烟"), 4,

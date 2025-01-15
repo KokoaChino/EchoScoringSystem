@@ -436,7 +436,7 @@ onMounted(async () => {
     height: 100%;
     display: flex;
     align-items: center;
-    gap: 9px;
+    gap: 7.7px;
 }
 
 .sub-echo {

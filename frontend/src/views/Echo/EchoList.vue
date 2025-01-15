@@ -191,6 +191,7 @@ const scale = ref({
     '秧秧': '92%',
     '卡卡罗': '95%',
     '相里要': '77%',
+    '珂莱塔': '87%',
 })
 const name_check = ref([]), cost_check = ref({1: false, 3: false, 4: false}), main_check = ref({
     '百分比攻击': false,
@@ -469,7 +470,7 @@ onMounted(async () => {
     height: 100%;
     display: flex;
     align-items: center;
-    gap: 9px;
+    gap: 7.7px;
 }
 
 .sub-echo {
