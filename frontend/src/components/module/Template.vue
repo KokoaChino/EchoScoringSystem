@@ -1,6 +1,6 @@
 <template>
     <el-backtop :right="100" :bottom="100" />
-    <el-container style="width: 1680px;">
+    <el-container style="width: 1680px;margin: 0 auto;">
         <el-header class="header">
             <Header />
         </el-header>
@@ -47,6 +47,5 @@ body {
     background-color: #f4f4f4;
     position: fixed;
     top: 0;
-    left: 0;
 }
 </style>

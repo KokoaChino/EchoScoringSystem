@@ -1,14 +1,14 @@
 <template>
-    <div>
-        <div style="margin: 30px 20px">
+    <div style="display: flex;flex-direction: column;align-content: center;position: relative">
+        <div style="position: absolute;top: 50px;width: 100%;">
             <el-steps :active="active" finish-status="success" align-center>
                 <el-step title="验证电子邮件" />
                 <el-step title="重新设定密码" />
             </el-steps>
         </div>
         <transition name="el-fade-in-linear" mode="out-in">
-            <div style="text-align: center;margin: 0 20px;height: 100%" v-if="active === 0">
-                <div style="margin-top: 80px">
+            <div style="text-align: center;margin: 0 20px;height: 100%;align-content: center;" v-if="active === 0">
+                <div>
                     <div style="font-size: 25px;font-weight: bold">重置密码</div>
                     <div style="font-size: 14px;color: grey">请输入需要重置密码的电子邮件地址</div>
                 </div>
@@ -46,8 +46,8 @@
             </div>
         </transition>
         <transition name="el-fade-in-linear" mode="out-in">
-            <div style="text-align: center;margin: 0 20px;height: 100%" v-if="active === 1">
-                <div style="margin-top: 80px">
+            <div style="text-align: center;margin: 0 20px;height: 100%;align-content: center;" v-if="active === 1">
+                <div>
                     <div style="font-size: 25px;font-weight: bold">重置密码</div>
                     <div style="font-size: 14px;color: grey">请填写您的新密码，务必牢记，防止丢失</div>
                 </div>

@@ -1,6 +1,6 @@
 <template>
-    <div style="text-align: center;margin: 0 20px">
-        <div style="margin-top: 100px">
+    <div style="text-align: center;margin: 0 20px;align-content: center">
+        <div>
             <div style="font-size: 25px;font-weight: bold">注册新用户</div>
             <div style="font-size: 14px;color: grey">欢迎注册声骸评分系统，请在下方填写相关信息</div>
         </div>
