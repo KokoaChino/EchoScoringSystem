@@ -48,7 +48,7 @@
                                 <span style="flex: 1">
                                     平滑分布
                                 </span>
-                                <el-slider style="flex: 10" v-model="el_kurtosis[name]" range disabled :min='-2' :max="2" />
+                                <el-slider style="flex: 10; margin: 0 10px;" v-model="el_kurtosis[name]" range disabled :min='-2' :max="2" />
                                 <span style="flex: 1">
                                     尖锐分布
                                 </span>
@@ -165,13 +165,13 @@ const handleChange = async (value) => {
 
 function set_color(w) {
     let color = ''
-    if (w >= 15) {
+    if (w >= 75) {
         color = "red"
-    } else if (w >= 10) {
+    } else if (w >= 40) {
         color = "orange"
-    } else if (w >= 5) {
+    } else if (w >= 20) {
         color = "blue"
-    } else if (w >= 2.5) {
+    } else if (w >= 10) {
         color = "green"
     } else {
         color = "gray"

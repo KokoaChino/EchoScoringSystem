@@ -218,13 +218,13 @@ const add_list = async (key, x) => {
 
 function set_color(key) {
     let color, w = weigths.value[key]
-    if (w >= 15) {
+    if (w >= 75) {
         color = "red"
-    } else if (w >= 10) {
+    } else if (w >= 40) {
         color = "orange"
-    } else if (w >= 5) {
+    } else if (w >= 20) {
         color = "blue"
-    } else if (w >= 2.5) {
+    } else if (w >= 10) {
         color = "green"
     } else {
         color = "gray"

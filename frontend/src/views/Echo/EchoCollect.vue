@@ -67,12 +67,12 @@
                     </td>
                 </tr>
                 <tr>
-                    <td v-for="(key, index) in Object.keys(rd)" :key="index" class="a" style="font-size: 17px;">
+                    <td v-for="(key, index) in Object.keys(rd)" :key="index" class="a" style="font-size: 16px;">
                         {{key}}
                     </td>
                 </tr>
                 <tr>
-                    <td v-for="(val, index) in Object.values(rd)" :key="index">
+                    <td v-for="(val, index) in Object.values(rd)" :key="index" :style="{ color: val < 0 ? 'red' : 'green' }">
                         {{val + '%'}}
                     </td>
                 </tr>

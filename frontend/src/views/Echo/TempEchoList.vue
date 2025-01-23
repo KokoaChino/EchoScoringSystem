@@ -230,13 +230,13 @@ const re_check = async () => {
 function set_color(name, key) {
     if (key === '') return ''
     let color = '', w = weights.value[name][key]
-    if (w >= 15) {
+    if (w >= 75) {
         color = "red"
-    } else if (w >= 10) {
+    } else if (w >= 40) {
         color = "orange"
-    } else if (w >= 5) {
+    } else if (w >= 20) {
         color = "blue"
-    } else if (w >= 2.5) {
+    } else if (w >= 10) {
         color = "green"
     } else {
         color = "gray"

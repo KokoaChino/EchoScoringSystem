@@ -45,7 +45,7 @@
                 <td :style="set_style3(key)">{{ key }}</td>
                 <td colspan="5" :style="set_style3(key)">
                     <div class="slider-demo-block">
-                        <el-slider v-model="weigths[key]" show-input size="large" :max="20"
+                        <el-slider v-model="weigths[key]" show-input size="large" :max="100"
                                    :step="is_one_percent ? 0.01 : 1"/>
                     </div>
                 </td>
@@ -68,7 +68,7 @@ const keys = ref([])
 const map = ref({})
 const weigths = ref({})
 const name = ref('')
-const is_one_percent = ref(true)
+const is_one_percent = ref(false)
 const options = ref([]), selectedValues = ref([])
 
 watch(selectedValues, (newVal) => {
@@ -96,13 +96,13 @@ watch(is_one_percent, async (newVal) => {
 
 function set_color(key) {
     let color, w = weigths.value[key]
-    if (w >= 15) {
+    if (w >= 75) {
         color = "red"
-    } else if (w >= 10) {
+    } else if (w >= 40) {
         color = "orange"
-    } else if (w >= 5) {
+    } else if (w >= 20) {
         color = "blue"
-    } else if (w >= 2.5) {
+    } else if (w >= 10) {
         color = "green"
     } else {
         color = "gray"

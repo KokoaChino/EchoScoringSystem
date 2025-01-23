@@ -49,6 +49,7 @@ public class EchoUtil { // 声骸工具类
         put("浩境粼光", new Weapon("浩境粼光", "长刃", 5, 587));
         put("诸方玄枢", new Weapon("诸方玄枢", "臂铠", 5, 587));
         put("擎渊怒涛", new Weapon("擎渊怒涛", "臂铠", 5, 587));
+        put("悲喜剧", new Weapon("悲喜剧", "臂铠", 5, 587));
         put("裁春", new Weapon("裁春", "迅刀", 5, 587));
         put("赫奕流明", new Weapon("赫奕流明", "迅刀", 5, 587));
         put("千古洑流", new Weapon("千古洑流", "迅刀", 5, 587));
@@ -103,70 +104,72 @@ public class EchoUtil { // 声骸工具类
     }};
     public static Map<String, Character> getCharacters () {
         return new LinkedHashMap<>() {{
-            put("安可", new Character("安可", "anke", "热熔", WEAPONS.get("掣傀之手"), 5,
-                    new int[]{425, 10512, 1246}, new int[]{11, 1, 1, 20, 2, 9, 2, 6, 3}));
             put("长离", new Character("长离", "changli", "热熔", WEAPONS.get("赫奕流明"), 5,
-                    new int[]{462, 10387, 1099}, new int[]{11, 1, 1, 20, 3, 2, 3, 8, 5}));
-            put("椿", new Character("椿", "chun", "湮灭", WEAPONS.get("裁春"), 5,
-                    new int[]{450, 10325, 1161}, new int[]{11, 1, 1, 20, 2, 9, 3, 0, 5}));
-            put("丹瑾", new Character("丹瑾", "danjing", "湮灭", WEAPONS.get("赫奕流明"), 4,
-                    new int[]{262, 9437, 1148}, new int[]{11, 1, 1, 20, 2, 3, 9, 5, 2}));
-            put("守岸人", new Character("守岸人", "shouanren", "衍射", WEAPONS.get("星序协响"), 5,
-                    new int[]{287, 16712, 1099}, new int[]{2, 14, 1, 16, 20, 1, 1, 1, 10}));
+                    new int[]{462, 10387, 1099}, new int[]{71, 3, 3, 100, 8, 7, 2, 46, 16}));
+            put("安可", new Character("安可", "anke", "热熔", WEAPONS.get("掣傀之手"), 5,
+                    new int[]{425, 10512, 1246}, new int[]{71, 3, 3, 100, 9, 35, 8, 23, 5}));
             put("维里奈", new Character("维里奈", "weilinai", "衍射", WEAPONS.get("星序协响"), 5,
-                    new int[]{337, 14237, 1099}, new int[]{17, 3, 3, 2, 20, 1, 1, 1, 0}));
+                    new int[]{337, 14237, 1099}, new int[]{85, 20, 20, 10, 100, 5, 5, 5, 0}));
+            put("守岸人", new Character("守岸人", "shouanren", "衍射", WEAPONS.get("星序协响"), 5,
+                    new int[]{287, 16712, 1099}, new int[]{10, 70, 5, 80, 100, 5, 5, 5, 50}));
+            put("丹瑾", new Character("丹瑾", "danjing", "湮灭", WEAPONS.get("赫奕流明"), 4,
+                    new int[]{262, 9437, 1148}, new int[]{71, 12, 12, 100, 2, 7, 44, 17, 3}));
+            put("椿", new Character("椿", "chun", "湮灭", WEAPONS.get("裁春"), 5,
+                    new int[]{450, 10325, 1161}, new int[]{71, 3, 3, 100, 10, 54, 3, 0, 14}));
             put("散华", new Character("散华", "sanhua", "冷凝", WEAPONS.get("赫奕流明"), 4,
-                    new int[]{275, 10062, 941}, new int[]{11, 1, 1, 20, 2, 2, 5, 6, 4}));
+                    new int[]{275, 10062, 941}, new int[]{71, 3, 3, 100, 6, 7, 24, 25, 15}));
+            put("今汐", new Character("今汐", "jinxi", "衍射", WEAPONS.get("时和岁稔"), 5,
+                    new int[]{412, 10825, 1258}, new int[]{71, 3, 3, 100, 9, 8, 4, 41, 18}));
+            put("洛可可", new Character("洛可可", "luokeke", "湮灭", WEAPONS.get("悲喜剧"), 5,
+                    new int[]{375, 12250, 1197}, new int[]{71, 3, 3, 100, 10, 9, 45, 17, 0}));
             /* 下面的角色权重未设置 */
             put("珂莱塔", new Character("珂莱塔", "kelaita", "冷凝", WEAPONS.get("死与舞"), 5,
-                    new int[]{462, 12450, 1197}, new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1}));
+                    new int[]{462, 12450, 1197}, new int[]{100, 100, 100, 100, 100, 100, 100, 100, 100}));
             put("灯灯", new Character("灯灯", "dengdeng", "导电", WEAPONS.get("浩境粼光"), 4,
-                    new int[]{337, 8500, 879}, new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1}));
+                    new int[]{337, 8500, 879}, new int[]{100, 100, 100, 100, 100, 100, 100, 100, 100}));
             put("相里要", new Character("相里要", "xiangliyao", "导电", WEAPONS.get("诸方玄枢"), 5,
-                    new int[]{425, 10625, 1222}, new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1}));
+                    new int[]{425, 10625, 1222}, new int[]{100, 100, 100, 100, 100, 100, 100, 100, 100}));
             put("折枝", new Character("折枝", "zhezhi", "冷凝", WEAPONS.get("琼枝冰绡"), 5,
-                    new int[]{375, 12250, 1197}, new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1}));
-            put("今汐", new Character("今汐", "jinxi", "衍射", WEAPONS.get("时和岁稔"), 5,
-                    new int[]{412, 10825, 1258}, new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1}));
+                    new int[]{375, 12250, 1197}, new int[]{100, 100, 100, 100, 100, 100, 100, 100, 100}));
             put("吟霖", new Character("吟霖", "yinlin", "导电", WEAPONS.get("掣傀之手"), 5,
-                    new int[]{400, 11000, 1283}, new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1}));
+                    new int[]{400, 11000, 1283}, new int[]{100, 100, 100, 100, 100, 100, 100, 100, 100}));
             put("忌炎", new Character("忌炎", "jiyan", "气动", WEAPONS.get("苍鳞千嶂"), 5,
-                    new int[]{437, 10487, 1185}, new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1}));
+                    new int[]{437, 10487, 1185}, new int[]{100, 100, 100, 100, 100, 100, 100, 100, 100}));
             put("鉴心", new Character("鉴心", "jianxin", "气动", WEAPONS.get("呼啸重音"), 5,
-                    new int[]{337, 14112, 1124}, new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1}));
+                    new int[]{337, 14112, 1124}, new int[]{100, 100, 100, 100, 100, 100, 100, 100, 100}));
             put("卡卡罗", new Character("卡卡罗", "kakaluo", "导电", WEAPONS.get("苍鳞千嶂"), 5,
-                    new int[]{437, 10500, 1185}, new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1}));
+                    new int[]{437, 10500, 1185}, new int[]{100, 100, 100, 100, 100, 100, 100, 100, 100}));
             put("凌阳", new Character("凌阳", "lingyang", "冷凝", WEAPONS.get("擎渊怒涛"), 5,
-                    new int[]{437, 10387, 1209}, new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1}));
+                    new int[]{437, 10387, 1209}, new int[]{100, 100, 100, 100, 100, 100, 100, 100, 100}));
             put("漂泊者 - 男 - 衍射", new Character("漂泊者 - 男 - 衍射", "piaobozhe-nan-yanshe", "衍射", WEAPONS.get("赫奕流明"), 5,
-                    new int[]{375, 11400, 1368}, new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1}));
+                    new int[]{375, 11400, 1368}, new int[]{100, 100, 100, 100, 100, 100, 100, 100, 100}));
             put("漂泊者 - 女 - 衍射", new Character("漂泊者 - 女 - 衍射", "piaobozhe-nv-yanshe", "衍射", WEAPONS.get("赫奕流明"), 5,
-                    new int[]{375, 11400, 1368}, new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1}));
+                    new int[]{375, 11400, 1368}, new int[]{100, 100, 100, 100, 100, 100, 100, 100, 100}));
             put("漂泊者 - 男 - 湮灭", new Character("漂泊者 - 男 - 湮灭", "piaobozhe-nan-yanmie", "湮灭", WEAPONS.get("赫奕流明"), 5,
-                    new int[]{412, 10825, 1258}, new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1}));
+                    new int[]{412, 10825, 1258}, new int[]{100, 100, 100, 100, 100, 100, 100, 100, 100}));
             put("漂泊者 - 女 - 湮灭", new Character("漂泊者 - 女 - 湮灭", "piaobozhe-nv-yanmie", "湮灭", WEAPONS.get("赫奕流明"), 5,
-                    new int[]{412, 10825, 1258}, new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1}));
+                    new int[]{412, 10825, 1258}, new int[]{100, 100, 100, 100, 100, 100, 100, 100, 100}));
             put("秧秧", new Character("秧秧", "yangyang", "气动", WEAPONS.get("千古洑流"), 4,
-                    new int[]{250, 10200, 1099}, new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1}));
+                    new int[]{250, 10200, 1099}, new int[]{100, 100, 100, 100, 100, 100, 100, 100, 100}));
             put("釉瑚", new Character("釉瑚", "youhu", "冷凝", WEAPONS.get("擎渊怒涛"), 4,
-                    new int[]{262, 9975, 1051}, new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1}));
+                    new int[]{262, 9975, 1051}, new int[]{100, 100, 100, 100, 100, 100, 100, 100, 100}));
             put("白芷", new Character("白芷", "baizhi", "冷凝", WEAPONS.get("星序协响"), 4,
-                    new int[]{212, 12812, 1002}, new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1}));
+                    new int[]{212, 12812, 1002}, new int[]{100, 100, 100, 100, 100, 100, 100, 100, 100}));
             put("炽霞", new Character("炽霞", "chixia", "热熔", WEAPONS.get("停驻之烟"), 4,
-                    new int[]{300, 9087, 953}, new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1}));
+                    new int[]{300, 9087, 953}, new int[]{100, 100, 100, 100, 100, 100, 100, 100, 100}));
             put("秋水", new Character("秋水", "qiushui", "气动", WEAPONS.get("华彩乐段"), 4,
-                    new int[]{262, 9850, 1075}, new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1}));
+                    new int[]{262, 9850, 1075}, new int[]{100, 100, 100, 100, 100, 100, 100, 100, 100}));
             put("莫特斐", new Character("莫特斐", "motefei", "热熔", WEAPONS.get("停驻之烟"), 4,
-                    new int[]{250, 10025, 1136}, new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1}));
+                    new int[]{250, 10025, 1136}, new int[]{100, 100, 100, 100, 100, 100, 100, 100, 100}));
             put("渊武", new Character("渊武", "yuanwu", "导电", WEAPONS.get("呼啸重音"), 4,
-                    new int[]{225, 8525, 1637}, new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1}));
+                    new int[]{225, 8525, 1637}, new int[]{100, 100, 100, 100, 100, 100, 100, 100, 100}));
             put("桃祈", new Character("桃祈", "taoqi", "湮灭", WEAPONS.get("异响空灵"), 4,
-                    new int[]{225, 8950, 1564}, new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1}));
+                    new int[]{225, 8950, 1564}, new int[]{100, 100, 100, 100, 100, 100, 100, 100, 100}));
         }};
     }
     public static final Map<String, Character> CHARACTERS = getCharacters(); // 角色
     public static final Map<String, Map<String, Double>> EX_WEIGTHS = Map.ofEntries( // 特别的角色副词条权重
-            Map.entry("守岸人", Map.of("暴击率", 3.0))
+            Map.entry("守岸人", Map.of("暴击率", 15.0))
     );
 
     public static String getPinyin(String name) { // 获取角色拼音
@@ -176,9 +179,9 @@ public class EchoUtil { // 声骸工具类
     public static Map<String, ? extends Number> getDefaultWeigths(String name, String weapon) { // 获取角色副词条默认权重展开
         int[] w = CHARACTERS.get(name).getWeight(), s = CHARACTERS.get(name).getStats();
         return Map.ofEntries(
-                Map.entry("固定攻击", Math.round(w[0] * ECHO_AVERAGE.get("固定攻击") * 10000 / ECHO_AVERAGE.get("百分比攻击") / (s[0] + WEAPONS.get(weapon).getATH())) / 100.0),
-                Map.entry("固定生命", Math.round(w[1] * ECHO_AVERAGE.get("固定生命") * 10000 / ECHO_AVERAGE.get("百分比生命") / s[1]) / 100.0),
-                Map.entry("固定防御", Math.round(w[2] * ECHO_AVERAGE.get("固定防御") * 10000 / ECHO_AVERAGE.get("百分比防御") / s[2]) / 100.0),
+                Map.entry("固定攻击", Math.round(w[0] * ECHO_AVERAGE.get("固定攻击") * 100 / ECHO_AVERAGE.get("百分比攻击") / (s[0] + WEAPONS.get(weapon).getATH()))),
+                Map.entry("固定生命", Math.round(w[1] * ECHO_AVERAGE.get("固定生命") * 100 / ECHO_AVERAGE.get("百分比生命") / s[1])),
+                Map.entry("固定防御", Math.round(w[2] * ECHO_AVERAGE.get("固定防御") * 100 / ECHO_AVERAGE.get("百分比防御") / s[2])),
                 Map.entry("百分比攻击", w[0]),
                 Map.entry("百分比生命", w[1]),
                 Map.entry("百分比防御", w[2]),
