@@ -92,13 +92,14 @@
 
 
 <script setup>
-import Template from "@/components/module/Template.vue";
+import Template from "@/components/layout/Template.vue";
 import { ref, onMounted } from "vue";
 import { get, post, POST } from "@/net/index.js";
 import { useStore } from "@/stores/index.js";
 import VChart from "vue-echarts";
 import "echarts";
 import router from "@/router/index.js";
+import {ElLoading} from "element-plus";
 
 const store = useStore()
 const data = ref({})
@@ -186,40 +187,51 @@ async function set_weight(name) {
 }
 
 onMounted( async () => {
-    let keys = await get("/echo-scoring-system/get-echo-keys")
-    kurtosis.value = await post("/echo-scoring-system/get-weight-kurtosis", store.auth.user.username)
-    for (let name of Object.keys(kurtosis.value)) {
-        if (isNaN(kurtosis.value[name])) kurtosis.value[name] = 0;
-        let val = kurtosis.value[name].toFixed(2)
-        kurtosis.value[name] = val
-        el_kurtosis.value[name] = [Math.max(-2, Math.min(0, val)), Math.min(2, Math.max(0, val))]
-    }
-    for (let name of await get("/echo-scoring-system/get-names")) {
-        let tmp = await POST("/echo-scoring-system/get-weigths", {
-            name: name,
-            username: store.auth.user.username,
-        })
-        let pie = JSON.parse(JSON.stringify(base_pie)), bar = JSON.parse(JSON.stringify(base_bar))
-        pies.value[name] = pie
-        bars.value[name] = bar
-        bars.value[name]['series'][0]['itemStyle'] = {
-            normal: {
-                color: function(params) {
-                    return set_color(params.value)
+    const loading = ElLoading.service({
+        lock: true,
+        text: 'Loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+    })
+    try {
+        let keys = await get("/echo-scoring-system/get-echo-keys")
+        kurtosis.value = await post("/echo-scoring-system/get-weight-kurtosis", store.auth.user.username)
+        for (let name of Object.keys(kurtosis.value)) {
+            if (isNaN(kurtosis.value[name])) kurtosis.value[name] = 0;
+            let val = kurtosis.value[name].toFixed(2)
+            kurtosis.value[name] = val
+            el_kurtosis.value[name] = [Math.max(-2, Math.min(0, val)), Math.min(2, Math.max(0, val))]
+        }
+        for (let name of await get("/echo-scoring-system/get-names")) {
+            let tmp = await POST("/echo-scoring-system/get-weigths", {
+                name: name,
+                username: store.auth.user.username,
+            })
+            let pie = JSON.parse(JSON.stringify(base_pie)), bar = JSON.parse(JSON.stringify(base_bar))
+            pies.value[name] = pie
+            bars.value[name] = bar
+            bars.value[name]['series'][0]['itemStyle'] = {
+                normal: {
+                    color: function(params) {
+                        return set_color(params.value)
+                    }
                 }
             }
+            data.value[name] = {}
+            for (let key of keys) {
+                data.value[name][key] = tmp[key]
+                let val = tmp[key]
+                if (val != 0) pie['series'][0]['data'].push({'name': key, 'value': val})
+                bar['xAxis']['data'].push(key)
+                bar['series'][0]['data'].push(val)
+            }
+            pie['series'][0]['data'].sort((a, b) => b.value - a.value)
         }
-        data.value[name] = {}
-        for (let key of keys) {
-            data.value[name][key] = tmp[key]
-            let val = tmp[key]
-            if (val != 0) pie['series'][0]['data'].push({'name': key, 'value': val})
-            bar['xAxis']['data'].push(key)
-            bar['series'][0]['data'].push(val)
-        }
-        pie['series'][0]['data'].sort((a, b) => b.value - a.value)
+        options.value = await store.get_options()
+    } catch (e) {
+        console.error("加载数据失败:", e);
+    } finally {
+        loading.close()
     }
-    options.value = await store.get_options()
 })
 </script>
 

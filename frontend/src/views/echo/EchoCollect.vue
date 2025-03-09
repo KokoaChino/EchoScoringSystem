@@ -89,12 +89,13 @@
 
 
 <script setup>
-import Template from "@/components/module/Template.vue";
+import Template from "@/components/layout/Template.vue";
 import { ref, onMounted } from "vue";
 import { post } from "@/net/index.js";
 import { useStore } from "@/stores/index.js";
 import VChart from "vue-echarts";
 import "echarts";
+import {ElLoading} from "element-plus";
 
 const store = useStore()
 const color = {
@@ -162,65 +163,76 @@ function set_colorbyw(w) {
 }
 
 onMounted(async () => {
-    cnt.value = await post("/echo-scoring-system/get-echo-cnts", store.auth.user.username)
-    rd.value = await post("echo-scoring-system/get-echo-relative-deviation", store.auth.user.username)
-    rds.value = JSON.parse(JSON.stringify(base_bar))
-    score.value = JSON.parse(JSON.stringify(base_bar))
-    rates.value = JSON.parse(JSON.stringify(base_bar))
-    score.value['title']['text'] = '声骸评分分布柱状图'
-    score.value['dataZoom'] = [{
-        type: 'inside'
-    },{
-        type: 'slider'
-    }]
-    rds.value['xAxis']['axisLabel'] = {
-        interval: 0,
-        rotate: 10
-    }
-    rds.value['series'][0]['itemStyle'] = {
-        normal: {
-            color: function(params) {
-                return params.value < 0 ? 'red' : 'green';
+    const loading = ElLoading.service({
+        lock: true,
+        text: 'Loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+    })
+    try {
+        cnt.value = await post("/echo-scoring-system/get-echo-cnts", store.auth.user.username)
+        rd.value = await post("echo-scoring-system/get-echo-relative-deviation", store.auth.user.username)
+        rds.value = JSON.parse(JSON.stringify(base_bar))
+        score.value = JSON.parse(JSON.stringify(base_bar))
+        rates.value = JSON.parse(JSON.stringify(base_bar))
+        score.value['title']['text'] = '声骸评分分布柱状图'
+        score.value['dataZoom'] = [{
+            type: 'inside'
+        },{
+            type: 'slider'
+        }]
+        rds.value['xAxis']['axisLabel'] = {
+            interval: 0,
+            rotate: 10
+        }
+        rds.value['series'][0]['itemStyle'] = {
+            normal: {
+                color: function(params) {
+                    return params.value < 0 ? 'red' : 'green';
+                }
             }
         }
-    }
-    rates.value['title']['text'] = '声骸评级分布柱状图'
-    rds.value['title']['text'] = '声骸词条标准化偏差柱状图'
-    for (let i = 0; i < cnt.value.length; i++) {
-        score.value['xAxis']['data'].push(i)
-        score.value['series'][0]['data'].push(cnt.value[i])
-        total.value += cnt.value[i]
-        sx.value += cnt.value[i] * i
-        if (i >= 90) {
-            rate.value["SSS"] += cnt.value[i]
-        } else if (i >= 80) {
-            rate.value["SS"] += cnt.value[i]
-        } else if (i >= 70) {
-            rate.value["S"] += cnt.value[i]
-        } else if (i >= 60) {
-            rate.value["A"] += cnt.value[i]
-        } else if (i >= 50) {
-            rate.value["B"] += cnt.value[i]
-        } else if (i >= 40) {
-            rate.value["C"] += cnt.value[i]
-        } else if (i >= 30) {
-            rate.value["D"] += cnt.value[i]
-        } else {
-            rate.value["F"] += cnt.value[i]
+        rates.value['title']['text'] = '声骸评级分布柱状图'
+        rds.value['title']['text'] = '声骸词条标准化偏差柱状图'
+        for (let i = 0; i < cnt.value.length; i++) {
+            score.value['xAxis']['data'].push(i)
+            score.value['series'][0]['data'].push(cnt.value[i])
+            total.value += cnt.value[i]
+            sx.value += cnt.value[i] * i
+            if (i >= 90) {
+                rate.value["SSS"] += cnt.value[i]
+            } else if (i >= 80) {
+                rate.value["SS"] += cnt.value[i]
+            } else if (i >= 70) {
+                rate.value["S"] += cnt.value[i]
+            } else if (i >= 60) {
+                rate.value["A"] += cnt.value[i]
+            } else if (i >= 50) {
+                rate.value["B"] += cnt.value[i]
+            } else if (i >= 40) {
+                rate.value["C"] += cnt.value[i]
+            } else if (i >= 30) {
+                rate.value["D"] += cnt.value[i]
+            } else {
+                rate.value["F"] += cnt.value[i]
+            }
         }
-    }
-    for (let key of Object.keys(rate.value)) {
-        rates.value['xAxis']['data'].push(key)
-        rates.value['series'][0]['data'].push(rate.value[key])
-    }
-    for (let key of Object.keys(rd.value)) {
-        rds.value['xAxis']['data'].push(key)
-        rds.value['series'][0]['data'].push(rd.value[key])
-    }
-    rates.value['series'][0]['itemStyle'] = {
-        color: function (params) {
-            return color[params.name];
+        for (let key of Object.keys(rate.value)) {
+            rates.value['xAxis']['data'].push(key)
+            rates.value['series'][0]['data'].push(rate.value[key])
         }
+        for (let key of Object.keys(rd.value)) {
+            rds.value['xAxis']['data'].push(key)
+            rds.value['series'][0]['data'].push(rd.value[key])
+        }
+        rates.value['series'][0]['itemStyle'] = {
+            color: function (params) {
+                return color[params.name];
+            }
+        }
+    } catch (e) {
+        console.error("加载数据失败:", e);
+    } finally {
+        loading.close()
     }
 })
 </script>

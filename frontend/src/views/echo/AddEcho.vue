@@ -104,10 +104,10 @@
 
 
 <script setup>
-import Template from "@/components/module/Template.vue";
+import Template from "@/components/layout/Template.vue";
 import { onMounted, ref, watch } from "vue";
 import { get, post, POST } from "@/net/index.js";
-import { ElMessage } from "element-plus";
+import {ElLoading, ElMessage} from "element-plus";
 import { useStore } from "@/stores/index.js";
 import { onBeforeRouteLeave } from "vue-router"
 
@@ -286,10 +286,12 @@ async function add_echo() {
         }
         if (len === 5) {
             ElMessage.warning("该角色的声骸列表已满！");
+            await add_temp_echo()
             return
         }
         if (sum + cost.value > 12) {
             ElMessage.warning("该角色声骸的 Cost 不合法！");
+            await add_temp_echo()
             return
         }
     }
@@ -309,6 +311,24 @@ async function add_echo() {
         json: JSON.stringify(echoImpl)
     })
     ElMessage.success("添加成功！");
+}
+
+async function add_temp_echo() {
+    let echo = {
+        main: main.value,
+        cost: cost.value,
+        score: 0,
+        echo: []
+    }
+    for (let item of list.value) {
+        item.push('')
+        echo['echo'].push(item)
+    }
+    await POST("/echo-scoring-system/add-temp-echo", {
+        username: store.auth.user.username,
+        echo: JSON.stringify(echo),
+        name_list: JSON.stringify([name.value])
+    })
 }
 
 const set_style1 = (key) => {
@@ -354,47 +374,59 @@ const to_map = () => {
     return map
 }
 
-onBeforeRouteLeave(() => {
+onBeforeRouteLeave((to, from, next) => {
     store.echo.name = null
     store.echo.index = -1
+    next()
 })
 
 onMounted(async () => {
-    keys.value = await get("/echo-scoring-system/get-echo-keys")
-    for (let key of keys.value) {
-        map.value[key] = []
-        weigths.value[key] = 0
-    }
-    selectedValues.value = ['热熔', '长离']
-    map.value = await get("/echo-scoring-system/get-echo-values")
-    keys.value.forEach(key => {
-        map.value[key].unshift(0);
-        map.value[key].sort((a, b) => a - b);
+    const loading = ElLoading.service({
+        lock: true,
+        text: 'Loading',
+        background: 'rgba(0, 0, 0, 0.7)',
     })
-    weigths.value = await POST("/echo-scoring-system/get-weigths", {
-        name: name.value,
-        username: store.auth.user.username,
-    })
-    data.value = await post("/echo-scoring-system/get-data", store.auth.user.username)
-    if (store.echo.name) {
-        name.value = store.echo.name;
-        cost.value = Number(data.value[store.echo.name][store.echo.index]['cost'])
-        main.value = data.value[store.echo.name][store.echo.index]['main']
-        let echo = data.value[store.echo.name][store.echo.index]['echo']
-        for (let i = 0; i < 5; i++) {
-            list.value[i] = [echo[i][0], echo[i][1]]
-            radios.value[keys.value.indexOf(echo[i][0])] = Number(echo[i][1])
+    try {
+        keys.value = await get("/echo-scoring-system/get-echo-keys")
+        for (let key of keys.value) {
+            map.value[key] = []
+            weigths.value[key] = 0
         }
-        len.value = 5
-        let characters = await post("/echo-scoring-system/get-characters", store.auth.user.username)
-        selectedValues.value = [characters[name.value]['type'], name.value]
+        selectedValues.value = ['热熔', '长离']
+        map.value = await get("/echo-scoring-system/get-echo-values")
+        keys.value.forEach(key => {
+            map.value[key].unshift(0);
+            map.value[key].sort((a, b) => a - b);
+        })
+        weigths.value = await POST("/echo-scoring-system/get-weigths", {
+            name: name.value,
+            username: store.auth.user.username,
+        })
+        data.value = await post("/echo-scoring-system/get-data", store.auth.user.username)
+        if (store.echo.name) {
+            name.value = store.echo.name;
+            cost.value = Number(data.value[store.echo.name][store.echo.index]['cost'])
+            main.value = data.value[store.echo.name][store.echo.index]['main']
+            let echo = data.value[store.echo.name][store.echo.index]['echo']
+            for (let i = 0; i < 5; i++) {
+                list.value[i] = [echo[i][0], echo[i][1]]
+                radios.value[keys.value.indexOf(echo[i][0])] = Number(echo[i][1])
+            }
+            len.value = 5
+            let characters = await post("/echo-scoring-system/get-characters", store.auth.user.username)
+            selectedValues.value = [characters[name.value]['type'], name.value]
+        }
+        percent.value = await POST("/echo-scoring-system/get-echo-percent", {
+            name: name.value,
+            username: store.auth.user.username,
+            values: JSON.stringify(to_map())
+        })
+        options.value = await store.get_options()
+    } catch (e) {
+        console.error("加载数据失败:", e);
+    } finally {
+        loading.close()
     }
-    percent.value = await POST("/echo-scoring-system/get-echo-percent", {
-        name: name.value,
-        username: store.auth.user.username,
-        values: JSON.stringify(to_map())
-    })
-    options.value = await store.get_options()
 })
 </script>
 

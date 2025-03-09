@@ -1,7 +1,7 @@
 package com.example.mapper;
 
 import com.example.entity.auth.Account;
-import com.example.entity.user.AccountUser;
+import com.example.entity.auth.AccountUser;
 import org.apache.ibatis.annotations.*;
 import java.util.List;
 
@@ -41,4 +41,17 @@ public interface UserMapper { // 用户相关的映射器
             "update ${table_name} set username = #{username} where username = #{old_username}" +
             "</script>")
     int resetUsername(String table_name, String username, String old_username);
+
+
+    @Select("select exists(select 1 from vip_user where username = #{username})")
+    boolean isVipUser(String username);
+
+    @Insert("""
+        insert into vip_user (username)
+        select #{username}
+        where not exists (
+            select 1 from vip_user where username = #{username}
+        )
+    """)
+    void insertVipUser(String username);
 }

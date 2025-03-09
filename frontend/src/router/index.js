@@ -8,7 +8,7 @@ const router = createRouter({
         {
             path: '/',
             name: 'welcome',
-            component: () => import('@/views/WelcomeView.vue'),
+            component: () => import('@/views/common/Welcome.vue'),
             meta: {
                 title: '声骸评分系统',
                 icon: '/favicon.png'
@@ -31,7 +31,7 @@ const router = createRouter({
         }, {
             path: '/index',
             name: 'index',
-            component: () => import('@/views/Echo/EchoList.vue'),
+            component: () => import('@/views/echo/EchoList.vue'),
             meta: {
                 title: '声骸评分系统',
                 icon: '/favicon.png'
@@ -39,39 +39,39 @@ const router = createRouter({
         }, {
             path: '/temp_echo_list',
             name: 'temp-echo-list',
-            component: () => import('@/views/Echo/TempEchoList.vue'),
+            component: () => import('@/views/echo/TempEchoList.vue'),
         }, {
             path: '/add_echo',
             name: 'add-echo',
-            component: () => import('@/views/Echo/AddEcho.vue'),
+            component: () => import('@/views/echo/AddEcho.vue'),
         }, {
             path: '/add_temp_echo',
             name: 'add-temp-echo',
-            component: () => import('@/views/Echo/AddTempEcho.vue'),
+            component: () => import('@/views/echo/AddTempEcho.vue'),
         }, {
             path: '/set_weight',
             name: 'set-weight',
-            component: () => import('@/views/Weight/SetWeight.vue'),
+            component: () => import('@/views/echo/SetWeight.vue'),
         }, {
             path: '/test',
             name: 'test',
-            component: () => import('@/views/Test.vue')
+            component: () => import('@/views/common/Test.vue')
         }, {
             path: '/weight_list',
             name: 'weight-list',
-            component: () => import('@/views/Weight/WeightList.vue')
+            component: () => import('@/views/echo/WeightList.vue')
         }, {
             path: '/echo_stats',
             name: 'echo-stats',
-            component: () => import('@/views/Echo/EchoStats.vue')
+            component: () => import('@/views/echo/EchoStats.vue')
         }, {
             path: '/echo_collect',
             name: 'echo-collect',
-            component: () => import('@/views/Echo/EchoCollect.vue')
+            component: () => import('@/views/echo/EchoCollect.vue')
         }, {
             path: '/stats_list',
             name: 'stats-list',
-            component: () => import('@/views/Stats/StatsList.vue')
+            component: () => import('@/views/echo/StatsList.vue')
         }
     ]
 })

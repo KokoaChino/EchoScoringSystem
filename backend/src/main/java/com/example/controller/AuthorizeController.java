@@ -1,10 +1,8 @@
 package com.example.controller;
 
-import com.example.entity.RestBean;
-import com.example.entity.auth.Account;
-import com.example.mapper.EchoMapper;
+import com.example.entity.common.RestBean;
 import com.example.mapper.UserMapper;
-import com.example.service.AuthorizeService;
+import com.example.service.api.AuthorizeService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.constraints.Pattern;
@@ -20,10 +18,7 @@ public class AuthorizeController { // 处理与身份认证和授权相关的控
 
     @Resource
     UserMapper userMapper;
-
-    @Resource
-    EchoMapper echoMapper;
-
+    
     @Resource
     AuthorizeService service; // 授权服务，用于处理注册、验证等业务逻辑
 

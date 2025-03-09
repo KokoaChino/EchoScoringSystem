@@ -1,8 +1,8 @@
-package com.example.config;
+package com.example.config.autoconfig;
 
 import com.alibaba.fastjson.JSONObject;
-import com.example.entity.RestBean;
-import com.example.service.AuthorizeService;
+import com.example.entity.common.RestBean;
+import com.example.service.api.AuthorizeService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -42,16 +42,17 @@ public class SecurityConfiguration { // Security 配置类
         return http
                 .authorizeHttpRequests(e -> e // 配置请求授权规则
                         .requestMatchers("/api/auth/**").permitAll() // 允许所有用户访问以 /api/auth/ 开头的请求
+                        .requestMatchers("/pay/notify").permitAll()
                         .anyRequest().authenticated() // 其他请求需认证后访问
                 )
                 .formLogin(e -> e // 配置表单登录设置
                         .loginProcessingUrl("/api/auth/login") // 设置登录处理的 URL
-                        .successHandler(this::onAuthenticationSuccess) // 登录成功后的处理逻辑
-                        .failureHandler(this::onAuthenticationFailure) // 登录失败后的处理逻辑
+                        .successHandler(this::onAuthenticationSuccess)
+                        .failureHandler(this::onAuthenticationFailure)
                 )
                 .logout(e -> e // 配置注销设置
                         .logoutUrl("/api/auth/logout") // 设置注销请求的 URL
-                        .logoutSuccessHandler(this::onAuthenticationSuccess) // 注销成功后的处理逻辑
+                        .logoutSuccessHandler(this::onAuthenticationSuccess)
                 )
                 .rememberMe(e -> e // 配置记住我功能
                         .rememberMeParameter("remember") // 记住我参数的名称

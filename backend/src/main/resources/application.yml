@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    include: alipay
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/echo_scoring_system?useUnicode=true&characterEncoding=utf-8
@@ -7,7 +9,7 @@ spring:
   mail:
     host: smtp.163.com
     username: 17575010142@163.com
-    password: GPr8iVnuvecEjQYf
+    password: HNXW4LW7ScMycf9R
     port: 465
     properties:
       from: 17575010142@163.com

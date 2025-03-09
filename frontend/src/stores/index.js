@@ -5,7 +5,8 @@ import { get } from "@/net/index.js";
 
 export const useStore = defineStore('store', () => {
     const auth = reactive({
-        user: null
+        user: null,
+        verificationStatus: false,
     })
     const echo = reactive({
         name: null,

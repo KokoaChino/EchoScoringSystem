@@ -1,6 +1,6 @@
 package com.example.mapper;
 
-import com.example.entity.echo.EchoPair;
+import com.example.dto.EchoPair;
 import org.apache.ibatis.annotations.*;
 import java.util.List;
 

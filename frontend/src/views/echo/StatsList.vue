@@ -105,10 +105,11 @@
 
 
 <script setup>
-import Template from "@/components/module/Template.vue";
+import Template from "@/components/layout/Template.vue";
 import { ref, onMounted, watch } from "vue";
 import { get, post, POST } from "@/net/index.js";
 import { useStore } from "@/stores/index.js";
+import {ElLoading} from "element-plus";
 
 const store = useStore()
 
@@ -236,12 +237,23 @@ function set_weapons_img_and_color(item, num) {
 }
 
 onMounted( async () => {
-    options.value = await store.get_options()
-    characters.value = await POST("/echo-scoring-system/get-characters-by-screen", {
-        username: store.auth.user.username,
-        names: JSON.stringify(names.value)
+    const loading = ElLoading.service({
+        lock: true,
+        text: 'Loading',
+        background: 'rgba(0, 0, 0, 0.7)',
     })
-    weapons.value = await get("/echo-scoring-system/get-weapons")
+    try {
+        options.value = await store.get_options()
+        characters.value = await POST("/echo-scoring-system/get-characters-by-screen", {
+            username: store.auth.user.username,
+            names: JSON.stringify(names.value)
+        })
+        weapons.value = await get("/echo-scoring-system/get-weapons")
+    } catch (e) {
+        console.error("加载数据失败:", e);
+    } finally {
+        loading.close()
+    }
 })
 </script>
 

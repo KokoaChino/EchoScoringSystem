@@ -33,6 +33,7 @@
                                 <el-cascader
                                     :options="name_options"
                                     :props="props"
+                                    v-model="selectedValues"
                                     collapse-tags
                                     collapse-tags-tooltip
                                     :max-collapse-tags="2"
@@ -94,11 +95,12 @@
 
 
 <script setup>
-import Template from "@/components/module/Template.vue";
+import Template from "@/components/layout/Template.vue";
 import { onMounted, ref, watch } from "vue";
-import { get, POST } from "@/net/index.js";
-import { ElMessage } from "element-plus";
+import { get, POST, post } from "@/net/index.js";
+import {ElLoading, ElMessage} from "element-plus";
 import { useStore } from "@/stores/index.js";
+import { onBeforeRouteLeave } from 'vue-router';
 
 const store = useStore()
 
@@ -133,7 +135,7 @@ const mains = {
         { value: '百分比防御 41.8%', label: '百分比防御 41.8%' },
     ]
 }, main = ref('暴击率 22%')
-const radios = ref([])
+const radios = ref([]), selectedValues = ref([])
 const list = ref([['', ''], ['', ''], ['', ''], ['', ''], ['', '']]), len = ref(0)
 
 const handleChange = async (value) => {
@@ -252,32 +254,53 @@ async function add_temp_echo() {
     refill()
 }
 
+onBeforeRouteLeave((to, from, next) => {
+    store.echo.name = null
+    store.echo.index = -1
+    next()
+})
+
 onMounted(async () => {
-    keys.value = await get("/echo-scoring-system/get-echo-keys")
-    radios.value = new Array(keys.value.length).fill(0)
-    map.value = await get("/echo-scoring-system/get-echo-values")
-    for (let name of await get("echo-scoring-system/get-names")) {
-        name_options.value.push({ value: name, label: name })
-    }
-    keys.value.forEach(key => {
-        map.value[key].unshift(0);
-        map.value[key].sort((a, b) => a - b);
+    const loading = ElLoading.service({
+        lock: true,
+        text: 'Loading',
+        background: 'rgba(0, 0, 0, 0.7)',
     })
-    if (store.echo.index === -2) {
-        let e = JSON.parse(store.echo.name);
-        for (let key of Object.keys(e)) {
-            if (key !== '声骸') name_list.value.push(key)
+    try {
+        keys.value = await get("/echo-scoring-system/get-echo-keys")
+        radios.value = new Array(keys.value.length).fill(0)
+        map.value = await get("/echo-scoring-system/get-echo-values")
+        for (let name of await get("echo-scoring-system/get-names")) {
+            name_options.value.push({ value: name, label: name })
         }
-        cost.value = e['声骸']['cost']
-        main.value = e['声骸']['main']
-        let echo = e['声骸']['echo']
-        for (let i = 0; i < 5; i++) {
-            list.value[i] = [echo[i][0], echo[i][1]]
-            radios.value[keys.value.indexOf(echo[i][0])] = Number(echo[i][1])
+        keys.value.forEach(key => {
+            map.value[key].unshift(0);
+            map.value[key].sort((a, b) => a - b);
+        })
+        if (store.echo.index === -2) {
+            let e = JSON.parse(store.echo.name);
+            for (let key of Object.keys(e)) {
+                if (key !== '声骸') name_list.value.push(key)
+            }
+            let characters = await post("/echo-scoring-system/get-characters", store.auth.user.username)
+            for (let name of name_list.value) {
+                selectedValues.value.push([characters[name]['type'], name])
+            }
+            cost.value = e['声骸']['cost']
+            main.value = e['声骸']['main']
+            let echo = e['声骸']['echo']
+            for (let i = 0; i < 5; i++) {
+                list.value[i] = [echo[i][0], echo[i][1]]
+                radios.value[keys.value.indexOf(echo[i][0])] = Number(echo[i][1])
+            }
+            len.value = 5
         }
-        len.value = 5
+        name_options.value = await store.get_options()
+    } catch (e) {
+        console.error("加载数据失败:", e);
+    } finally {
+        loading.close()
     }
-    name_options.value = await store.get_options()
 })
 </script>
 

@@ -2,10 +2,11 @@ package com.example.service.impl;
 
 import com.example.entity.auth.Account;
 import com.example.mapper.UserMapper;
-import com.example.service.AuthorizeService;
+import com.example.service.api.AuthorizeService;
 import jakarta.annotation.Resource;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -37,6 +38,8 @@ public class AuthorizeServiceImpl implements AuthorizeService { // 用户授权�
     StringRedisTemplate template; // Redis 字符串模板，用于存取数据
 
     BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(); // 用于密码加密
+    @Autowired
+    private UserMapper userMapper;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException { // 根据用户名加载用户信息
@@ -156,5 +159,10 @@ public class AuthorizeServiceImpl implements AuthorizeService { // 用户授权�
     @Override
     public boolean changeEmail(String oldEmail, String newEmail) { // 重置邮件
         return mapper.resetEmailByEmail(oldEmail, newEmail) > 0;
+    }
+
+    @Override
+    public void updateUserVip(String username) {
+        userMapper.insertVipUser(username);
     }
 }

@@ -1,6 +1,6 @@
 package com.example.interceptor;
 
-import com.example.entity.user.AccountUser;
+import com.example.entity.auth.AccountUser;
 import com.example.mapper.UserMapper;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;

@@ -43,6 +43,7 @@
                 <div style="margin-top: 70px">
                     <el-button @click="startReset()" style="width: 270px;" type="danger" plain>开始重置密码</el-button>
                 </div>
+                <div id="hcaptcha-container"></div>
             </div>
         </transition>
         <transition name="el-fade-in-linear" mode="out-in">
@@ -80,11 +81,12 @@
 
 
 <script setup>
-import { reactive, ref } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import { EditPen, Lock, Message } from "@element-plus/icons-vue";
-import { _POST } from "@/net";
-import { ElMessage } from "element-plus";
+import { _POST } from "src/net";
+import { ElMessage, ElNotification } from "element-plus";
 import router from "@/router";
+import { useStore } from "@/stores/index.js";
 
 const active = ref(0)
 const form = reactive({
@@ -124,6 +126,26 @@ const rules = {
 const formRef = ref()
 const isEmailValid = ref(false)
 const coldTime = ref(0)
+const store = useStore()
+
+const onVerify = (token) => {
+    ElMessage.success("验证成功！")
+    store.auth.verificationStatus = true
+}
+
+const onError = (err) => {
+    ElMessage.error("验证失败！")
+}
+
+const initHcaptcha = () => {
+    if (window.hcaptcha) {
+        window.hcaptcha.render('hcaptcha-container', {
+            sitekey: 'eca80d76-ea54-4954-bfae-39ae3dd86776',
+            callback: onVerify,
+            'error-callback': onError
+        })
+    }
+}
 
 const onValidate = (prop, isValid) => {
     if (prop === 'email')
@@ -131,16 +153,24 @@ const onValidate = (prop, isValid) => {
 }
 
 const validateEmail = () => {
-    coldTime.value = 60
-    _POST('/api/auth/valid-reset-email', {
-        email: form.email
-    }, (message) => {
-        ElMessage.success(message)
-        setInterval(() => coldTime.value--, 1000)
-    }, (message) => {
-        ElMessage.warning(message)
-        coldTime.value = 0
-    })
+    if (store.auth.verificationStatus) {
+        coldTime.value = 60
+        _POST('/api/auth/valid-reset-email', {
+            email: form.email
+        }, (message) => {
+            ElMessage.success(message)
+            setInterval(() => coldTime.value--, 1000)
+        }, (message) => {
+            ElMessage.warning(message)
+            coldTime.value = 0
+        })
+    } else {
+        ElNotification({
+            title: '(＃°Д°)',
+            message: '请先完成下面的"我是人类"验证！',
+            type: 'error',
+        })
+    }
 }
 
 const startReset = () => {
@@ -172,6 +202,18 @@ const doReset = () => {
         }
     })
 }
+
+onMounted(() => {
+    useStore().auth.verificationStatus = false
+    const script = document.createElement('script')
+    script.src = 'https://js.hcaptcha.com/1/api.js?onload=onloadCallback&render=explicit'
+    script.async = true
+    script.defer = true
+    window.onloadCallback = () => {
+        initHcaptcha()
+    }
+    document.head.appendChild(script)
+})
 </script>
 
 
@@ -183,5 +225,9 @@ const doReset = () => {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+#hcaptcha-container {
+    margin: 20px 0;
 }
 </style>

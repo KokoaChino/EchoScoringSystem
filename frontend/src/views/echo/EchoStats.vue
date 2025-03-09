@@ -93,12 +93,13 @@
 
 
 <script setup>
-import Template from "@/components/module/Template.vue";
+import Template from "@/components/layout/Template.vue";
 import { ref, onMounted } from "vue";
 import { get, post, POST } from "@/net/index.js";
 import "echarts";
 import VChart from "vue-echarts";
 import { useStore } from "@/stores/index.js";
+import {ElLoading} from "element-plus";
 
 const store = useStore()
 const base_pie = {
@@ -180,50 +181,61 @@ function set_background_color(item, num) {
 }
 
 onMounted( async () => {
-    let average = await get("/echo-scoring-system/get-echo-average"),
-        basics = await get("/echo-scoring-system/get-character-stats")
-    characters.value = await POST("/echo-scoring-system/get-characters", store.auth.user.username)
-    data.value = await post("echo-scoring-system/get-echo-stats", store.auth.user.username)
-    for (let item of Object.values(data.value)) {
-        let pie = JSON.parse(JSON.stringify(base_pie)), bar = JSON.parse(JSON.stringify(base_bar)), list = []
-        bar['series'][0]['itemStyle'] = {
-            normal: {
-                color: function(params) {
-                    return params.value < 0 ? 'red' : 'green';
+    const loading = ElLoading.service({
+        lock: true,
+        text: 'Loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+    })
+    try {
+        let average = await get("/echo-scoring-system/get-echo-average"),
+            basics = await get("/echo-scoring-system/get-character-stats")
+        characters.value = await POST("/echo-scoring-system/get-characters", store.auth.user.username)
+        data.value = await post("echo-scoring-system/get-echo-stats", store.auth.user.username)
+        for (let item of Object.values(data.value)) {
+            let pie = JSON.parse(JSON.stringify(base_pie)), bar = JSON.parse(JSON.stringify(base_bar)), list = []
+            bar['series'][0]['itemStyle'] = {
+                normal: {
+                    color: function(params) {
+                        return params.value < 0 ? 'red' : 'green';
+                    }
                 }
             }
-        }
-        for (let key of Object.keys(item)) {
-            if (key !== '角色' && item[key] != 0) {
-                let val = (item[key] / average[key]).toFixed(1)
-                list.push({'name': key, 'value': val})
+            for (let key of Object.keys(item)) {
+                if (key !== '角色' && item[key] != 0) {
+                    let val = (item[key] / average[key]).toFixed(1)
+                    list.push({'name': key, 'value': val})
+                }
+            }
+            pie['series'][0]['data'] = list.sort((a, b) => b.value - a.value)
+            pies.value[item['角色']] = pie
+            let rdmap = await POST("/echo-scoring-system/get-echo-relative-deviation-by-name", {
+                username: store.auth.user.username,
+                name: item['角色']
+            })
+            for (let key of Object.keys(rdmap)) {
+                let val = rdmap[key]
+                bar['xAxis']['data'].push(key)
+                bar['series'][0]['data'].push(val)
+            }
+            bars.value[item['角色']] = bar
+            select_show.value[item['角色']] = '加点次数'
+            item['攻击'] = (Number(item['固定攻击']) + Number(item['百分比攻击'] * Number(basics[item['角色']][0]) * 0.01)).toFixed(1)
+            item['生命'] = (Number(item['固定生命']) + Number(item['百分比生命']) * Number(basics[item['角色']][1]) * 0.01).toFixed(1)
+            item['防御'] = (Number(item['固定防御']) + Number(item['百分比防御'] * Number(basics[item['角色']][2]) * 0.01)).toFixed(1)
+            for (let key of Object.keys(item)) {
+                if (item[key] == 0) {
+                    item[key] = 0
+                }
+                if (!new Set(['攻击', '生命', '防御', '角色']).has(key))
+                    item[key] += '%'
             }
         }
-        pie['series'][0]['data'] = list.sort((a, b) => b.value - a.value)
-        pies.value[item['角色']] = pie
-        let rdmap = await POST("/echo-scoring-system/get-echo-relative-deviation-by-name", {
-            username: store.auth.user.username,
-            name: item['角色']
-        })
-        for (let key of Object.keys(rdmap)) {
-            let val = rdmap[key]
-            bar['xAxis']['data'].push(key)
-            bar['series'][0]['data'].push(val)
-        }
-        bars.value[item['角色']] = bar
-        select_show.value[item['角色']] = '加点次数'
-        item['攻击'] = (Number(item['固定攻击']) + Number(item['百分比攻击'] * Number(basics[item['角色']][0]) * 0.01)).toFixed(1)
-        item['生命'] = (Number(item['固定生命']) + Number(item['百分比生命']) * Number(basics[item['角色']][1]) * 0.01).toFixed(1)
-        item['防御'] = (Number(item['固定防御']) + Number(item['百分比防御'] * Number(basics[item['角色']][2]) * 0.01)).toFixed(1)
-        for (let key of Object.keys(item)) {
-            if (item[key] == 0) {
-                item[key] = 0
-            }
-            if (!new Set(['攻击', '生命', '防御', '角色']).has(key))
-            item[key] += '%'
-        }
+        options.value = await store.get_options()
+    } catch (e) {
+        console.error("加载数据失败:", e);
+    } finally {
+        loading.close()
     }
-    options.value = await store.get_options()
 })
 </script>
 

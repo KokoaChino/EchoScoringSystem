@@ -168,14 +168,14 @@
 
 
 <script setup>
-import Template from "@/components/module/Template.vue";
+import Template from "@/components/layout/Template.vue";
 import { ref, onMounted, watch } from "vue";
 import router from "@/router/index.js";
 import { useStore } from "@/stores/index.js";
 import { post, POST } from "@/net/index.js";
-import { ElMessage } from "element-plus";
+import {ElLoading, ElMessage} from "element-plus";
 
-const store = useStore()
+const store = useStore(), loading = ref(false)
 const name_check = ref([]), cost_check = ref({1: false, 3: false, 4: false}), main_check = ref({
     '百分比攻击': false,
     '百分比生命': false,
@@ -282,10 +282,16 @@ const get_check = () => {
 }
 
 const flush_data = async () => {
+    const loading = ElLoading.service({
+        lock: true,
+        text: 'Loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+    })
     data.value = await POST("echo-scoring-system/get-temp-data-by-screen", {
         json: JSON.stringify(get_check()),
         username: store.auth.user.username
     })
+    loading.close()
 }
 
 const del_sub_echo = async (name, index) => {
@@ -351,22 +357,39 @@ const set_img = (name) => {
 }
 
 const get_temp_data_by_screen = async () => {
+    const loading = ElLoading.service({
+        lock: true,
+        text: 'Loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+    })
     data.value = await POST("echo-scoring-system/get-temp-data-by-screen", {
         json: JSON.stringify(get_check()),
         username: store.auth.user.username
     })
+    loading.close()
 }
 
 onMounted(async () => {
-    characters.value = await post("/echo-scoring-system/get-characters", store.auth.user.username)
-    for (let name of Object.keys(characters.value)) {
-        weights.value[name] = await POST("/echo-scoring-system/get-weigths", {
-            username: store.auth.user.username,
-            name: name
-        })
+    const loading = ElLoading.service({
+        lock: true,
+        text: 'Loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+    })
+    try {
+        characters.value = await post("/echo-scoring-system/get-characters", store.auth.user.username)
+        for (let name of Object.keys(characters.value)) {
+            weights.value[name] = await POST("/echo-scoring-system/get-weigths", {
+                username: store.auth.user.username,
+                name: name
+            })
+        }
+        options.value = await store.get_options()
+        await get_temp_data_by_screen()
+    } catch (e) {
+        console.error("加载数据失败:", e);
+    } finally {
+        loading.close()
     }
-    options.value = await store.get_options()
-    await get_temp_data_by_screen()
 })
 </script>
 

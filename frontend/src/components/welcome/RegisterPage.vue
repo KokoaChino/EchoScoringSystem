@@ -60,6 +60,7 @@
             <span style="font-size: 14px;line-height: 15px;color: grey">已有账号? </span>
             <el-link type="primary" style="translate: 0 -2px" @click="router.push('/')">立即登录</el-link>
         </div>
+        <div id="hcaptcha-container"></div>
     </div>
 </template>
 
@@ -68,9 +69,31 @@
 <script setup>
 import { EditPen, Lock, Message, User } from "@element-plus/icons-vue";
 import router from "@/router";
-import { reactive, ref } from "vue";
-import { ElMessage } from "element-plus";
-import { _POST } from "@/net";
+import { onMounted, reactive, ref } from "vue";
+import { ElMessage, ElNotification } from "element-plus";
+import { _POST } from "src/net";
+import { useStore } from "@/stores/index.js";
+
+const store = useStore()
+
+const onVerify = (token) => {
+    ElMessage.success("验证成功！")
+    store.auth.verificationStatus = true
+}
+
+const onError = (err) => {
+    ElMessage.error("验证失败！")
+}
+
+const initHcaptcha = () => {
+    if (window.hcaptcha) {
+        window.hcaptcha.render('hcaptcha-container', {
+            sitekey: 'eca80d76-ea54-4954-bfae-39ae3dd86776',
+            callback: onVerify,
+            'error-callback': onError
+        })
+    }
+}
 
 const form = reactive({
     username: '',
@@ -149,17 +172,37 @@ const register = () => {
 }
 
 const validateEmail = () => {
-    coldTime.value = 60
-    _POST('/api/auth/valid-register-email', {
-        email: form.email
-    }, (message) => {
-        ElMessage.success(message)
-        setInterval(() => coldTime.value--, 1000)
-    }, (message) => {
-        ElMessage.warning(message)
-        coldTime.value = 0
-    })
+    if (store.auth.verificationStatus) {
+        coldTime.value = 60
+        _POST('/api/auth/valid-register-email', {
+            email: form.email
+        }, (message) => {
+            ElMessage.success(message)
+            setInterval(() => coldTime.value--, 1000)
+        }, (message) => {
+            ElMessage.warning(message)
+            coldTime.value = 0
+        })
+    } else {
+        ElNotification({
+            title: '(＃°Д°)',
+            message: '请先完成下面的"我是人类"验证！',
+            type: 'error',
+        })
+    }
 }
+
+onMounted(() => {
+    useStore().auth.verificationStatus = false
+    const script = document.createElement('script')
+    script.src = 'https://js.hcaptcha.com/1/api.js?onload=onloadCallback&render=explicit'
+    script.async = true
+    script.defer = true
+    window.onloadCallback = () => {
+        initHcaptcha()
+    }
+    document.head.appendChild(script)
+})
 </script>
 
 
@@ -171,5 +214,9 @@ const validateEmail = () => {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+#hcaptcha-container {
+    margin: 20px 0;
 }
 </style>

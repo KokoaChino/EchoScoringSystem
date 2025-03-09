@@ -1,4 +1,4 @@
-package com.example.entity.user;
+package com.example.entity.auth;
 
 import lombok.Data;
 

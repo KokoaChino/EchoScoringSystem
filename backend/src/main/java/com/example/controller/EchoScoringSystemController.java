@@ -4,8 +4,8 @@ import java.util.*;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.example.entity.echo.Echo;
-import com.example.entity.echo.EchoPair;
-import com.example.entity.echo.EchoUtil;
+import com.example.dto.EchoPair;
+import com.example.util.EchoUtil;
 import com.example.entity.echo.Weapon;
 import com.example.entity.echo.Character;
 import com.example.mapper.EchoMapper;
@@ -241,6 +241,7 @@ public class EchoScoringSystemController { // 声骸评分系统控制器
             if (!found) data.remove(key);
         }
         EchoUtil.sortData(data);
+        System.out.println(data);
         return data;
     }
     @PostMapping("/add-data")

@@ -1,4 +1,4 @@
-package com.example.service;
+package com.example.service.api;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -18,4 +18,6 @@ public interface AuthorizeService extends UserDetailsService { // 用户授权�
     boolean changeUsername(String username, String oldUsername, String email); // 重置名称
 
     boolean changeEmail(String oldEmail, String newEmail); // 重置邮箱
+
+    void updateUserVip(String username); // 更新用户VIP
 }

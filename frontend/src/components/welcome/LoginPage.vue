@@ -42,7 +42,7 @@
 import { User, Lock } from '@element-plus/icons-vue'
 import { reactive } from "vue";
 import { ElMessage } from "element-plus";
-import { _GET, _POST } from "@/net";
+import { _GET, _POST, POST } from "src/net";
 import router from "@/router";
 import { useStore } from "@/stores";
 

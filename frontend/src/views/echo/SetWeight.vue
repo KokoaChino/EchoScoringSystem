@@ -57,10 +57,11 @@
 
 
 <script setup>
-import Template from "@/components/module/Template.vue";
+import Template from "@/components/layout/Template.vue";
 import { ref, onMounted, watch } from "vue";
 import { get, post, POST } from "@/net/index.js";
 import { useStore } from "@/stores/index.js";
+import {ElLoading} from "element-plus";
 
 
 const store = useStore()
@@ -149,26 +150,37 @@ const set_style3 = (key) => {
 
 
 onMounted(async () => {
-    options.value = await store.get_options()
-    keys.value = await get("/echo-scoring-system/get-echo-keys")
-    for (let key of keys.value) {
-        map.value[key] = []
-        weigths.value[key] = 0
-    }
-    if (store.echo.index === -3) {
-        name.value = store.echo.name
-        let characters = await post("/echo-scoring-system/get-characters", store.auth.user.username)
-        selectedValues.value = [characters[name.value]['type'], name.value]
-    }
-    map.value = await get("/echo-scoring-system/get-echo-values")
-    keys.value.forEach(key => {
-        map.value[key].unshift(0);
-        map.value[key].sort((a, b) => a - b);
+    const loading = ElLoading.service({
+        lock: true,
+        text: 'Loading',
+        background: 'rgba(0, 0, 0, 0.7)',
     })
-    weigths.value = await POST("/echo-scoring-system/get-weigths", {
-        name: name.value,
-        username: store.auth.user.username,
-    })
+    try {
+        options.value = await store.get_options()
+        keys.value = await get("/echo-scoring-system/get-echo-keys")
+        for (let key of keys.value) {
+            map.value[key] = []
+            weigths.value[key] = 0
+        }
+        if (store.echo.index === -3) {
+            name.value = store.echo.name
+            let characters = await post("/echo-scoring-system/get-characters", store.auth.user.username)
+            selectedValues.value = [characters[name.value]['type'], name.value]
+        }
+        map.value = await get("/echo-scoring-system/get-echo-values")
+        keys.value.forEach(key => {
+            map.value[key].unshift(0);
+            map.value[key].sort((a, b) => a - b);
+        })
+        weigths.value = await POST("/echo-scoring-system/get-weigths", {
+            name: name.value,
+            username: store.auth.user.username,
+        })
+    } catch (e) {
+        console.error("加载数据失败:", e);
+    } finally {
+        loading.close()
+    }
 })
 </script>
 

@@ -19,13 +19,19 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import Template from "@/components/module/Template.vue";
+import Template from "@/components/layout/Template.vue";
+import {ElLoading} from "element-plus";
 
 const activeName = ref('first')
 const ref1 = ref(''), ref11 = ref(null);
 const ref2 = ref(''), ref22 = ref(null);
 
 onMounted(async () => {
+    const loading = ElLoading.service({
+        lock: true,
+        text: 'Loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+    })
     try {
         const r1 = await fetch('/项目文档.html'), r2 = await fetch('/使用手册.html')
         const h1 = await r1.text(), h2 = await r2.text()
@@ -41,6 +47,8 @@ onMounted(async () => {
         }
     } catch (error) {
         console.error('加载 HTML 错误：', error);
+    } finally {
+        loading.close()
     }
 });
 </script>

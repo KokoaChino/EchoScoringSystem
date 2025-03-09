@@ -1,5 +1,5 @@
 <template>
-    <div style="display: flex;height: 100vh;justify-content: center;" v-show="showImage">
+    <div style="display: flex;height: 100vh;justify-content: center;" v-if="showImage">
         <div style="flex: 33;position: relative;">
             <div class="img" :style="{ backgroundImage: 'url(/login.png)' }"></div>
             <div class="welcome-title">
@@ -15,7 +15,7 @@
             </router-view>
         </div>
     </div>
-    <div style="display: flex;height: 100vh;justify-content: center;" v-show="!showImage">
+    <div style="display: flex;height: 100vh;justify-content: center;" v-else>
         <div style="background-color: white;z-index: 1;width: 400px;">
             <router-view v-slot="{ Component }">
                 <transition name="el-fade-in-linear" mode="out-in">
