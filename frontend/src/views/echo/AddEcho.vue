@@ -246,7 +246,7 @@ async function edit_echo() {
         ElMessage.warning("声骸副词条个数不合法！");
         return
     }
-    await POST("echo-scoring-system/del-echo", {
+    await POST("/echo-scoring-system/del-echo", {
         username: store.auth.user.username,
         name: store.echo.name,
         index: store.echo.index

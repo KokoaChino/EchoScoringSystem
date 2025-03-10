@@ -121,7 +121,7 @@ const set_weights = async () => {
 }
 
 const re_weights = async () => {
-    await POST("echo-scoring-system/re_weights", {
+    await POST("/echo-scoring-system/re_weights", {
         name: name.value,
         username: store.auth.user.username
     })

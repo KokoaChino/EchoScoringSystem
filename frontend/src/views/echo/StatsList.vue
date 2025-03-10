@@ -184,7 +184,7 @@ const close_drawer = async () => {
         username: store.auth.user.username,
         names: JSON.stringify(names.value)
     })
-    await POST("echo-scoring-system/re_weights", {
+    await POST("/echo-scoring-system/re_weights", {
         name: select_character.value['name'],
         username: store.auth.user.username
     })

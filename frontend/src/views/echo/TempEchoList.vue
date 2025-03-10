@@ -287,7 +287,7 @@ const flush_data = async () => {
         text: 'Loading',
         background: 'rgba(0, 0, 0, 0.7)',
     })
-    data.value = await POST("echo-scoring-system/get-temp-data-by-screen", {
+    data.value = await POST("/echo-scoring-system/get-temp-data-by-screen", {
         json: JSON.stringify(get_check()),
         username: store.auth.user.username
     })
@@ -295,7 +295,7 @@ const flush_data = async () => {
 }
 
 const del_sub_echo = async (name, index) => {
-    await POST("echo-scoring-system/del-temp-sub-echo", {
+    await POST("/echo-scoring-system/del-temp-sub-echo", {
         username: store.auth.user.username,
         json: JSON.stringify(data.value[index]),
         name: name
@@ -333,7 +333,7 @@ async function add_echo(name, d, index) {
 }
 
 const del_echo = async (index) => {
-    await POST("echo-scoring-system/del-temp-echo", {
+    await POST("/echo-scoring-system/del-temp-echo", {
         username: store.auth.user.username,
         json: JSON.stringify(data.value[index]),
     })
@@ -362,7 +362,7 @@ const get_temp_data_by_screen = async () => {
         text: 'Loading',
         background: 'rgba(0, 0, 0, 0.7)',
     })
-    data.value = await POST("echo-scoring-system/get-temp-data-by-screen", {
+    data.value = await POST("/echo-scoring-system/get-temp-data-by-screen", {
         json: JSON.stringify(get_check()),
         username: store.auth.user.username
     })

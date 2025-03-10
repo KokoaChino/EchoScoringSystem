@@ -283,7 +283,7 @@ function set_background_color(item, num) {
 }
 
 const get_data_by_screen = async () => {
-    data.value = await POST("echo-scoring-system/get-data-by-screen", {
+    data.value = await POST("/echo-scoring-system/get-data-by-screen", {
         json: JSON.stringify(get_check()),
         username: store.auth.user.username
     })

@@ -186,7 +186,7 @@ const edit_echo = async () => {
         ElMessage.warning("角色列表为空！");
         return;
     }
-    await POST("echo-scoring-system/del-temp-echo", {
+    await POST("/echo-scoring-system/del-temp-echo", {
         username: store.auth.user.username,
         json: store.echo.name
     })
@@ -197,7 +197,7 @@ const edit_echo = async () => {
     }
     data['声骸']['main'] = main.value
     data['声骸']['cost'] = cost.value
-    await POST("echo-scoring-system/add-temp-echo", {
+    await POST("/echo-scoring-system/add-temp-echo", {
         username: store.auth.user.username,
         echo: JSON.stringify(data['声骸']),
         name_list: JSON.stringify(name_list.value)
@@ -270,7 +270,7 @@ onMounted(async () => {
         keys.value = await get("/echo-scoring-system/get-echo-keys")
         radios.value = new Array(keys.value.length).fill(0)
         map.value = await get("/echo-scoring-system/get-echo-values")
-        for (let name of await get("echo-scoring-system/get-names")) {
+        for (let name of await get("/echo-scoring-system/get-names")) {
             name_options.value.push({ value: name, label: name })
         }
         keys.value.forEach(key => {
