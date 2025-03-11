@@ -23,7 +23,7 @@
             </div>
             <el-dropdown trigger="hover" placement="bottom-start">
                 <el-button type="text" style="color: white;" class="avatar" :class="{ 'vip-frame': isVip }">
-                    <img src="/user.jpg" alt="头像" class="img"/>
+                    <img src="/src/assets/avatars/user.jpg" alt="头像" class="img"/>
                 </el-button>
                 <template #dropdown>
                     <el-dropdown-menu>

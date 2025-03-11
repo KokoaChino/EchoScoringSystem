@@ -194,6 +194,8 @@ const scale = ref({
     '相里要': '77%',
     '珂莱塔': '87%',
     '洛可可': '75%',
+    '菲比': '70%',
+    '布兰特': '77%',
 })
 const name_check = ref([]), cost_check = ref({1: false, 3: false, 4: false}), main_check = ref({
     '百分比攻击': false,

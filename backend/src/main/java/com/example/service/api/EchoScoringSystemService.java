@@ -2,7 +2,9 @@ package com.example.service.api;
 
 import com.example.entity.echo.Echo;
 import com.example.entity.echo.Weapon;
-import java.util.*;
+import com.example.entity.echo.Character;
+import java.util.List;
+import java.util.Map;
 
 
 public interface EchoScoringSystemService {
@@ -15,8 +17,8 @@ public interface EchoScoringSystemService {
     List<Weapon> getWeaponsByScreen(String json); // 获取筛选后的武器
     void setWeapon(String username, String name, String weapon); // 设置角色武器
 
-    Map<String, com.example.entity.echo.Character> getCharacters(String username); // 获取角色
-    Map<String, com.example.entity.echo.Character> getCharactersByScreen(String username, String json); // 获取筛选后的角色
+    Map<String, Character> getCharacters(String username); // 获取角色
+    Map<String, Character> getCharactersByScreen(String username, String json); // 获取筛选后的角色
     List<String> getNames(); // 获取角色名称列表
     Map<String, List<String>> getCharacterGroupsByType(); // 获取角色分组
     Map<String, int[]> getCharacterStats(); // 获取角色三维属性

@@ -3,7 +3,6 @@ package com.example.util;
 import com.example.entity.echo.Character;
 import com.example.entity.echo.Echo;
 import com.example.entity.echo.Weapon;
-
 import java.util.*;
 
 
@@ -48,21 +47,28 @@ public class EchoUtil { // 声骸工具类
         )
     );
     public static final Map<String, Weapon> WEAPONS = new LinkedHashMap<>() {{ // 武器
+
         put("时和岁稔", new Weapon("时和岁稔", "长刃", 5, 587));
         put("苍鳞千嶂", new Weapon("苍鳞千嶂", "长刃", 5, 587));
         put("浩境粼光", new Weapon("浩境粼光", "长刃", 5, 587));
+
         put("诸方玄枢", new Weapon("诸方玄枢", "臂铠", 5, 587));
         put("擎渊怒涛", new Weapon("擎渊怒涛", "臂铠", 5, 587));
         put("悲喜剧", new Weapon("悲喜剧", "臂铠", 5, 587));
+
         put("裁春", new Weapon("裁春", "迅刀", 5, 587));
         put("赫奕流明", new Weapon("赫奕流明", "迅刀", 5, 587));
         put("千古洑流", new Weapon("千古洑流", "迅刀", 5, 587));
+        put("不灭航路", new Weapon("不灭航路", "迅刀", 5, 412));
+
         put("死与舞", new Weapon("死与舞", "佩枪", 5, 500));
         put("停驻之烟", new Weapon("停驻之烟", "佩枪", 5, 587));
+
         put("星序协响", new Weapon("星序协响", "音感仪", 5, 412));
         put("琼枝冰绡", new Weapon("琼枝冰绡", "音感仪", 5, 500));
         put("掣傀之手", new Weapon("掣傀之手", "音感仪", 5, 500));
         put("漪澜浮录", new Weapon("漪澜浮录", "音感仪", 5, 500));
+        put("和光回唱", new Weapon("和光回唱", "音感仪", 5, 500));
 
         put("凋亡频移", new Weapon("凋亡频移", "长刃", 4, 462));
         put("纹秋", new Weapon("纹秋", "长刃", 4, 412));
@@ -105,70 +111,75 @@ public class EchoUtil { // 声骸工具类
         put("异度", new Weapon("异度", "音感仪", 4, 412));
         put("渊海回声", new Weapon("渊海回声", "音感仪", 4, 337));
         put("虚饰的华尔兹", new Weapon("虚饰的华尔兹", "音感仪", 4, 462));
+        put("大海的馈赠", new Weapon("大海的馈赠", "音感仪", 4, 462));
     }};
-    public static Map<String, com.example.entity.echo.Character> getCharacters () {
+    public static Map<String, Character> getCharacters () {
         return new LinkedHashMap<>() {{
-            put("长离", new com.example.entity.echo.Character("长离", "changli", "热熔", WEAPONS.get("赫奕流明"), 5,
+            put("长离", new Character("长离", "changli", "热熔", WEAPONS.get("赫奕流明"), 5,
                     new int[]{462, 10387, 1099}, new int[]{71, 2, 2, 100, 8, 7, 2, 46, 16}));
-            put("安可", new com.example.entity.echo.Character("安可", "anke", "热熔", WEAPONS.get("掣傀之手"), 5,
+            put("安可", new Character("安可", "anke", "热熔", WEAPONS.get("掣傀之手"), 5,
                     new int[]{425, 10512, 1246}, new int[]{71, 2, 2, 100, 9, 35, 8, 23, 5}));
-            put("维里奈", new com.example.entity.echo.Character("维里奈", "weilinai", "衍射", WEAPONS.get("星序协响"), 5,
+            put("维里奈", new Character("维里奈", "weilinai", "衍射", WEAPONS.get("星序协响"), 5,
                     new int[]{337, 14237, 1099}, new int[]{85, 20, 20, 10, 100, 5, 5, 5, 0}));
-            put("守岸人", new com.example.entity.echo.Character("守岸人", "shouanren", "衍射", WEAPONS.get("星序协响"), 5,
+            put("守岸人", new Character("守岸人", "shouanren", "衍射", WEAPONS.get("星序协响"), 5,
                     new int[]{287, 16712, 1099}, new int[]{10, 70, 5, 80, 100, 5, 5, 5, 50}));
-            put("丹瑾", new com.example.entity.echo.Character("丹瑾", "danjing", "湮灭", WEAPONS.get("赫奕流明"), 4,
+            put("丹瑾", new Character("丹瑾", "danjing", "湮灭", WEAPONS.get("赫奕流明"), 4,
                     new int[]{262, 9437, 1148}, new int[]{71, 12, 12, 100, 2, 7, 44, 17, 3}));
-            put("椿", new com.example.entity.echo.Character("椿", "chun", "湮灭", WEAPONS.get("裁春"), 5,
+            put("椿", new Character("椿", "chun", "湮灭", WEAPONS.get("裁春"), 5,
                     new int[]{450, 10325, 1161}, new int[]{71, 2, 2, 100, 10, 54, 3, 0, 14}));
-            put("散华", new com.example.entity.echo.Character("散华", "sanhua", "冷凝", WEAPONS.get("赫奕流明"), 4,
+            put("散华", new Character("散华", "sanhua", "冷凝", WEAPONS.get("赫奕流明"), 4,
                     new int[]{275, 10062, 941}, new int[]{71, 2, 2, 100, 6, 7, 24, 25, 15}));
-            put("今汐", new com.example.entity.echo.Character("今汐", "jinxi", "衍射", WEAPONS.get("时和岁稔"), 5,
+            put("今汐", new Character("今汐", "jinxi", "衍射", WEAPONS.get("时和岁稔"), 5,
                     new int[]{412, 10825, 1258}, new int[]{71, 2, 2, 100, 9, 8, 4, 41, 18}));
-            put("洛可可", new com.example.entity.echo.Character("洛可可", "luokeke", "湮灭", WEAPONS.get("悲喜剧"), 5,
+            put("洛可可", new Character("洛可可", "luokeke", "湮灭", WEAPONS.get("悲喜剧"), 5,
                     new int[]{375, 12250, 1197}, new int[]{71, 2, 2, 100, 10, 9, 45, 17, 0}));
             /* 下面的角色权重未进行人工设置，默认权重由 AI 生成 */
-            put("珂莱塔", new com.example.entity.echo.Character("珂莱塔", "kelaita", "冷凝", WEAPONS.get("死与舞"), 5,
+            put("布兰特", new Character("布兰特", "bulante", "热熔", WEAPONS.get("不灭航路"), 5,
+                    new int[]{375, 11675, 1307}, new int[]{71, 2, 2, 100, 85, 50, 0, 15, 6}));
+            put("菲比", new Character("菲比", "feibi", "衍射", WEAPONS.get("和光回唱"), 5,
+                    new int[]{412, 10825, 1258}, new int[]{71, 2, 2, 100, 8, 2, 35, 10, 24}));
+            put("珂莱塔", new Character("珂莱塔", "kelaita", "冷凝", WEAPONS.get("死与舞"), 5,
                     new int[]{462, 12450, 1197}, new int[]{71, 2, 2, 100, 8, 7, 2, 46, 16}));
-            put("相里要", new com.example.entity.echo.Character("相里要", "xiangliyao", "导电", WEAPONS.get("诸方玄枢"), 5,
-                    new int[]{425, 10625, 1222}, new int[]{71, 2, 2, 100, 10, 0, 0, 16, 55}));
-            put("折枝", new com.example.entity.echo.Character("折枝", "zhezhi", "冷凝", WEAPONS.get("琼枝冰绡"), 5,
-                    new int[]{375, 12250, 1197}, new int[]{71, 2, 2, 100, 35, 70, 0, 0, 1}));
-            put("吟霖", new com.example.entity.echo.Character("吟霖", "yinlin", "导电", WEAPONS.get("掣傀之手"), 5,
+            put("相里要", new Character("相里要", "xiangliyao", "导电", WEAPONS.get("诸方玄枢"), 5,
+                    new int[]{425, 10625, 1222}, new int[]{71, 2, 2, 100, 10, 3, 2, 15, 51}));
+            put("折枝", new Character("折枝", "zhezhi", "冷凝", WEAPONS.get("琼枝冰绡"), 5,
+                    new int[]{375, 12250, 1197}, new int[]{71, 2, 2, 100, 8, 50, 0, 15, 6}));
+            put("吟霖", new Character("吟霖", "yinlin", "导电", WEAPONS.get("掣傀之手"), 5,
                     new int[]{400, 11000, 1283}, new int[]{71, 2, 2, 100, 8, 7, 30, 24, 10}));
-            put("忌炎", new com.example.entity.echo.Character("忌炎", "jiyan", "气动", WEAPONS.get("苍鳞千嶂"), 5,
+            put("忌炎", new Character("忌炎", "jiyan", "气动", WEAPONS.get("苍鳞千嶂"), 5,
                     new int[]{437, 10487, 1185}, new int[]{71, 2, 2, 100, 14, 5, 50, 10, 6}));
-            put("卡卡罗", new com.example.entity.echo.Character("卡卡罗", "kakaluo", "导电", WEAPONS.get("苍鳞千嶂"), 5,
-                    new int[]{437, 10500, 1185}, new int[]{71, 2, 2, 100, 0, 35, 10, 16, 10}));
-            put("凌阳", new com.example.entity.echo.Character("凌阳", "lingyang", "冷凝", WEAPONS.get("擎渊怒涛"), 5,
-                    new int[]{437, 10387, 1209}, new int[]{71, 2, 2, 100, 0, 46, 0, 25, 0}));
-            put("鉴心", new com.example.entity.echo.Character("鉴心", "jianxin", "气动", WEAPONS.get("呼啸重音"), 5,
-                    new int[]{337, 14112, 1124}, new int[]{75, 0, 0, 100, 20, 0, 0, 85, 30}));
-            put("漂泊者 - 男 - 衍射", new com.example.entity.echo.Character("漂泊者 - 男 - 衍射", "piaobozhe-nan-yanshe", "衍射", WEAPONS.get("赫奕流明"), 5,
+            put("卡卡罗", new Character("卡卡罗", "kakaluo", "导电", WEAPONS.get("苍鳞千嶂"), 5,
+                    new int[]{437, 10500, 1185}, new int[]{71, 2, 2, 100, 3, 35, 10, 16, 10}));
+            put("凌阳", new Character("凌阳", "lingyang", "冷凝", WEAPONS.get("擎渊怒涛"), 5,
+                    new int[]{437, 10387, 1209}, new int[]{71, 2, 2, 100, 3, 46, 3, 22, 0}));
+            put("鉴心", new Character("鉴心", "jianxin", "气动", WEAPONS.get("呼啸重音"), 5,
+                    new int[]{337, 14112, 1124}, new int[]{71, 2, 2, 100, 20, 2, 3, 51, 15}));
+            put("漂泊者 - 男 - 衍射", new Character("漂泊者 - 男 - 衍射", "piaobozhe-nan-yanshe", "衍射", WEAPONS.get("赫奕流明"), 5,
                     new int[]{375, 11400, 1368}, new int[]{71, 2, 2, 100, 8, 20, 1, 40, 10}));
-            put("漂泊者 - 女 - 衍射", new com.example.entity.echo.Character("漂泊者 - 女 - 衍射", "piaobozhe-nv-yanshe", "衍射", WEAPONS.get("赫奕流明"), 5,
+            put("漂泊者 - 女 - 衍射", new Character("漂泊者 - 女 - 衍射", "piaobozhe-nv-yanshe", "衍射", WEAPONS.get("赫奕流明"), 5,
                     new int[]{375, 11400, 1368}, new int[]{71, 2, 2, 100, 8, 20, 1, 40, 10}));
-            put("漂泊者 - 男 - 湮灭", new com.example.entity.echo.Character("漂泊者 - 男 - 湮灭", "piaobozhe-nan-yanmie", "湮灭", WEAPONS.get("赫奕流明"), 5,
+            put("漂泊者 - 男 - 湮灭", new Character("漂泊者 - 男 - 湮灭", "piaobozhe-nan-yanmie", "湮灭", WEAPONS.get("赫奕流明"), 5,
                     new int[]{412, 10825, 1258}, new int[]{71, 2, 2, 100, 8, 30, 10, 20, 11}));
-            put("漂泊者 - 女 - 湮灭", new com.example.entity.echo.Character("漂泊者 - 女 - 湮灭", "piaobozhe-nv-yanmie", "湮灭", WEAPONS.get("赫奕流明"), 5,
+            put("漂泊者 - 女 - 湮灭", new Character("漂泊者 - 女 - 湮灭", "piaobozhe-nv-yanmie", "湮灭", WEAPONS.get("赫奕流明"), 5,
                     new int[]{412, 10825, 1258}, new int[]{71, 2, 2, 100, 8, 30, 10, 20, 11}));
-            put("灯灯", new com.example.entity.echo.Character("灯灯", "dengdeng", "导电", WEAPONS.get("浩境粼光"), 4,
+            put("灯灯", new Character("灯灯", "dengdeng", "导电", WEAPONS.get("浩境粼光"), 4,
                     new int[]{337, 8500, 879}, new int[]{71, 2, 2, 100, 8, 50, 1, 5, 15}));
-            put("釉瑚", new com.example.entity.echo.Character("釉瑚", "youhu", "冷凝", WEAPONS.get("擎渊怒涛"), 4,
-                    new int[]{262, 9975, 1051}, new int[]{85, 0, 0, 100, 70, 40, 60, 25, 15}));
-            put("炽霞", new com.example.entity.echo.Character("炽霞", "chixia", "热熔", WEAPONS.get("停驻之烟"), 4,
+            put("釉瑚", new Character("釉瑚", "youhu", "冷凝", WEAPONS.get("擎渊怒涛"), 4,
+                    new int[]{262, 9975, 1051}, new int[]{71, 2, 2, 100, 10, 21, 31, 12, 7}));
+            put("炽霞", new Character("炽霞", "chixia", "热熔", WEAPONS.get("停驻之烟"), 4,
                     new int[]{300, 9087, 953}, new int[]{71, 2, 2, 100, 8, 10, 0, 46, 15}));
-            put("秧秧", new com.example.entity.echo.Character("秧秧", "yangyang", "气动", WEAPONS.get("千古洑流"), 4,
+            put("秧秧", new Character("秧秧", "yangyang", "气动", WEAPONS.get("千古洑流"), 4,
                     new int[]{250, 10200, 1099}, new int[]{71, 2, 2, 100, 8, 7, 2, 46, 16}));
-            put("秋水", new com.example.entity.echo.Character("秋水", "qiushui", "气动", WEAPONS.get("华彩乐段"), 4,
+            put("秋水", new Character("秋水", "qiushui", "气动", WEAPONS.get("华彩乐段"), 4,
                     new int[]{262, 9850, 1075}, new int[]{71, 2, 2, 100, 8, 50, 7, 7, 7}));
-            put("莫特斐", new com.example.entity.echo.Character("莫特斐", "motefei", "热熔", WEAPONS.get("停驻之烟"), 4,
+            put("莫特斐", new Character("莫特斐", "motefei", "热熔", WEAPONS.get("停驻之烟"), 4,
                     new int[]{250, 10025, 1136}, new int[]{71, 2, 2, 100, 8, 7, 2, 16, 46}));
-            put("白芷", new com.example.entity.echo.Character("白芷", "baizhi", "冷凝", WEAPONS.get("星序协响"), 4,
-                    new int[]{212, 12812, 1002}, new int[]{30, 100, 0, 0, 80, 0, 0, 0, 0}));
-            put("渊武", new com.example.entity.echo.Character("渊武", "yuanwu", "导电", WEAPONS.get("呼啸重音"), 4,
-                    new int[]{225, 8525, 1637}, new int[]{10, 0, 100, 60, 75, 0, 0, 15, 0}));
-            put("桃祈", new com.example.entity.echo.Character("桃祈", "taoqi", "湮灭", WEAPONS.get("异响空灵"), 4,
-                    new int[]{225, 8950, 1564}, new int[]{0, 20, 100, 65, 40, 0, 15, 30, 10}));
+            put("白芷", new Character("白芷", "baizhi", "冷凝", WEAPONS.get("星序协响"), 4,
+                    new int[]{212, 12812, 1002}, new int[]{10, 80, 20, 14, 100, 0, 0, 3, 7}));
+            put("渊武", new Character("渊武", "yuanwu", "导电", WEAPONS.get("呼啸重音"), 4,
+                    new int[]{225, 8525, 1637}, new int[]{10, 20, 80, 14, 100, 0, 0, 4, 6}));
+            put("桃祈", new Character("桃祈", "taoqi", "湮灭", WEAPONS.get("异响空灵"), 4,
+                    new int[]{225, 8950, 1564}, new int[]{10, 20, 80, 14, 100, 0, 2, 3, 5}));
         }};
     }
     public static final Map<String, Character> CHARACTERS = getCharacters(); // 角色

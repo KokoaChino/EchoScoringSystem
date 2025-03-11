@@ -1,12 +1,13 @@
 package com.example.controller;
 
-import java.util.*;
 import com.example.entity.echo.Echo;
 import com.example.service.api.EchoScoringSystemService;
 import com.example.entity.echo.Weapon;
 import com.example.entity.echo.Character;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.util.Map;
 
 
 @RestController
