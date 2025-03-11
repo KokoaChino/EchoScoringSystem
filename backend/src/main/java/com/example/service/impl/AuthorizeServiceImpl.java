@@ -72,8 +72,31 @@ public class AuthorizeServiceImpl implements AuthorizeService { // 用户授权�
             MimeMessageHelper helper = new MimeMessageHelper(message, false, "UTF-8");
             helper.setFrom(from, "声骸评分系统");
             helper.setTo(email);
-            helper.setSubject("【声骸评分系统的验证邮件】");
-            helper.setText("您的验证码是：" + code);
+            helper.setSubject("【声骸评分系统】账户安全验证码（请及时查收）");
+            String htmlContent = """
+    <html>
+    <body style='font-family: Microsoft YaHei, sans-serif;'>
+        <p>尊敬的用户：</p>
+        <p>您好！</p>
+        <p>您正在申请【声骸评分系统】的账户安全验证服务，本次操作验证码为：<br>
+        <strong style='color: #1890ff; font-size: 18px;'>%s</strong></p>
+        
+        <div style='color: #666; margin-top: 20px;'>
+            <h4>【温馨提示】</h4>
+            <ol>
+                <li>本验证码3分钟内有效，请及时完成验证</li>
+                <li>切勿向他人泄露验证码</li>
+                <li>如非本人操作，请忽略本邮件</li>
+            </ol>
+        </div>
+        
+        <p>感谢您对声骸评分系统的信任与支持！(≧∀≦)ゞ<br>
+        <hr style='border: 0; border-top: 1px solid #eee; margin: 20px 0;'>
+        <p style='color: #999; font-size: 12px;'>此邮件为系统自动发送，请勿直接回复</p>
+    </body>
+    </html>
+    """.formatted(code);
+            helper.setText(htmlContent, true);
             mailSender.send(message);
             template.opsForValue().set(key, code, 3, TimeUnit.MINUTES); // 在 Redis 中保存验证码，有效期为 3 分钟
             return null;
@@ -167,10 +190,5 @@ public class AuthorizeServiceImpl implements AuthorizeService { // 用户授权�
         for (String tableName : userMapper.findAllTables()) {
             userMapper.deleteAccountByUsername(tableName, username);
         }
-    }
-
-    @Override
-    public void updateUserVip(String username) {
-        userMapper.insertVipUser(username);
     }
 }

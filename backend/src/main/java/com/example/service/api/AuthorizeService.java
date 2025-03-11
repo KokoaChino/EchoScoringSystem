@@ -15,5 +15,4 @@ public interface AuthorizeService extends UserDetailsService { // 用户授权�
     boolean changeEmail(String oldEmail, String newEmail); // 重置邮箱
 
     void signout(String username); // 注销用户
-    void updateUserVip(String username); // 更新用户VIP
 }

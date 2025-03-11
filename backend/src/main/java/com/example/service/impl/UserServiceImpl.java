@@ -2,7 +2,7 @@ package com.example.service.impl;
 
 import com.example.entity.auth.AccountUser;
 import com.example.entity.common.RestBean;
-import com.example.mapper.UserMapper;
+import com.example.mapper.PayMapper;
 import com.example.service.api.UserService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     @Resource
-    private UserMapper userMapper;
+    private PayMapper payMapper;
 
     @Override
     public RestBean<AccountUser> me(AccountUser user) { // 记住我功能
@@ -21,6 +21,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean isVip(String username) { // 查询用户是否为 VIP 用户
-        return userMapper.isVipUser(username);
+        return payMapper.isVipUser(username);
     }
 }

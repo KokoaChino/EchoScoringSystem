@@ -12,7 +12,7 @@ public interface UserMapper { // 用户相关的映射器
     @Select("select * from account where username = #{text} or email = #{text}")
     Account findAccountByNameOrEmail(String text);
 
-    @Select("select * from account where username = #{text} or email = #{text}")
+    @Select("select id, username, email from account where username = #{text} or email = #{text}")
     AccountUser findAccountUserByNameOrEmail(String text);
 
     @Insert("insert into account (email, username, password) values (#{email}, #{username}, #{password})")
@@ -40,18 +40,5 @@ public interface UserMapper { // 用户相关的映射器
     @Update("<script>" +
             "update ${table_name} set username = #{username} where username = #{old_username}" +
             "</script>")
-    int resetUsername(String table_name, String username, String old_username);
-
-
-    @Select("select exists(select 1 from vip_user where username = #{username})")
-    boolean isVipUser(String username);
-
-    @Insert("""
-        insert into vip_user (username)
-        select #{username}
-        where not exists (
-            select 1 from vip_user where username = #{username}
-        )
-    """)
-    void insertVipUser(String username);
+    void resetUsername(String table_name, String username, String old_username);
 }

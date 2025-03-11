@@ -6,13 +6,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 
-//@Configuration
-//public class RabbitConfiguration {
-//
-//    @Bean
-//    public MessageConverter messageConverter() {
-//        Jackson2JsonMessageConverter converter = new Jackson2JsonMessageConverter();
-//        converter.setCreateMessageIds(true);
-//        return converter;
-//    }
-//}
+@Configuration
+public class RabbitConfiguration {
+
+    @Bean
+    public MessageConverter messageConverter() {
+        Jackson2JsonMessageConverter converter = new Jackson2JsonMessageConverter();
+        converter.setCreateMessageIds(true);
+        return converter;
+    }
+}

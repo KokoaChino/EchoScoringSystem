@@ -35,7 +35,7 @@
             </el-dropdown>
         </div>
     </div>
-    <el-dialog v-model="dialogFormVisible" title="修改用户信息" width="500">
+    <el-dialog v-model="dialogFormVisible" title="修改用户信息" width="500" v-loading="loading3">
         <el-form :model="form" :rules="rules" ref="formRef" @validate="onValidate">
             <el-form-item label="用户名称" :label-width="formLabelWidth" prop="username">
                 <el-input v-model="form.username" autocomplete="off" :placeholder="store.auth.user.username">
@@ -151,7 +151,7 @@ const aliPay = ref({
     username: "",
     qrcode: ""
 })
-const isVip = ref(false), loading = ref(true), loading2 = ref(false)
+const isVip = ref(false), loading = ref(true), loading2 = ref(false), loading3 = ref(false)
 
 watch(dialogFormVisible, () => {
     reset()
@@ -217,16 +217,23 @@ const rules = {
 }
 
 const sendEmail = () => {
-    coldTime.value = 60
-    _POST('/api/auth/valid-register-email', {
-        email: form.email
-    }, (message) => {
-        ElMessage.success(message)
-        setInterval(() => coldTime.value--, 1000)
-    }, (message) => {
-        ElMessage.warning(message)
-        coldTime.value = 0
-    })
+    loading3.value = true
+    try {
+        coldTime.value = 60
+        _POST('/api/auth/valid-register-email', {
+            email: form.email
+        }, (message) => {
+            ElMessage.success(message)
+            setInterval(() => coldTime.value--, 1000)
+        }, (message) => {
+            ElMessage.warning(message)
+            coldTime.value = 0
+        })
+    } catch (e) {
+        console.error("邮件发送失败:", e);
+    } finally {
+        loading3.value = false
+    }
 }
 
 const open = () => {

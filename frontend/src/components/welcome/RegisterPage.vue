@@ -4,7 +4,7 @@
             <div style="font-size: 25px;font-weight: bold">注册新用户</div>
             <div style="font-size: 14px;color: grey">欢迎注册声骸评分系统，请在下方填写相关信息</div>
         </div>
-        <div style="margin-top: 50px">
+        <div style="margin-top: 50px" v-loading="loading">
             <el-form :model="form" :rules="rules" @validate="onValidate" ref="formRef">
                 <el-form-item prop="username">
                     <el-input v-model="form.username" :maxlength="8" type="text" placeholder="用户名">
@@ -71,7 +71,7 @@ import { EditPen, Lock, Message, User } from "@element-plus/icons-vue";
 import router from "@/router";
 import { onMounted, reactive, ref } from "vue";
 import { ElMessage, ElNotification } from "element-plus";
-import { _POST } from "src/net";
+import { _POST } from "@/net";
 import { useStore } from "@/stores/index.js";
 
 const store = useStore()
@@ -146,7 +146,7 @@ const rules = {
 
 const formRef = ref()
 const isEmailValid = ref(false)
-const coldTime = ref(0)
+const coldTime = ref(0), loading = ref(false)
 
 const onValidate = (prop, isValid) => {
     if (prop === 'email')
@@ -172,23 +172,30 @@ const register = () => {
 }
 
 const validateEmail = () => {
-    if (store.auth.verificationStatus) {
-        coldTime.value = 60
-        _POST('/api/auth/valid-register-email', {
-            email: form.email
-        }, (message) => {
-            ElMessage.success(message)
-            setInterval(() => coldTime.value--, 1000)
-        }, (message) => {
-            ElMessage.warning(message)
-            coldTime.value = 0
-        })
-    } else {
-        ElNotification({
-            title: '(＃°Д°)',
-            message: '请先完成下面的"我是人类"验证！',
-            type: 'error',
-        })
+    loading.value = true
+    try {
+        if (store.auth.verificationStatus) {
+            coldTime.value = 60
+            _POST('/api/auth/valid-register-email', {
+                email: form.email
+            }, (message) => {
+                ElMessage.success(message)
+                setInterval(() => coldTime.value--, 1000)
+            }, (message) => {
+                ElMessage.warning(message)
+                coldTime.value = 0
+            })
+        } else {
+            ElNotification({
+                title: '(＃°Д°)',
+                message: '请先完成下面的"我是人类"验证！',
+                type: 'error',
+            })
+        }
+    } catch (e) {
+        console.error("邮件发送失败:", e);
+    } finally {
+        loading.value = false
     }
 }
 

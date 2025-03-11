@@ -2,7 +2,7 @@ spring:
   profiles:
     include:
     - alipay
-#    - mq
+    - mq
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/echo_scoring_system?useUnicode=true&characterEncoding=utf-8

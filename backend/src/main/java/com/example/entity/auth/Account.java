@@ -9,4 +9,5 @@ public class Account { // 用户
     String email;
     String username;
     String password;
+    Boolean vip;
 }
