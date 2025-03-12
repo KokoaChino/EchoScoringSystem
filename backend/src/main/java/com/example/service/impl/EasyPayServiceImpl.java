@@ -9,6 +9,7 @@ import com.alipay.easysdk.payment.common.models.AlipayTradeQueryResponse;
 import com.alipay.easysdk.payment.facetoface.models.AlipayTradePrecreateResponse;
 import com.example.dto.AliPay;
 import com.example.entity.order.Order;
+import com.example.mapper.MqMapper;
 import com.example.mapper.PayMapper;
 import com.example.service.api.EasyPayService;
 import com.example.util.PayUtil;
@@ -19,6 +20,9 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 
@@ -36,6 +40,9 @@ public class EasyPayServiceImpl implements EasyPayService {
 
     @Resource
     PayMapper payMapper;
+
+    @Resource
+    MqMapper mqMapper;
 
     @Override
     public AliPay pay(String username) { // 生成支付二维码
@@ -59,6 +66,19 @@ public class EasyPayServiceImpl implements EasyPayService {
                 payMapper.deleteOrderByUsername(username);
                 payMapper.insertOrder(new Order(id, username, LocalDateTime.now(), qrUrl));
                 template.opsForValue().set(username, JSON.toJSONString(aliPay), 30, TimeUnit.MINUTES);
+                Map<String, String> msg = new HashMap<>(
+                        Map.ofEntries(
+                                Map.entry("id", id + "-FAILED"),
+                                Map.entry("outTradeNo", id),
+                                Map.entry("username", username),
+                                Map.entry("time", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                        )
+                );
+                mqMapper.insertMessageIdLog(msg.get("id"), 0);
+                rabbitTemplate.convertAndSend("e1", "pay_failed", msg, message -> {
+                    message.getMessageProperties().setExpiration("1800000"); // 延迟时间 30min
+                    return message;
+                });
                 return aliPay;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -71,8 +91,19 @@ public class EasyPayServiceImpl implements EasyPayService {
     public String notify(HttpServletRequest request) { // 支付成功回调接口
         String outTradeNo = request.getParameter("out_trade_no");
         String username = outTradeNo.substring(0, outTradeNo.indexOf('-'));
+        if (Boolean.TRUE.equals(template.hasKey(username))) {
+            template.delete(username);
+        }
         payMapper.updateVipUser(username);
-        rabbitTemplate.convertAndSend("e1", "pay_success", username);
+        Map<String, String> msg = new HashMap<>(
+                Map.ofEntries(
+                        Map.entry("id", outTradeNo + "-SUCCESS"),
+                        Map.entry("outTradeNo", outTradeNo),
+                        Map.entry("username", username)
+                )
+        );
+        mqMapper.insertMessageIdLog(msg.get("id"), 0);
+        rabbitTemplate.convertAndSend("e1", "pay_success", msg);
         return username + "：Success";
     }
 

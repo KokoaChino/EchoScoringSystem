@@ -2,6 +2,7 @@
 <project version="4">
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/backend/src/main/java/com/example/mapper/EchoMapper.java" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/backend/src/main/java/com/example/mapper/MqMapper.java" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/backend/src/main/java/com/example/mapper/PayMapper.java" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/backend/src/main/java/com/example/mapper/UserMapper.java" dialect="GenericSQL" />
   </component>

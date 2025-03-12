@@ -116,6 +116,9 @@
                 <div class="image-container" v-else>
                     <img :src="aliPay.qrcode" alt="支付二维码" class="responsive-image">
                 </div>
+                <div class="order-number">
+                    订单编号：<span>{{ aliPay.id }}</span>
+                </div>
                 <div class="caption">￥39.99</div>
                 <button class="button" @click="pay_query">我已完成支付</button>
             </div>
@@ -542,6 +545,20 @@ onMounted(async () => {
     text-transform: uppercase;
     letter-spacing: 1px;
     font-weight: 600;
+}
+
+.order-number {
+    font-size: 16px;
+    color: #666;
+    line-height: 1.5;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+.order-number span {
+    color: #007bff;
+    margin-left: 4px;
+    font-weight: 500;
 }
 
 .card {

@@ -9,6 +9,11 @@ spring:
       simple:
         prefetch: 1
         acknowledge-mode: auto
+        retry:
+          enabled: true
+          initial-interval: 1000ms
+          multiplier: 1
+          max-attempts: 3
     connection-timeout: 1s # 连接超时时间
     template:
       retry:
@@ -16,4 +21,3 @@ spring:
         initial-interval: 1000ms # 失败后的初始等待时间
         multiplier: 1 # 失败后下次的等待时长倍数
         max-attempts: 3 # 最大重试次数
-        stateless: true # 如果业务中包含事务，这里改为false
