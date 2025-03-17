@@ -146,7 +146,6 @@ public class MessageServiceImpl implements MessageService {
         );
         insertMessageIdLog(msg.get("id"), 0);
         rabbitTemplate.convertAndSend("e1", "code", msg);
-        System.out.println("ENDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
     }
 
     @Override

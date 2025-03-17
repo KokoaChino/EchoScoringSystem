@@ -30,7 +30,6 @@ public class RabbitMQListener {
             key = {"code"}
     ))
     public void listenCodeMessage(Map<String, String> msg) { // 发送验证码邮件
-        System.out.println("发送验证码邮件" + msg);
         String id = msg.get("id"), email = msg.get("email"), code = msg.get("code");
         Integer status = mqMapper.selectMessageIdLog(id);
         if (status != null && status != 0) return;
@@ -51,7 +50,6 @@ public class RabbitMQListener {
         String id = msg.get("id"), username = msg.get("username");
         Integer status = mqMapper.selectMessageIdLog(id);
         if (status != null && status != 0) return;
-        System.out.println("account" + "///////////////////////////////////////////////////////////////////////////////");
         Account account = authClient.getAccount(username);
         String email = account.getEmail();
         Boolean res = messageService.sendPaySuccessEmail(email, username);

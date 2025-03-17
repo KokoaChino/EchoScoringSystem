@@ -26,20 +26,18 @@
 
 ### 1.3 项目说明
 
-1. 项目浏览卡顿为正常现象，因为我用的免费试用的云服务器，带宽是最低一档的（只有 3Mbps）
+1. 项目只关心声骸的副词条属性，并且以此为依据作出评分
 
-2. 项目只关心声骸的副词条属性，并且以此为依据作出评分
+2. 项目不关心声骸的技能，主词条属性，套装效果等等
 
-3. 项目不关心声骸的技能，主词条属性，套装效果等等
-
-4. 项目默认属性：
+3. 项目默认属性：
 
    * 角色：90 级，0 共鸣链，满技能
    * 武器：对应角色专武 90 级（武器可以去角色基础属性模块设置），谐振 1 阶
 
    * 声骸：5 星的满调谐声骸
 
-5. **目前有绝大部分的角色默认权重还没有配置**，等我养到了再配
+4. **目前有绝大部分的角色默认权重都由AI配置**，等我养到了再进行人工配置
 
 ## 2. 系统架构
 
@@ -308,63 +306,125 @@ $$
 
 ### 5.1 开发工具
 
-**[IntelliJ IDEA 2024.1.2](https://www.jetbrains.com/idea/)**：用于开发前后端代码，提供强大的代码自动补全、调试和版本控制集成功能，提升开发效率
+#### 5.1.1 **开发环境**
 
-**[Navicat Premium 16](https://www.navicat.com.cn/download/navicat-premium)**：用于管理数据库，支持连接多种数据库
+**[IntelliJ IDEA 2024.1.2 ](https://www.jetbrains.com/idea/)**：用于开发前后端代码，提供强大的代码自动补全、调试和版本控制集成功能，提升开发效率
 
-**[Typora](https://typoraio.cn/)**：用于编写项目文档，提供简洁的 Markdown 编辑环境，实时预览功能让编写文档更直观
+**[VMware Workstation Pro ](https://www.vmware.com/products/workstation-pro.html)**：虚拟化软件，用于构建和测试多操作系统开发环境，支持虚拟机管理与资源分配
 
-**[Microsoft Edge](https://www.microsoft.com/zh-cn/edge/?form=MA13FJ)**：用于网页预览和调试，提供强大的开发者工具，帮助开发者进行页面调试、性能分析和网页兼容性测试
+**[MobaXterm ](https://mobaxterm.mobatek.net/)**：集成 SSH 终端、文件传输（SFTP）、X11 远程图形界面和网络工具，方便远程服务器管理和运维
 
-**[ChatGPT](https://chat.openai.com/)**：用于快速解答技术问题、生成代码片段、以及对开发过程中遇到的 bug 给出解决方案
+#### 5.1.2 **数据库工具**
+
+**[Navicat Premium 16 ](https://www.navicat.com.cn/download/navicat-premium)**：用于管理数据库，支持连接多种数据库（如 MySQL、Redis 等）
+
+#### **5.1.3 文档与协作**
+
+**[Typora ](https://typoraio.cn/)**：用于编写文档，提供简洁的 Markdown 编辑环境，实时预览功能让编写文档更直观
+
+**[QWEN CHAT ](https://chat.qwen.ai/)**：用于快速解答技术问题、生成代码片段、以及对开发过程中遇到的 bug 给出解决方案
+
+#### **5.1.4 测试与调试**
+
+**[Apipost ](https://www.apipost.cn/)**：用于 API 设计、测试和文档生成的工具，支持接口调试、自动化测试和团队协作，提升 API 开发效率
+
+**[Microsoft Edge ](https://www.microsoft.com/zh-cn/edge/?form=MA13FJ)**：用于网页预览和调试，提供强大的开发者工具，帮助开发者进行页面调试、性能分析和网页兼容性测试
+
+#### 5.1.5 **支付测试环境**
+
+**[支付宝沙箱 APP ](https://opendocs.alipay.com/common/02kkv7?pathHash=9a45a6d6)**：支付宝提供的测试环境，用于模拟真实支付流程，支持联调测试，避免在开发阶段产生真实交易费用
 
 ### 5.2 前端
 
-**[Vue](https://cn.vuejs.org/)**：用于构建用户界面的渐进式框架
+#### 5.2.1 **框架与核心库**
 
-**[vue-axios](https://github.com/axios/axios)**：用于在 Vue 项目中发送 HTTP 请求，基于 Axios 实现
+**[Vue ](https://cn.vuejs.org/)**：用于构建用户界面的渐进式框架
 
-**[vue-router](https://next.router.vuejs.org/)**：Vue.js 的官方路由库，用于在 Vue 应用中进行页面导航
+**[Vite ](https://vitejs.dev/)**：现代前端构建工具，提供快速的开发环境和打包功能，支持模块热更新
 
-**[vue-echarts](https://github.com/ecomfe/vue-echarts/blob/main/README.zh-Hans.md)**：在 Vue 3 中集成 ECharts 图表库，便于数据可视化
+#### 5.2.2 **状态管理**
 
-**[Vite](https://vitejs.dev/)**：现代前端构建工具，提供快速的开发环境和打包功能，支持模块热更新
+**[pinia ](https://pinia.vuejs.org/)**：Vue 3 的官方状态管理库，提供轻量级、易用的全局状态管理解决方案
 
-**[pinia](https://pinia.vuejs.org/)**：Vue 3 的官方状态管理库，提供轻量级、易用的全局状态管理解决方案
+#### **5.2.3 路由与组件库**
 
-**[Element Plus](https://element-plus.org/zh-CN/)**：基于 Vue 3 的 UI 组件库，提供丰富的界面组件，帮助开发者快速构建美观的后台管理系统
+**[vue-router ](https://next.router.vuejs.org/)**：Vue.js 的官方路由库，用于在 Vue 应用中进行页面导航
 
-**[iconfont](https://www.iconfont.cn/search/index?from=meibp#:~:text=5000)**：阿里巴巴图标库，提供大量的矢量图标，可方便地集成到网页中
+**[Element Plus ](https://element-plus.org/zh-CN/)**：基于 Vue 3 的 UI 组件库，提供丰富的界面组件，帮助开发者快速构建美观的后台管理系统
+
+#### 5.2.4 **数据可视化与工具**
+
+**[vue-echarts ](https://github.com/ecomfe/vue-echarts/blob/main/README.zh-Hans.md)**：在 Vue 3 中集成 ECharts 图表库，便于数据可视化
+
+**[vue-axios ](https://github.com/axios/axios)**：用于在 Vue 项目中发送 HTTP 请求，基于 Axios 实现
+
+#### **5.2.5 图标与资源**
+
+**[iconfont ](https://www.iconfont.cn/search/index?from=meibp#:~:text=5000)**：阿里巴巴图标库，提供大量的矢量图标，可方便地集成到网页中
 
 ### 5.3 后端
 
-**[Spring Boot](https://spring.io/projects/spring-boot)**：用于简化 Spring 应用的创建和配置，支持快速开发和部署
+#### 5.3.1 **微服务架构**
 
-**[Spring MVC](https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc)**：Spring 框架中的一个模块，用于构建基于 HTTP 的 Web 应用
+**[Spring Cloud ](https://spring.io/projects/spring-cloud)**：用于构建分布式系统的框架，整合多个子项目实现服务治理、配置管理、负载均衡等能力
 
-**[Spring Security](https://spring.io/projects/spring-security)**：提供全面的安全功能，支持认证和授权控制，保护应用免受安全漏洞
+**[Spring Cloud Gateway ](https://spring.io/projects/spring-cloud-gateway)**：基于 Spring WebFlux 的 API 网关，实现路由、过滤、安全控制等网关功能
 
-**[Bean Validation](https://beanvalidation.org/)**：用于 Java 应用中对对象属性进行约束检查，确保数据的有效性和一致性
+**[Nacos ](https://nacos.io/zh-cn/docs/what-is-nacos.html)**：服务发现与配置中心，提供动态服务注册/发现、配置管理及 DNS 服务
 
-**[JavaMail API](https://javaee.github.io/javamail/)**：提供发送和接收电子邮件的功能，支持 SMTP、POP3、IMAP 等协议
+**[OpenFeign ](https://cloud.spring.io/spring-cloud-openfeign/)**：声明式 HTTP 客户端，简化服务间调用，支持负载均衡和 Hystrix 集成
 
-**[MySQL](https://dev.mysql.com/doc/)**：开源的关系型数据库管理系统，广泛用于存储和管理结构化数据
+**[Sentinel ](https://github.com/alibaba/Sentinel)**：流量控制与熔断降级组件，保障系统稳定性，支持实时监控和规则配置
 
-**[MyBatis](https://mybatis.org/mybatis-3/)**：一个支持定制化 SQL 的持久层框架，简化数据库操作
+#### 5.3.2 **基础框架与核心库**
 
-**[Redis](https://redis.io/)**：开源的内存数据结构存储系统，用于缓存、消息队列和持久化存储
+**[Spring Boot ](https://spring.io/projects/spring-boot)**：用于简化 Spring 应用的创建和配置，支持快速开发和部署
 
-**[Lombok](https://projectlombok.org/)**：用于简化 Java 代码的工具，自动生成 getter、setter、构造函数等方法，减少样板代码
+**[Spring MVC ](https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc)**：Spring 框架中的 HTTP Web 模块，用于构建基于 RESTful 的 API
 
-**[Tomcat](https://tomcat.apache.org/)**：Apache 提供的开源 Java Servlet 容器和 Web 服务器，广泛用于 Java Web 应用的部署和运行
+**[Spring Security ](https://spring.io/projects/spring-security)**：提供全面的安全功能，支持认证和授权控制，保护应用免受安全漏洞
 
-**[SLF4J](https://www.slf4j.org/)**：一个简单的日志抽象层，用于统一日志接口，支持多种日志框架的后端
+#### 5.3.3 **数据库与缓存**
 
-**[JUnit](https://junit.org/junit5/)**：用于编写和运行 Java 测试的框架，支持单元测试和集成测试
+**[MySQL ](https://dev.mysql.com/doc/)**：开源的关系型数据库管理系统，广泛用于存储和管理结构化数据
 
-**[Fastjson](https://github.com/alibaba/fastjson)**：阿里巴巴开源的 Java 库，用于高效的 JSON 解析和生成
+**[MyBatis ](https://mybatis.org/mybatis-3/)**：支持定制化 SQL 的持久层框架，简化数据库操作
 
-**[Commons Math](https://commons.apache.org/proper/commons-math/)**：Apache 提供的数学库，提供线性代数、统计学、优化等数学功能
+**[Redis ](https://redis.io/)**：开源的内存数据结构存储系统，用于缓存、消息队列和持久化存储
+
+#### 5.3.4 **消息中间件**
+
+**[RabbitMQ ](https://www.rabbitmq.com/)**：开源的消息中间件，支持多种消息模式（如发布/订阅、工作队列），用于异步通信和任务解耦
+
+#### 5.3.5 **工具库与辅助组件**
+
+**[Lombok ](https://projectlombok.org/)**：用于简化 Java 代码的工具，自动生成 getter、setter、构造函数等方法，减少样板代码
+
+**[Hutool ](https://hutool.cn/)**：Java 工具类库，提供丰富的工具方法（如日期处理、加密解密、文件操作），简化开发中的通用逻辑
+
+**[ZXing ](https://github.com/zxing/zxing)**：二维码生成与解析库，支持多种编码格式，用于生成和扫描二维码
+
+**[Fastjson ](https://github.com/alibaba/fastjson)**：阿里巴巴开源的 Java 库，用于高效的 JSON 解析和生成
+
+**[Commons Math ](https://commons.apache.org/proper/commons-math/)**：Apache 提供的数学库，提供线性代数、统计学、优化等数学功能
+
+#### **5.3.6 第三方集成**
+
+**[支付宝 SDK ](https://opendocs.alipay.com/)**：集成支付宝支付、账单查询等功能的官方 SDK，支持商户与用户的资金流转（需结合支付宝沙箱环境进行开发测试）
+
+#### **5.3.7 开发辅助**
+
+**[JavaMail API ](https://javaee.github.io/javamail/)**：提供发送和接收电子邮件的功能，支持 SMTP、POP3、IMAP 等协议
+
+**[Bean Validation ](https://beanvalidation.org/)**：用于 Java 应用中对对象属性进行约束检查，确保数据的有效性和一致性
+
+**[SLF4J ](https://www.slf4j.org/)**：一个简单的日志抽象层，用于统一日志接口，支持多种日志框架的后端
+
+**[JUnit ](https://junit.org/junit5/)**：用于编写和运行 Java 测试的框架，支持单元测试和集成测试
+
+#### 5.3.8 **容器化部署**
+
+**[Docker ](https://www.docker.com/)**：容器化平台，用于构建、部署和运行应用程序容器，实现环境一致性、简化运维，并支持快速扩展和跨环境迁移
 
 ## 6. 关于作者
 
@@ -417,24 +477,52 @@ $$
 * 数据补全到鸣潮 2.0 版本
 
 
+**2025-3-17：[1.6.0]**
+
+* **版本号规范升级**：采用语义化版本号。版本号格式从 `a.b` 升级为 `a.b.c`（主版本号.次版本号.修订号）
+
+* **分布式微服务架构迁移** ：全面重构后端技术栈，采用分布式微服务设计，提升系统可扩展性与稳定性，代码规范性显著增强
+
+* **人机验证系统上线** ：新增智能人机验证码功能，有效防范自动化攻击，保障用户操作真实性
+
+* **VIP支付沙箱环境部署** ：搭建独立测试环境，支持VIP支付功能全流程验证，为后续正式上线奠定基础
+
+* **交互流程优化** ：在关键操作节点新增可视化加载提示（Loading），显著改善用户等待体验
+
+* **邮件系统升级** ：引入RabbitMQ消息队列技术，实现异步邮件发送，提升通知效率与可靠性
+
+* **内容版本同步** ：平台数据维护更新至《鸣潮》2.1版本，确保游戏/应用内容与最新版本保持一致
+
+
 ## 8. 后记
 
-本项目为基于 Session 的前后端分离项目，前端使用 Vue3，后端使用 SpringBoot 3
+本项目基于 Session 技术构建，采用前后端分离架构
 
-`2024-11-22` 从零开始，不使用任何大型模板
+前端选用 Vue3 框架，后端依托 Spring Cloud 生态系统，以现代技术栈实现高效开发
 
-期间仅通过查询自己的 `markdown` 笔记和在线文档，以及 ChatGpt4 的辅助
+### 8.1 **项目历程**
 
-最终于 `2024-12-9` 完成了鸣潮声骸评分系统的 v1.0 版本
+自 `2024年11月22日` 从零开始，全程摒弃大型模板的依赖，仅通过查阅个人 Markdown 笔记、官方文档及 AI 辅助开发
 
-~~项目已上线：http://175.178.171.179:5173~~
+历时 17 个昼夜，于 `2024年12月9日` 完成「鸣潮声骸评分系统」v1.0.0 版本的交付
 
-项目已开源：https://github.com/KokoaChino/EchoScoringSystem
+### 8.2 **项目状态**
 
-如果遇到了 BUG 或者有什么优化建议，可以在我的 github 仓库的 issues 模块给我留言
+• 当前版本已部署至服务器（*注：演示环境暂未开放，具体上线时间请关注后续通知* ）
+• 完整代码已开源至 GitHub：https://github.com/KokoaChino/EchoScoringSystem
 
-如果这个项目对您有所帮助，我将非常感激您的支持，以便我能够继续改善和发展这个项目
+### 8.3 **未来规划**
 
-感谢您的关注与支持！(*´∀`)~♥
+1. **视觉升级** ：登录界面将实现动态壁纸轮播效果
+2. **用户体系优化** ：新增个性化头像系统与账号绑定功能
+3. **数据互通** ：通过库街区 Token 实现声骸数据自动获取（无需手动输入）
+
+### 8.4 **反馈与支持**
+
+如遇系统异常或有优化建议，欢迎在 GitHub Issues 提交反馈。您的每一条意见都将推动项目迭代。
+若您认为此项目对您有所助益，您的 **Star** 或 **Pull Request** 将是我持续改进的最大动力。
+
+衷心感谢您的关注与支持！
+—— 项目开发者 星开祈灵 (*´∀`)~♥ 
 
 ![](https://gitee.com/kokoachino/picture-bed/raw/master/项目/EchoScoringSystem%20项目文档-12.jpg)

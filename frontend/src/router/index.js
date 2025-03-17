@@ -55,7 +55,7 @@ const router = createRouter({
         }, {
             path: '/test',
             name: 'test',
-            component: () => import('@/views/common/Test.vue')
+            component: () => import('@/views/common/Document.vue')
         }, {
             path: '/weight_list',
             name: 'weight-list',
