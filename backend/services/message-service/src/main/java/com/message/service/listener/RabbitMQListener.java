@@ -1,7 +1,7 @@
 package com.message.service.listener;
 
 import com.common.entity.Account;
-import com.message.client.frign.AuthClient;
+import com.message.client.feign.AuthClient;
 import com.message.mapper.MqMapper;
 import com.message.service.api.MessageService;
 import jakarta.annotation.Resource;

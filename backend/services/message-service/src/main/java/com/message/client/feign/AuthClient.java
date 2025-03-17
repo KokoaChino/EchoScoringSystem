@@ -1,4 +1,4 @@
-package com.message.client.frign;
+package com.message.client.feign;
 
 import com.common.entity.Account;
 import com.message.client.fallback.AuthClientFallback;

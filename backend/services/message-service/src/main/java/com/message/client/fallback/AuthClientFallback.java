@@ -1,7 +1,7 @@
 package com.message.client.fallback;
 
 import com.common.entity.Account;
-import com.message.client.frign.AuthClient;
+import com.message.client.feign.AuthClient;
 import org.springframework.stereotype.Component;
 
 
