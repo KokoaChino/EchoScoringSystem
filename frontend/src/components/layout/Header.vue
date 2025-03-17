@@ -131,7 +131,7 @@
 <script setup>
 import { ElDropdown, ElDropdownMenu, ElDropdownItem, ElButton, ElMessage, ElMessageBox } from 'element-plus';
 import router from "@/router";
-import { _GET, _POST, post, POST } from "@/net/index.js";
+import {_GET, _POST, GET, post, POST} from "@/net/index.js";
 import { useStore } from "@/stores";
 import { reactive, ref, watch, onMounted } from 'vue'
 import { EditPen, Lock, Message, User } from "@element-plus/icons-vue";
@@ -193,7 +193,7 @@ const onValidate = (prop, isValid) => {
 }
 
 const pay = async () => {
-    aliPay.value = await POST("/pay/pay", {
+    aliPay.value = await POST("/api/pay/pay", {
         username: store.auth.user.username
     })
     if (aliPay.value === "") aliPay.value = null
@@ -306,7 +306,7 @@ const pay_query = async () => {
         return
     }
     loading2.value = true
-    let res = await POST("/pay/query", {
+    let res = await POST("/api/pay/query", {
         username: store.auth.user.username,
         id: aliPay.value.id
     })
@@ -378,7 +378,7 @@ const submit = async () => {
 }
 
 onMounted(async () => {
-    isVip.value = await POST("/api/user/is-vip", {
+    isVip.value = await GET("/api/auth/is-vip", {
         username: store.auth.user.username
     })
 })

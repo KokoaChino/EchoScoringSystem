@@ -187,10 +187,10 @@ onMounted( async () => {
         background: 'rgba(0, 0, 0, 0.7)',
     })
     try {
-        let average = await get("/echo-scoring-system/get-echo-average"),
-            basics = await get("/echo-scoring-system/get-character-stats")
-        characters.value = await POST("/echo-scoring-system/get-characters", store.auth.user.username)
-        data.value = await post("/echo-scoring-system/get-echo-stats", store.auth.user.username)
+        let average = await get("/api/echo/get-echo-average"),
+            basics = await get("/api/echo/get-character-stats")
+        characters.value = await POST("/api/echo/get-characters", store.auth.user.username)
+        data.value = await post("/api/echo/get-echo-stats", store.auth.user.username)
         for (let item of Object.values(data.value)) {
             let pie = JSON.parse(JSON.stringify(base_pie)), bar = JSON.parse(JSON.stringify(base_bar)), list = []
             bar['series'][0]['itemStyle'] = {
@@ -208,7 +208,7 @@ onMounted( async () => {
             }
             pie['series'][0]['data'] = list.sort((a, b) => b.value - a.value)
             pies.value[item['角色']] = pie
-            let rdmap = await POST("/echo-scoring-system/get-echo-relative-deviation-by-name", {
+            let rdmap = await POST("/api/echo/get-echo-relative-deviation-by-name", {
                 username: store.auth.user.username,
                 name: item['角色']
             })

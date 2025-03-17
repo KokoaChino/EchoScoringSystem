@@ -160,11 +160,11 @@ watch(selectedValues, (newVal) => {
 })
 
 watch(name, async (newVal) => {
-    weigths.value = await POST("/echo-scoring-system/get-weigths", {
+    weigths.value = await POST("/api/echo/get-weigths", {
         name: newVal,
         username: store.auth.user.username,
     })
-    percent.value = await POST("/echo-scoring-system/get-echo-percent", {
+    percent.value = await POST("/api/echo/get-echo-percent", {
         name: newVal,
         username: store.auth.user.username,
         values: JSON.stringify(to_map())
@@ -183,7 +183,7 @@ const add_list = async (key, x) => {
                 list.value[i] = ['', '']
                 len.value--
             } else list.value[i][1] = x
-            percent.value = await POST("/echo-scoring-system/get-echo-percent", {
+            percent.value = await POST("/api/echo/get-echo-percent", {
                 name: name.value,
                 username: store.auth.user.username,
                 values: JSON.stringify(to_map())
@@ -203,7 +203,7 @@ const add_list = async (key, x) => {
         setTimeout(() => radios.value[index] = 0, 250);
     } else {
         list.value[len.value++] = [key, x]
-        percent.value = await POST("/echo-scoring-system/get-echo-percent", {
+        percent.value = await POST("/api/echo/get-echo-percent", {
             name: name.value,
             username: store.auth.user.username,
             values: JSON.stringify(to_map())
@@ -246,7 +246,7 @@ async function edit_echo() {
         ElMessage.warning("声骸副词条个数不合法！");
         return
     }
-    await POST("/echo-scoring-system/del-echo", {
+    await POST("/api/echo/del-echo", {
         username: store.auth.user.username,
         name: store.echo.name,
         index: store.echo.index
@@ -261,7 +261,7 @@ async function edit_echo() {
         echo: echo,
         score: percent.value['总得分']
     }
-    data.value = await POST("/echo-scoring-system/add-data", {
+    data.value = await POST("/api/echo/add-data", {
         name: name.value,
         username: store.auth.user.username,
         json: JSON.stringify(echoImpl)
@@ -305,7 +305,7 @@ async function add_echo() {
         echo: echo,
         score: percent.value['总得分']
     }
-    data.value = await POST("/echo-scoring-system/add-data", {
+    data.value = await POST("/api/echo/add-data", {
         name: name.value,
         username: store.auth.user.username,
         json: JSON.stringify(echoImpl)
@@ -324,7 +324,7 @@ async function add_temp_echo() {
         item.push('')
         echo['echo'].push(item)
     }
-    await POST("/echo-scoring-system/add-temp-echo", {
+    await POST("/api/echo/add-temp-echo", {
         username: store.auth.user.username,
         echo: JSON.stringify(echo),
         name_list: JSON.stringify([name.value])
@@ -387,22 +387,22 @@ onMounted(async () => {
         background: 'rgba(0, 0, 0, 0.7)',
     })
     try {
-        keys.value = await get("/echo-scoring-system/get-echo-keys")
+        keys.value = await get("/api/echo/get-echo-keys")
         for (let key of keys.value) {
             map.value[key] = []
             weigths.value[key] = 0
         }
         selectedValues.value = ['热熔', '长离']
-        map.value = await get("/echo-scoring-system/get-echo-values")
+        map.value = await get("/api/echo/get-echo-values")
         keys.value.forEach(key => {
             map.value[key].unshift(0);
             map.value[key].sort((a, b) => a - b);
         })
-        weigths.value = await POST("/echo-scoring-system/get-weigths", {
+        weigths.value = await POST("/api/echo/get-weigths", {
             name: name.value,
             username: store.auth.user.username,
         })
-        data.value = await post("/echo-scoring-system/get-data", store.auth.user.username)
+        data.value = await post("/api/echo/get-data", store.auth.user.username)
         if (store.echo.name) {
             name.value = store.echo.name;
             cost.value = Number(data.value[store.echo.name][store.echo.index]['cost'])
@@ -413,10 +413,10 @@ onMounted(async () => {
                 radios.value[keys.value.indexOf(echo[i][0])] = Number(echo[i][1])
             }
             len.value = 5
-            let characters = await post("/echo-scoring-system/get-characters", store.auth.user.username)
+            let characters = await post("/api/echo/get-characters", store.auth.user.username)
             selectedValues.value = [characters[name.value]['type'], name.value]
         }
-        percent.value = await POST("/echo-scoring-system/get-echo-percent", {
+        percent.value = await POST("/api/echo/get-echo-percent", {
             name: name.value,
             username: store.auth.user.username,
             values: JSON.stringify(to_map())

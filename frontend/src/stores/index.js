@@ -15,7 +15,7 @@ export const useStore = defineStore('store', () => {
     const options = ref(null)
     const get_options = async () => {
         if (options.value === null) { // 单例模式
-            let g = await get("/echo-scoring-system/get-character-groups"), res = []
+            let g = await get("/api/echo/get-character-groups"), res = []
             for (let key of Object.keys(g)) {
                 let item = {value: key, label: key, children: []}
                 for (let name of g[key]) {

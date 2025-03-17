@@ -7,13 +7,25 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="backend" />
+        <module name="auth-service" />
+        <module name="pay-service" />
+        <module name="common" />
+        <module name="message-service" />
+        <module name="gateway" />
+        <module name="echo-service" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="backend" options="-parameters" />
+      <module name="auth-service" options="-parameters" />
+      <module name="backend" options="" />
+      <module name="common" options="-parameters" />
+      <module name="echo-service" options="-parameters" />
+      <module name="gateway" options="-parameters" />
+      <module name="message-service" options="-parameters" />
+      <module name="pay-service" options="-parameters" />
+      <module name="services" options="" />
     </option>
   </component>
 </project>

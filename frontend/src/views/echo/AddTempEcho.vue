@@ -186,7 +186,7 @@ const edit_echo = async () => {
         ElMessage.warning("角色列表为空！");
         return;
     }
-    await POST("/echo-scoring-system/del-temp-echo", {
+    await POST("/api/echo/del-temp-echo", {
         username: store.auth.user.username,
         json: store.echo.name
     })
@@ -197,7 +197,7 @@ const edit_echo = async () => {
     }
     data['声骸']['main'] = main.value
     data['声骸']['cost'] = cost.value
-    await POST("/echo-scoring-system/add-temp-echo", {
+    await POST("/api/echo/add-temp-echo", {
         username: store.auth.user.username,
         echo: JSON.stringify(data['声骸']),
         name_list: JSON.stringify(name_list.value)
@@ -246,7 +246,7 @@ async function add_temp_echo() {
         item.push('')
         echo['echo'].push(item)
     }
-    await POST("/echo-scoring-system/add-temp-echo", {
+    await POST("/api/echo/add-temp-echo", {
         username: store.auth.user.username,
         echo: JSON.stringify(echo),
         name_list: JSON.stringify(name_list.value)
@@ -267,10 +267,10 @@ onMounted(async () => {
         background: 'rgba(0, 0, 0, 0.7)',
     })
     try {
-        keys.value = await get("/echo-scoring-system/get-echo-keys")
+        keys.value = await get("/api/echo/get-echo-keys")
         radios.value = new Array(keys.value.length).fill(0)
-        map.value = await get("/echo-scoring-system/get-echo-values")
-        for (let name of await get("/echo-scoring-system/get-names")) {
+        map.value = await get("/api/echo/get-echo-values")
+        for (let name of await get("/api/echo/get-names")) {
             name_options.value.push({ value: name, label: name })
         }
         keys.value.forEach(key => {
@@ -282,7 +282,7 @@ onMounted(async () => {
             for (let key of Object.keys(e)) {
                 if (key !== '声骸') name_list.value.push(key)
             }
-            let characters = await post("/echo-scoring-system/get-characters", store.auth.user.username)
+            let characters = await post("/api/echo/get-characters", store.auth.user.username)
             for (let name of name_list.value) {
                 selectedValues.value.push([characters[name]['type'], name])
             }

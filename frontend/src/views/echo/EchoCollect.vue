@@ -169,8 +169,8 @@ onMounted(async () => {
         background: 'rgba(0, 0, 0, 0.7)',
     })
     try {
-        cnt.value = await post("/echo-scoring-system/get-echo-cnts", store.auth.user.username)
-        rd.value = await post("/echo-scoring-system/get-echo-relative-deviation", store.auth.user.username)
+        cnt.value = await post("/api/echo/get-echo-cnts", store.auth.user.username)
+        rd.value = await post("/api/echo/get-echo-relative-deviation", store.auth.user.username)
         rds.value = JSON.parse(JSON.stringify(base_bar))
         score.value = JSON.parse(JSON.stringify(base_bar))
         rates.value = JSON.parse(JSON.stringify(base_bar))

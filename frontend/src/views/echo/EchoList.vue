@@ -245,7 +245,7 @@ const re_check = async () => {
         echo_check.value[key] = false
     }
     range.value = [0, 100]
-    data.value = await post("/echo-scoring-system/get-data", store.auth.user.username)
+    data.value = await post("/api/echo/get-data", store.auth.user.username)
 }
 
 const get_check = () => {
@@ -285,7 +285,7 @@ function set_background_color(item, num) {
 }
 
 const get_data_by_screen = async () => {
-    data.value = await POST("/echo-scoring-system/get-data-by-screen", {
+    data.value = await POST("/api/echo/get-data-by-screen", {
         json: JSON.stringify(get_check()),
         username: store.auth.user.username
     })
@@ -301,7 +301,7 @@ async function edit_echo(name, index) {
 
 async function del_echo(name, index, k) {
     if (k === '') return
-    await POST("/echo-scoring-system/del-echo", {
+    await POST("/api/echo/del-echo", {
         username: store.auth.user.username,
         name: name,
         index: index
@@ -392,17 +392,17 @@ onMounted(async () => {
         background: 'rgba(0, 0, 0, 0.7)',
     })
     try {
-        data.value = await post("/echo-scoring-system/get-data", store.auth.user.username)
+        data.value = await post("/api/echo/get-data", store.auth.user.username)
         keys.value = Object.keys(data.value)
         keys.value.sort((a, b) => get_total(b) - get_total(a))
         for (let key of Object.keys(data.value)) {
             showContent.value[key] = new Array(5).fill(false)
-            weigths.value[key] = await POST("/echo-scoring-system/get-weigths", {
+            weigths.value[key] = await POST("/api/echo/get-weigths", {
                 name: key,
                 username: store.auth.user.username,
             })
         }
-        characters.value = await POST("/echo-scoring-system/get-characters", store.auth.user.username)
+        characters.value = await POST("/api/echo/get-characters", store.auth.user.username)
         options.value = await store.get_options()
     } catch (e) {
         console.error("加载数据失败:", e);

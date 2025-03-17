@@ -77,14 +77,14 @@ watch(selectedValues, (newVal) => {
 })
 
 watch(name, async (newVal) => {
-    weigths.value = await POST("/echo-scoring-system/get-weigths", {
+    weigths.value = await POST("/api/echo/get-weigths", {
         name: newVal,
         username: store.auth.user.username,
     })
 });
 
 watch(is_one_percent, async (newVal) => {
-    weigths.value = await POST("/echo-scoring-system/get-weigths", {
+    weigths.value = await POST("/api/echo/get-weigths", {
         name: name.value,
         username: store.auth.user.username,
     })
@@ -112,20 +112,20 @@ function set_color(key) {
 }
 
 const set_weights = async () => {
-    await POST("/echo-scoring-system/set-weights", {
+    await POST("/api/echo/set-weights", {
         name: name.value,
         username: store.auth.user.username,
         json: JSON.stringify(weigths.value)
     })
-    await post("/echo-scoring-system/re-data", store.auth.user.username)
+    await post("/api/echo/re-data", store.auth.user.username)
 }
 
 const re_weights = async () => {
-    await POST("/echo-scoring-system/re_weights", {
+    await POST("/api/echo/re_weights", {
         name: name.value,
         username: store.auth.user.username
     })
-    weigths.value = await POST("/echo-scoring-system/get-weigths", {
+    weigths.value = await POST("/api/echo/get-weigths", {
         name: name.value,
         username: store.auth.user.username
     })
@@ -157,22 +157,22 @@ onMounted(async () => {
     })
     try {
         options.value = await store.get_options()
-        keys.value = await get("/echo-scoring-system/get-echo-keys")
+        keys.value = await get("/api/echo/get-echo-keys")
         for (let key of keys.value) {
             map.value[key] = []
             weigths.value[key] = 0
         }
         if (store.echo.index === -3) {
             name.value = store.echo.name
-            let characters = await post("/echo-scoring-system/get-characters", store.auth.user.username)
+            let characters = await post("/api/echo/get-characters", store.auth.user.username)
             selectedValues.value = [characters[name.value]['type'], name.value]
         }
-        map.value = await get("/echo-scoring-system/get-echo-values")
+        map.value = await get("/api/echo/get-echo-values")
         keys.value.forEach(key => {
             map.value[key].unshift(0);
             map.value[key].sort((a, b) => a - b);
         })
-        weigths.value = await POST("/echo-scoring-system/get-weigths", {
+        weigths.value = await POST("/api/echo/get-weigths", {
             name: name.value,
             username: store.auth.user.username,
         })

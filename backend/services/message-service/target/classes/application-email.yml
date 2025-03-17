@@ -1,0 +1,12 @@
+spring:
+  mail:
+    host: smtp.163.com
+    username: 17575010142@163.com
+    password: HNXW4LW7ScMycf9R
+    port: 465
+    properties:
+      from: 17575010142@163.com
+      mail:
+        smtp:
+          socketFactory:
+            class: javax.net.ssl.SSLSocketFactory

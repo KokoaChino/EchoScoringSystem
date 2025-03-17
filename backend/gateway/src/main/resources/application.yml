@@ -1,0 +1,13 @@
+server:
+  port: 4000
+spring:
+  application:
+    name: gateway
+  profiles:
+    include: route
+  cloud:
+    nacos:
+      server-addr: localhost:8848
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG

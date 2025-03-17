@@ -6,7 +6,7 @@ import 'element-plus/dist/index.css'
 import axios from "axios";
 import { setupPersistedStore } from './stores/index.js';
 
-axios.defaults.baseURL = 'http://localhost:8080'
+axios.defaults.baseURL = 'http://localhost:4000'
 
 const pinia = createPinia();
 setupPersistedStore(pinia);

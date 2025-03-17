@@ -193,16 +193,16 @@ onMounted( async () => {
         background: 'rgba(0, 0, 0, 0.7)',
     })
     try {
-        let keys = await get("/echo-scoring-system/get-echo-keys")
-        kurtosis.value = await post("/echo-scoring-system/get-weight-kurtosis", store.auth.user.username)
+        let keys = await get("/api/echo/get-echo-keys")
+        kurtosis.value = await post("/api/echo/get-weight-kurtosis", store.auth.user.username)
         for (let name of Object.keys(kurtosis.value)) {
             if (isNaN(kurtosis.value[name])) kurtosis.value[name] = 0;
             let val = kurtosis.value[name].toFixed(2)
             kurtosis.value[name] = val
             el_kurtosis.value[name] = [Math.max(-2, Math.min(0, val)), Math.min(2, Math.max(0, val))]
         }
-        for (let name of await get("/echo-scoring-system/get-names")) {
-            let tmp = await POST("/echo-scoring-system/get-weigths", {
+        for (let name of await get("/api/echo/get-names")) {
+            let tmp = await POST("/api/echo/get-weigths", {
                 name: name,
                 username: store.auth.user.username,
             })

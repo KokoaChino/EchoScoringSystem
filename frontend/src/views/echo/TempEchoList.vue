@@ -287,7 +287,7 @@ const flush_data = async () => {
         text: 'Loading',
         background: 'rgba(0, 0, 0, 0.7)',
     })
-    data.value = await POST("/echo-scoring-system/get-temp-data-by-screen", {
+    data.value = await POST("/api/echo/get-temp-data-by-screen", {
         json: JSON.stringify(get_check()),
         username: store.auth.user.username
     })
@@ -295,7 +295,7 @@ const flush_data = async () => {
 }
 
 const del_sub_echo = async (name, index) => {
-    await POST("/echo-scoring-system/del-temp-sub-echo", {
+    await POST("/api/echo/del-temp-sub-echo", {
         username: store.auth.user.username,
         json: JSON.stringify(data.value[index]),
         name: name
@@ -304,7 +304,7 @@ const del_sub_echo = async (name, index) => {
 }
 
 async function add_echo(name, d, index) {
-    let data = await post("/echo-scoring-system/get-data", store.auth.user.username)
+    let data = await post("/api/echo/get-data", store.auth.user.username)
     let echo = d['声骸']
     if (Object.keys(data).includes(name)) {
         let len = 0, sum = 0
@@ -323,7 +323,7 @@ async function add_echo(name, d, index) {
             return
         }
     }
-    data.value = await POST("/echo-scoring-system/add-data", {
+    data.value = await POST("/api/echo/add-data", {
         name: name,
         username: store.auth.user.username,
         json: JSON.stringify(d[name])
@@ -333,7 +333,7 @@ async function add_echo(name, d, index) {
 }
 
 const del_echo = async (index) => {
-    await POST("/echo-scoring-system/del-temp-echo", {
+    await POST("/api/echo/del-temp-echo", {
         username: store.auth.user.username,
         json: JSON.stringify(data.value[index]),
     })
@@ -362,7 +362,7 @@ const get_temp_data_by_screen = async () => {
         text: 'Loading',
         background: 'rgba(0, 0, 0, 0.7)',
     })
-    data.value = await POST("/echo-scoring-system/get-temp-data-by-screen", {
+    data.value = await POST("/api/echo/get-temp-data-by-screen", {
         json: JSON.stringify(get_check()),
         username: store.auth.user.username
     })
@@ -376,9 +376,9 @@ onMounted(async () => {
         background: 'rgba(0, 0, 0, 0.7)',
     })
     try {
-        characters.value = await post("/echo-scoring-system/get-characters", store.auth.user.username)
+        characters.value = await post("/api/echo/get-characters", store.auth.user.username)
         for (let name of Object.keys(characters.value)) {
-            weights.value[name] = await POST("/echo-scoring-system/get-weigths", {
+            weights.value[name] = await POST("/api/echo/get-weigths", {
                 username: store.auth.user.username,
                 name: name
             })

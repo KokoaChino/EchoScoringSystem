@@ -138,14 +138,14 @@ const options = ref([]), selectedValues = ref([]), names = ref([])
 
 const handleChange = async (value) => {
     names.value = await value.map((path) => path[path.length - 1]);
-    characters.value = await POST("/echo-scoring-system/get-characters-by-screen", {
+    characters.value = await POST("/api/echo/get-characters-by-screen", {
         username: store.auth.user.username,
         names: JSON.stringify(names.value)
     })
 };
 
 watch(check,async () => {
-    screen_weapons.value = await POST("/echo-scoring-system/get-weapons-by-screen", {
+    screen_weapons.value = await POST("/api/echo/get-weapons-by-screen", {
         json: JSON.stringify(screen())
     })
 }, {deep: true})
@@ -168,27 +168,27 @@ const open_drawer = async () => {
         }
     }
     select_weapon.value = ''
-    screen_weapons.value = await POST("/echo-scoring-system/get-weapons-by-screen", {
+    screen_weapons.value = await POST("/api/echo/get-weapons-by-screen", {
         json: JSON.stringify(screen())
     })
 }
 
 const close_drawer = async () => {
     if (select_weapon.value === '') return
-    await POST("/echo-scoring-system/set-weapon", {
+    await POST("/api/echo/set-weapon", {
         username: store.auth.user.username,
         name: select_character.value['name'],
         weapon: select_weapon.value
     })
-    characters.value = await POST("/echo-scoring-system/get-characters-by-screen", {
+    characters.value = await POST("/api/echo/get-characters-by-screen", {
         username: store.auth.user.username,
         names: JSON.stringify(names.value)
     })
-    await POST("/echo-scoring-system/re_weights", {
+    await POST("/api/echo/re_weights", {
         name: select_character.value['name'],
         username: store.auth.user.username
     })
-    await post("/echo-scoring-system/re-data", store.auth.user.username)
+    await post("/api/echo/re-data", store.auth.user.username)
 }
 
 const screen = () => {
@@ -244,11 +244,11 @@ onMounted( async () => {
     })
     try {
         options.value = await store.get_options()
-        characters.value = await POST("/echo-scoring-system/get-characters-by-screen", {
+        characters.value = await POST("/api/echo/get-characters-by-screen", {
             username: store.auth.user.username,
             names: JSON.stringify(names.value)
         })
-        weapons.value = await get("/echo-scoring-system/get-weapons")
+        weapons.value = await get("/api/echo/get-weapons")
     } catch (e) {
         console.error("加载数据失败:", e);
     } finally {

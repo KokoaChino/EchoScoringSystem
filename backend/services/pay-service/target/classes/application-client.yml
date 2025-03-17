@@ -1,0 +1,12 @@
+spring:
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            logger-level: full
+            connect-timeout: 5000
+            read-timeout: 10000
+feign:
+  sentinel:
+    enabled: true

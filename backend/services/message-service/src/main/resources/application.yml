@@ -1,0 +1,49 @@
+server:
+  port: 4070
+spring:
+  profiles:
+    active: dev
+    include:
+      - datasource
+      - email
+      - mq
+      - redis
+      - client
+  application:
+    name: message-service
+  cloud:
+    nacos:
+      server-addr: localhost:8848
+      config:
+        import-check:
+          enabled: false
+        namespace: ${spring.profiles.active:public}
+    sentinel:
+      transport:
+        dashboard: localhost:8080
+      eager: true
+logging:
+  level:
+    com.message.client: debug
+
+---
+spring:
+  config:
+    import:
+      - nacos:database.properties?group=message
+    activate:
+      on-profile: dev
+---
+spring:
+  config:
+    import:
+      - nacos:database.properties?group=message
+    activate:
+      on-profile: test
+---
+spring:
+  config:
+    import:
+      - nacos:database.properties?group=message
+    activate:
+      on-profile: prod

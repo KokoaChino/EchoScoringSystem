@@ -54,9 +54,10 @@ async function post(url, data) {
     }
 }
 
-async function GET(url) {
+async function GET(url, params) {
     try {
         const res = await axios.get(url, {
+            params: params,
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
