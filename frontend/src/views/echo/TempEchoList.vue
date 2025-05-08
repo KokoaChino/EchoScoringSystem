@@ -173,7 +173,7 @@ import { ref, onMounted, watch } from "vue";
 import router from "@/router/index.js";
 import { useStore } from "@/stores/index.js";
 import { post, POST } from "@/net/index.js";
-import {ElLoading, ElMessage} from "element-plus";
+import { ElLoading, ElMessage } from "element-plus";
 
 const store = useStore(), loading = ref(false)
 const name_check = ref([]), cost_check = ref({1: false, 3: false, 4: false}), main_check = ref({

@@ -61,7 +61,7 @@ import Template from "@/components/layout/Template.vue";
 import { ref, onMounted, watch } from "vue";
 import { get, post, POST } from "@/net/index.js";
 import { useStore } from "@/stores/index.js";
-import {ElLoading} from "element-plus";
+import {ElLoading, ElMessage} from "element-plus";
 
 
 const store = useStore()
@@ -118,6 +118,7 @@ const set_weights = async () => {
         json: JSON.stringify(weigths.value)
     })
     await post("/api/echo/re-data", store.auth.user.username)
+    ElMessage.success("权重更新成功！")
 }
 
 const re_weights = async () => {

@@ -5,15 +5,18 @@ spring:
     active: dev
     include:
       - datasource
+      - seata
   application:
     name: echo-service
   cloud:
     nacos:
       server-addr: localhost:8848
-      config:
-        import-check:
-          enabled: false
-        namespace: ${spring.profiles.active:public}
+      import-check:
+        enabled: false
+      namespace: ${spring.profiles.active:public}
+      discovery:
+        ip: localhost
+        port: ${server.port}
     sentinel:
       transport:
         dashboard: localhost:8080

@@ -71,7 +71,7 @@ import { EditPen, Lock, Message, User } from "@element-plus/icons-vue";
 import router from "@/router";
 import { onMounted, reactive, ref } from "vue";
 import { ElMessage, ElNotification } from "element-plus";
-import { _POST } from "@/net";
+import {_POST, GET} from "@/net";
 import { useStore } from "@/stores/index.js";
 
 const store = useStore()
@@ -106,7 +106,7 @@ const form = reactive({
 const validateUsername = (rule, value, callback) => {
     if (value === '') {
         callback(new Error('请输入用户名'))
-    } else if(!/^[a-zA-Z0-9\u4e00-\u9fa5]+$/.test(value)){
+    } else if (!/^[a-zA-Z0-9\u4e00-\u9fa5]+$/.test(value)){
         callback(new Error('用户名不能包含特殊字符，只能是中文 / 英文 / 数字'))
     } else {
         callback()
@@ -171,9 +171,14 @@ const register = () => {
     })
 }
 
-const validateEmail = () => {
+const validateEmail = async () => {
     loading.value = true
     try {
+        let account = await GET("/api/auth/get-account", { username: form.email })
+        if (!(account === null || account === undefined || account === "")) {
+            ElMessage.warning("此邮箱已被注册，请更换邮箱！")
+            return
+        }
         if (store.auth.verificationStatus) {
             coldTime.value = 60
             _POST('/api/auth/valid-register-email', {

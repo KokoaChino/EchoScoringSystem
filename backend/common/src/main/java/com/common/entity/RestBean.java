@@ -4,11 +4,11 @@ import lombok.Data;
 
 
 @Data
-public class RestBean<T> { // 前后端数据交互规范
+public class RestBean<T> {
 
-    private int status; // 响应码
-    private boolean success; // 是否成功
-    private T message; // 响应消息
+    private int status;
+    private boolean success;
+    private T message;
 
     private RestBean(int status, boolean success, T message) {
         this.status = status;

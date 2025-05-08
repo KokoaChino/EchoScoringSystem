@@ -54,7 +54,7 @@ const form = reactive({
 })
 
 const login = () => {
-    if(!form.username || !form.password) {
+    if (!form.username || !form.password) {
         ElMessage.warning('请填写用户名和密码！')
     } else {
         _POST('/api/auth/login', {
@@ -68,6 +68,7 @@ const login = () => {
                 router.push('/index')
             }, () => {
                 store.auth.user = null
+                ElMessage.error('自动登录失败，请重新登录');
             })
         })
     }

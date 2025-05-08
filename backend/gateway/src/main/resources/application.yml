@@ -8,6 +8,9 @@ spring:
   cloud:
     nacos:
       server-addr: localhost:8848
+      discovery:
+        init-timeout: 30000
+        failure-tolerance-enabled: true
 logging:
   level:
-    org.springframework.cloud.gateway: DEBUG
+    org.springframework.cloud.gateway: INFO

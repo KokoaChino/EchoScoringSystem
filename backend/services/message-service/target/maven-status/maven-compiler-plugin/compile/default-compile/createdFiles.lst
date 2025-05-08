@@ -1,0 +1,12 @@
+com\message\MessageMainApplication.class
+com\message\service\listener\RabbitMQListener.class
+com\message\config\ErrorMessageConfig.class
+com\message\mapper\MqMapper.class
+com\message\service\impl\MessageServiceImpl.class
+com\message\exception\MyBlockExceptionHandler.class
+com\message\config\RabbitConfiguration.class
+com\message\service\api\MessageService.class
+com\message\config\FeignConfig.class
+com\message\controller\MessageController.class
+com\message\client\feign\AuthClient.class
+com\message\client\fallback\AuthClientFallback.class

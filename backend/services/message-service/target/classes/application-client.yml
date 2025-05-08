@@ -4,7 +4,7 @@ spring:
       client:
         config:
           default:
-            logger-level: full
+            logger-level: BASIC
             connect-timeout: 5000
             read-timeout: 10000
 feign:

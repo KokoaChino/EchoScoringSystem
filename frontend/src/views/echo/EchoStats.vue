@@ -99,7 +99,7 @@ import { get, post, POST } from "@/net/index.js";
 import "echarts";
 import VChart from "vue-echarts";
 import { useStore } from "@/stores/index.js";
-import {ElLoading} from "element-plus";
+import { ElLoading } from "element-plus";
 
 const store = useStore()
 const base_pie = {

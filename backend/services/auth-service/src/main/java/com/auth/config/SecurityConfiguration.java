@@ -46,18 +46,18 @@ public class SecurityConfiguration { // Security 配置类
                         .anyRequest().authenticated()
                 )
                 .formLogin(e -> e // 配置表单登录设置
-                        .loginProcessingUrl("/api/auth/login") // 设置登录处理的 URL
+                        .loginProcessingUrl("/api/auth/login")
                         .successHandler(this::onAuthenticationSuccess)
                         .failureHandler(this::onAuthenticationFailure)
                 )
                 .logout(e -> e // 配置注销设置
-                        .logoutUrl("/api/auth/logout") // 设置注销请求的 URL
+                        .logoutUrl("/api/auth/logout")
                         .logoutSuccessHandler(this::onAuthenticationSuccess)
                 )
                 .rememberMe(e -> e // 配置记住我功能
-                        .rememberMeParameter("remember") // 记住我参数的名称
-                        .tokenRepository(repository) // 设置 token 存储库
-                        .tokenValiditySeconds(3600 * 24 * 7) // 设置 token 有效期为 7 天
+                        .rememberMeParameter("remember")
+                        .tokenRepository(repository)
+                        .tokenValiditySeconds(3600 * 24 * 15)
                 )
                 .csrf(AbstractHttpConfigurer::disable) // 禁用 CSRF 防护机制
                 .exceptionHandling(e -> e.authenticationEntryPoint(this::onAuthenticationFailure)) // 配置异常处理
@@ -67,20 +67,20 @@ public class SecurityConfiguration { // Security 配置类
     @Bean
     public PersistentTokenRepository tokenRepository() {
         JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
-        jdbcTokenRepository.setDataSource(dataSource); // 设置数据源
-        jdbcTokenRepository.setCreateTableOnStartup(false); // 配置不在启动时创建表格
+        jdbcTokenRepository.setDataSource(dataSource);
+        jdbcTokenRepository.setCreateTableOnStartup(false);
         return jdbcTokenRepository;
     }
 
     private CorsConfigurationSource corsConfigurationSource() { // 定义 CORS 配置源的方法
         CorsConfiguration cors = new CorsConfiguration();
-        cors.addAllowedOriginPattern("*"); // 允许所有的源进行跨域请求
-        cors.setAllowCredentials(true); // 允许携带凭证
-        cors.addAllowedHeader("*"); // 允许所有请求头
-        cors.addAllowedMethod("*"); // 允许所有请求方法
-        cors.addExposedHeader("*"); // 允许暴露所有响应头
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource(); // 创建基于 URL 的 CORS 配置源
-        source.registerCorsConfiguration("/**", cors); // 注册针对所有路径的 CORS 配置
+        cors.addAllowedOriginPattern("*");
+        cors.setAllowCredentials(true);
+        cors.addAllowedHeader("*");
+        cors.addAllowedMethod("*");
+        cors.addExposedHeader("*");
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", cors);
         return source;
     }
 
@@ -88,7 +88,7 @@ public class SecurityConfiguration { // Security 配置类
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder authenticationManagerBuilder =
                 http.getSharedObject(AuthenticationManagerBuilder.class);
-        authenticationManagerBuilder.userDetailsService(authorizeService); // 设置用户详情服务
+        authenticationManagerBuilder.userDetailsService(authorizeService);
         return authenticationManagerBuilder.build();
     }
 
@@ -101,9 +101,9 @@ public class SecurityConfiguration { // Security 配置类
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException { // 当认证成功时调用的处理方法
         response.setCharacterEncoding("utf-8");
-        if(request.getRequestURI().endsWith("/login"))
+        if (request.getRequestURI().endsWith("/login"))
             response.getWriter().write(JSONObject.toJSONString(RestBean.success("登录成功")));
-        else if(request.getRequestURI().endsWith("/logout"))
+        else if (request.getRequestURI().endsWith("/logout"))
             response.getWriter().write(JSONObject.toJSONString(RestBean.success("退出登录成功")));
     }
 

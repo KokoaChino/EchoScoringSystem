@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useStore } from "@/stores";
 import { nextTick } from 'vue';
+import { _GET } from "@/net/index.js";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -76,12 +77,20 @@ const router = createRouter({
     ]
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
     const store = useStore()
-    nextTick(() => {
+    try {
+        await _GET('/api/user/me',
+            (message) => store.auth.user = message,
+            () => store.auth.user = null
+        );
+    } catch (e) {
+        store.auth.user = null
+    }
+    await nextTick(() => {
         if (store.auth.user != null && to.name.startsWith('welcome-')) {
             next('/index')
-        } else if (store.auth.user == null && to.fullPath.startsWith('/index')) {
+        } else if (!store.auth.user && !to.name.startsWith('welcome-')) {
             next('/')
         } else if (to.matched.length === 0) {
             next('/index')

@@ -58,11 +58,13 @@ public class EchoUtil { // 声骸工具类
         put("诸方玄枢", new Weapon("诸方玄枢", "臂铠", 5, 587));
         put("擎渊怒涛", new Weapon("擎渊怒涛", "臂铠", 5, 587));
         put("悲喜剧", new Weapon("悲喜剧", "臂铠", 5, 587));
+        put("焰光裁定", new Weapon("焰光裁定", "臂铠", 5, 587));
 
         put("裁春", new Weapon("裁春", "迅刀", 5, 587));
         put("赫奕流明", new Weapon("赫奕流明", "迅刀", 5, 587));
         put("千古洑流", new Weapon("千古洑流", "迅刀", 5, 587));
         put("不灭航路", new Weapon("不灭航路", "迅刀", 5, 412));
+        put("血誓盟约", new Weapon("血誓盟约", "迅刀", 5, 587));
 
         put("死与舞", new Weapon("死与舞", "佩枪", 5, 500));
         put("停驻之烟", new Weapon("停驻之烟", "佩枪", 5, 587));
@@ -72,6 +74,7 @@ public class EchoUtil { // 声骸工具类
         put("掣傀之手", new Weapon("掣傀之手", "音感仪", 5, 500));
         put("漪澜浮录", new Weapon("漪澜浮录", "音感仪", 5, 500));
         put("和光回唱", new Weapon("和光回唱", "音感仪", 5, 500));
+        put("海的呢喃", new Weapon("海的呢喃", "音感仪", 5, 500));
 
         put("凋亡频移", new Weapon("凋亡频移", "长刃", 4, 462));
         put("纹秋", new Weapon("纹秋", "长刃", 4, 412));
@@ -137,6 +140,14 @@ public class EchoUtil { // 声骸工具类
             put("洛可可", new Character("洛可可", "luokeke", "湮灭", WEAPONS.get("悲喜剧"), 5,
                     new int[]{375, 12250, 1197}, new int[]{71, 2, 2, 100, 10, 9, 45, 17, 0}));
             /* 下面的角色权重未进行人工设置，默认权重由 AI 生成 */
+            put("赞妮", new Character("赞妮", "zanni", "衍射", WEAPONS.get("焰光裁定"), 5,
+                    new int[]{437, 10775, 1136}, new int[]{71, 2, 2, 100, 15, 5, 50, 8, 3}));
+            put("坎特蕾拉", new Character("坎特蕾拉", "kanteleila", "湮灭", WEAPONS.get("海的呢喃"), 5,
+                    new int[]{400, 11600, 1099}, new int[]{71, 2, 2, 100, 20, 45, 0, 20, 6}));
+            put("漂泊者 - 男 - 气动", new Character("漂泊者 - 男 - 气动", "piaobozhe-nan-qidong", "气动", WEAPONS.get("血誓盟约"), 5,
+                    new int[]{437, 10775, 1136}, new int[]{71, 2, 2, 100, 60, 0, 0, 50, 21}));
+            put("漂泊者 - 女 - 气动", new Character("漂泊者 - 女 - 气动", "piaobozhe-nv-qidong", "气动", WEAPONS.get("血誓盟约"), 5,
+                    new int[]{437, 10775, 1136}, new int[]{71, 2, 2, 100, 60, 0, 0, 50, 21}));
             put("布兰特", new Character("布兰特", "bulante", "热熔", WEAPONS.get("不灭航路"), 5,
                     new int[]{375, 11675, 1307}, new int[]{71, 2, 2, 100, 85, 50, 0, 15, 6}));
             put("菲比", new Character("菲比", "feibi", "衍射", WEAPONS.get("和光回唱"), 5,

@@ -1,14 +1,24 @@
 import axios from "axios";
 import { ElMessage } from "element-plus";
+import { useStore } from "vuex";
+import router from "@/router/index.js";
 
-const defaultError = () => ElMessage.error('发生了一些错误，请联系作者："星开祈灵"')
+const defaultError = (err) => {
+    const store = useStore();
+    if (err.response?.status === 401) {
+        store.auth.user = null;
+        router.push('/login');
+    }
+    console.error(err);
+    ElMessage.error('发生了一些错误，请联系作者：星开祈灵')
+}
 const defaultFailure = (message) => ElMessage.warning(message)
 
 function _GET(url, success, failure = defaultFailure, error = defaultError) {
     axios.get(url, {
         withCredentials: true
     }).then(({data}) => {
-        if(data.success)
+        if (data.success)
             success(data.message, data.status)
         else
             failure(data.message, data.status)
@@ -22,7 +32,7 @@ function _POST(url, data, success, failure = defaultFailure, error = defaultErro
         },
         withCredentials: true
     }).then(({data}) => {
-        if(data.success)
+        if (data.success)
             success(data.message, data.status)
         else
             failure(data.message, data.status)

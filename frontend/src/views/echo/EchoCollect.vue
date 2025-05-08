@@ -95,7 +95,7 @@ import { post } from "@/net/index.js";
 import { useStore } from "@/stores/index.js";
 import VChart from "vue-echarts";
 import "echarts";
-import {ElLoading} from "element-plus";
+import { ElLoading } from "element-plus";
 
 const store = useStore()
 const color = {

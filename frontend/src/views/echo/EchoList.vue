@@ -157,8 +157,8 @@ import Template from "@/components/layout/Template.vue";
 import { ref, onMounted, watch } from "vue";
 import router from "@/router/index.js";
 import { useStore } from "@/stores/index.js";
-import { get, post, POST } from "@/net/index.js";
-import {ElLoading} from "element-plus";
+import { post, POST } from "@/net/index.js";
+import { ElLoading } from "element-plus";
 
 const store = useStore()
 const showContent = ref({}), characters = ref({})
@@ -182,6 +182,8 @@ const scale = ref({
     '漂泊者 - 男 - 衍射': '80%',
     '漂泊者 - 男 - 湮灭': '80%',
     '漂泊者 - 女 - 湮灭': '85%',
+    '漂泊者 - 男 - 气动': '80%',
+    '漂泊者 - 女 - 气动': '85%',
     '吟霖': '95%',
     '鉴心': '95%',
     '莫特斐': '79%',
@@ -196,6 +198,8 @@ const scale = ref({
     '洛可可': '75%',
     '菲比': '70%',
     '布兰特': '77%',
+    '坎特蕾拉': '79%',
+    '赞妮': '73%',
 })
 const name_check = ref([]), cost_check = ref({1: false, 3: false, 4: false}), main_check = ref({
     '百分比攻击': false,

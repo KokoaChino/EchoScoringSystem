@@ -1,16 +1,21 @@
 package com.auth.service.impl;
 
+import com.auth.client.feign.EchoClient;
 import com.auth.client.feign.MessageClient;
+import com.auth.client.feign.PayClient;
+import com.auth.mapper.DataGovernanceMapper;
 import com.auth.mapper.UserMapper;
 import com.auth.service.api.AuthorizeService;
 import com.common.entity.Account;
 import jakarta.annotation.Resource;
+import org.apache.seata.spring.annotation.GlobalTransactional;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -22,7 +27,16 @@ public class AuthorizeServiceImpl implements AuthorizeService {
     UserMapper userMapper;
 
     @Resource
+    DataGovernanceMapper dataGovernanceMapper;
+
+    @Resource
     MessageClient messageClient;
+
+    @Resource
+    EchoClient echoClient;
+
+    @Resource
+    PayClient payClient;
 
     @Resource
     StringRedisTemplate template;
@@ -119,12 +133,19 @@ public class AuthorizeServiceImpl implements AuthorizeService {
     }
 
     @Override
+    @Transactional
+    @GlobalTransactional
     public boolean changeUsername(String username, String email) { // 重置名称
         String oldUsername = userMapper.findAccountByNameOrEmail(email).getUsername();
-        boolean res = userMapper.resetUsernameByEmail(username, email) > 0;
-        for (String table : userMapper.findAllTables()) {
-            userMapper.resetUsername(table, username, oldUsername);
+        if (oldUsername == null) {
+            throw new RuntimeException("原用户名不存在");
         }
+        boolean res = userMapper.resetUsernameByEmail(username, email) > 0;
+        for (String table : dataGovernanceMapper.findAllTables()) {
+            dataGovernanceMapper.resetUsername(table, username, oldUsername);
+        }
+        echoClient.changeUsername(username, oldUsername);
+        payClient.changeUsername(username, oldUsername);
         return res;
     }
 
@@ -140,10 +161,14 @@ public class AuthorizeServiceImpl implements AuthorizeService {
     }
 
     @Override
+    @Transactional
+    @GlobalTransactional
     public void signout(String username) { // 注销用户
-        for (String tableName : userMapper.findAllTables()) {
-            userMapper.deleteAccountByUsername(tableName, username);
+        for (String tableName : dataGovernanceMapper.findAllTables()) {
+            dataGovernanceMapper.deleteAccountByUsername(tableName, username);
         }
+        echoClient.signout(username);
+        payClient.signout(username);
     }
 
     @Override

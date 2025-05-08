@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024-2025 KokoaChino
+ * Released under the MIT License
+ */
+
 package com.message;
 
 import org.springframework.boot.SpringApplication;

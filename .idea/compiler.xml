@@ -7,12 +7,17 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="auth-service" />
-        <module name="pay-service" />
         <module name="common" />
-        <module name="message-service" />
         <module name="gateway" />
-        <module name="echo-service" />
+      </profile>
+      <profile name="Annotation profile for backend" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
+        </processorPath>
+        <module name="auth-service" />
       </profile>
     </annotationProcessing>
   </component>
@@ -25,7 +30,7 @@
       <module name="gateway" options="-parameters" />
       <module name="message-service" options="-parameters" />
       <module name="pay-service" options="-parameters" />
-      <module name="services" options="" />
+      <module name="services" options="-parameters" />
     </option>
   </component>
 </project>

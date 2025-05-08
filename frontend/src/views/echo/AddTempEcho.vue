@@ -98,7 +98,7 @@
 import Template from "@/components/layout/Template.vue";
 import { onMounted, ref, watch } from "vue";
 import { get, POST, post } from "@/net/index.js";
-import {ElLoading, ElMessage} from "element-plus";
+import { ElLoading, ElMessage } from "element-plus";
 import { useStore } from "@/stores/index.js";
 import { onBeforeRouteLeave } from 'vue-router';
 

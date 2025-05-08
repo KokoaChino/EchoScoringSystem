@@ -188,7 +188,7 @@ const validateCode = (rule, value, callback) => {
 }
 
 const onValidate = (prop, isValid) => {
-    if(prop === 'email')
+    if (prop === 'email')
         isEmailValid.value = isValid
 }
 
@@ -219,9 +219,14 @@ const rules = {
     ],
 }
 
-const sendEmail = () => {
+const sendEmail = async () => {
     loading3.value = true
     try {
+        let account = await GET("/api/auth/get-account", { username: form.email })
+        if (!(account === null || account === undefined || account === "")) {
+            ElMessage.warning("此邮箱已被注册，请更换邮箱！")
+            return
+        }
         coldTime.value = 60
         _POST('/api/auth/valid-register-email', {
             email: form.email
@@ -338,7 +343,7 @@ const submit = async () => {
             }
             let is_P = form['email']
             if (form['email']) {
-                formRef.value.validate( (isValid) => {
+                formRef.value.validate((isValid) => {
                     if (isValid) {
                         _POST('/api/auth/validate-email', {
                             email: form.email,

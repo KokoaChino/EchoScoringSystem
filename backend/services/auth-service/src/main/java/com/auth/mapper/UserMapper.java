@@ -3,7 +3,6 @@ package com.auth.mapper;
 import com.common.entity.Account;
 import com.common.entity.AccountUser;
 import org.apache.ibatis.annotations.*;
-import java.util.List;
 
 
 @Mapper
@@ -27,20 +26,6 @@ public interface UserMapper { // 用户相关的映射器
 
     @Update("update account set email = #{newEmail} where email = #{oldEmail}")
     int resetEmailByEmail(String oldEmail, String newEmail);
-
-
-    @Select("select table_name from information_schema.TABLES where table_schema = 'echo_scoring_system'")
-    List<String> findAllTables();
-
-    @Delete("<script>" +
-            "delete from ${table_name} where username = #{username}" +
-            "</script>")
-    void deleteAccountByUsername(String table_name, String username);
-
-    @Update("<script>" +
-            "update ${table_name} set username = #{username} where username = #{old_username}" +
-            "</script>")
-    void resetUsername(String table_name, String username, String old_username);
 
 
     @Select("select vip = 1 from account where username = #{username}")

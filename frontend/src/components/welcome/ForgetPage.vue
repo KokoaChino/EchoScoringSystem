@@ -83,7 +83,7 @@
 <script setup>
 import { onMounted, reactive, ref } from "vue";
 import { EditPen, Lock, Message } from "@element-plus/icons-vue";
-import { _POST } from "@/net";
+import { _POST, GET } from "@/net";
 import { ElMessage, ElNotification } from "element-plus";
 import router from "@/router";
 import { useStore } from "@/stores/index.js";
@@ -152,9 +152,14 @@ const onValidate = (prop, isValid) => {
         isEmailValid.value = isValid
 }
 
-const validateEmail = () => {
+const validateEmail = async () => {
     loading.value = true
     try {
+        let account = await GET("/api/auth/get-account", { username: form.email })
+        if (account === null || account === undefined || account === "") {
+            ElMessage.warning("邮箱账户不存在！")
+            return
+        }
         if (store.auth.verificationStatus) {
             coldTime.value = 60
             _POST('/api/auth/valid-reset-email', {

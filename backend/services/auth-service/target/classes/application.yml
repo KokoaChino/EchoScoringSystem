@@ -6,22 +6,26 @@ spring:
     include:
       - datasource
       - client
+      - seata
+      - redis
   application:
     name: auth-service
   cloud:
     nacos:
       server-addr: localhost:8848
-      config:
-        import-check:
-          enabled: false
-        namespace: ${spring.profiles.active:public}
+      import-check:
+        enabled: false
+      namespace: ${spring.profiles.active:public}
+      discovery:
+        ip: localhost
+        port: ${server.port}
     sentinel:
       transport:
         dashboard: localhost:8080
       eager: true
 logging:
   level:
-    com.auth.client: debug
+    com.auth.client: info
 
 ---
 spring:
