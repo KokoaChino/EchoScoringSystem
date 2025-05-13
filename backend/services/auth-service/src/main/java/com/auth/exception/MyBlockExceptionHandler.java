@@ -21,7 +21,7 @@ public class MyBlockExceptionHandler implements BlockExceptionHandler {
         response.setStatus(429);
         response.setContentType("application/json;charset=utf-8");
         PrintWriter writer = response.getWriter();
-        R error = R.error(500, resourceName + "被Sentinel限制了，原因：" + e.getClass());
+        R error = R.error(429, resourceName + "被Sentinel限制了，原因：" + e.getClass());
         String json = objectMapper.writeValueAsString(error);
         writer.write(json);
         writer.flush();

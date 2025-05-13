@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useStore } from "@/stores";
 import { nextTick } from 'vue';
 import { _GET } from "@/net/index.js";
+import {ElMessage} from "element-plus";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -79,18 +80,11 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
     const store = useStore()
-    try {
-        await _GET('/api/user/me',
-            (message) => store.auth.user = message,
-            () => store.auth.user = null
-        );
-    } catch (e) {
-        store.auth.user = null
-    }
     await nextTick(() => {
         if (store.auth.user != null && to.name.startsWith('welcome-')) {
             next('/index')
         } else if (!store.auth.user && !to.name.startsWith('welcome-')) {
+            ElMessage.warning('自动登录失效，请重新登录');
             next('/')
         } else if (to.matched.length === 0) {
             next('/index')

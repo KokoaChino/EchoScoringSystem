@@ -178,7 +178,7 @@ public class EchoScoringSystemController { // 声骸评分系统控制器
 
     @PostMapping("/get-temp-data-by-screen")
     public List<Map<String, Echo>> getTempDataByScreen(@RequestParam("username") String username,
-                                                   @RequestParam("json") String json) {
+                                                       @RequestParam("json") String json) {
         return service.getTempDataByScreen(username, json);
     }
 

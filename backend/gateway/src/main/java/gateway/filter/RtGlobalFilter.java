@@ -20,8 +20,6 @@ public class RtGlobalFilter implements GlobalFilter, Ordered {
         String uri = request.getURI().toString();
         long start = System.currentTimeMillis();
         log.info("请求 {} 开始", uri);
-        // ============================== 以上是前置逻辑 ==============================
-        // ============================== 以下是后置逻辑 ==============================
         return chain.filter(exchange).doFinally((result) -> {
             long end = System.currentTimeMillis();
             log.info("请求 {} 结束，耗时：{}ms", uri, end - start);

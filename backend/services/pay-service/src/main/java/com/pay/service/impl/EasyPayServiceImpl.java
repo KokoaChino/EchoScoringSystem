@@ -16,17 +16,21 @@ import com.pay.service.api.EasyPayService;
 import com.pay.util.PayUtil;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 
+@Slf4j
 @Service
 public class EasyPayServiceImpl implements EasyPayService {
 
@@ -45,44 +49,67 @@ public class EasyPayServiceImpl implements EasyPayService {
     @Resource
     AuthClient authClient;
 
+    private static final String LOCK_PREFIX = "lock:pay:";
+
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public AliPay pay(String username) { // 生成支付二维码
-        if (Boolean.TRUE.equals(template.hasKey(username))) { // Redis 里有未过期的订单，直接返回
-            String json = template.opsForValue().get(username);
-            return JSON.parseObject(json, new TypeReference<AliPay>() {});
-        } else { // 否则，再去数据库找
-            Order order = payMapper.findOrderByUsername(username);
-            if (order != null) {
-                if (Duration.between(order.getCreateTime(), LocalDateTime.now()).toMinutes() <= 30)
-                    return new AliPay(order.getId(), username, PayUtil.urlToQrcode(order.getQrUrl()));
+        String lockKey = LOCK_PREFIX + username;
+        try {
+            // 获取分布式锁，防止缓存击穿
+            Boolean isLocked = template.opsForValue().setIfAbsent(lockKey, UUID.randomUUID().toString(), 3, TimeUnit.SECONDS);
+            if (Boolean.TRUE.equals(isLocked)) {
+                try {
+                    if (Boolean.TRUE.equals(template.hasKey(username))) {
+                        String json = template.opsForValue().get(username);
+                        return JSON.parseObject(json, new TypeReference<AliPay>() {});
+                    }
+                    Order existingOrder = payMapper.findOrderByUsername(username);
+                    if (existingOrder != null && !isOrderExpired(existingOrder)) {
+                        return new AliPay(
+                                existingOrder.getId(),
+                                username,
+                                PayUtil.urlToQrcode(existingOrder.getQrUrl())
+                        );
+                    }
+                    String orderId = username + "-" + System.currentTimeMillis();
+                    Factory.setOptions(config);
+                    AlipayTradePrecreateResponse response = Factory.Payment.FaceToFace().preCreate("声骸评分系统VIP", orderId, "39.99");
+                    String httpBody = response.getHttpBody();
+                    JSONObject jsonObject = JSON.parseObject(httpBody);
+                    String qrUrl = jsonObject.getJSONObject("alipay_trade_precreate_response").getString("qr_code");
+                    AliPay aliPay = new AliPay(orderId, username, PayUtil.urlToQrcode(qrUrl));
+                    // 删除旧订单并插入新订单（事务内操作）
+                    payMapper.deleteOrderByUsername(username);
+                    payMapper.insertOrder(new Order(orderId, username, LocalDateTime.now(), qrUrl));
+                    String aliPayJson = JSON.toJSONString(aliPay); // 设置缓存（带随机过期时间，防雪崩）
+                    int expireMinutes = 30 + new Random().nextInt(3);
+                    template.opsForValue().set(username, aliPayJson, expireMinutes, TimeUnit.MINUTES);
+                    // 发送延迟消息（30分钟后检查支付状态）
+                    Map<String, String> msg = new HashMap<>();
+                    msg.put("id", UUID.randomUUID() + "-FAILED");
+                    msg.put("outTradeNo", orderId);
+                    msg.put("username", username);
+                    msg.put("time", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                    messageClient.insertMessageIdLog(msg.get("id"), 0);
+                    messageClient.sendDelayedMqMessage("e1", "pay_failed", msg, "1800000"); // 30分钟延迟
+                    return aliPay;
+                } finally {
+                    template.delete(lockKey); // 释放锁
+                }
+            } else {
+                // 获取锁失败，等待后重试（适用于低并发场景）
+                Thread.sleep(1000);
+                return pay(username);
             }
-            try {
-                String id = username + "-" + System.currentTimeMillis();
-                Factory.setOptions(config);
-                AlipayTradePrecreateResponse response = Factory.Payment.FaceToFace().preCreate("声骸评分系统VIP", id, "39.99");
-                String httpBody = response.getHttpBody();
-                JSONObject jsonObject = JSONObject.parseObject(httpBody);
-                String qrUrl = jsonObject.getJSONObject("alipay_trade_precreate_response").get("qr_code").toString();
-                AliPay aliPay = new AliPay(id, username, PayUtil.urlToQrcode(qrUrl));
-                payMapper.deleteOrderByUsername(username);
-                payMapper.insertOrder(new Order(id, username, LocalDateTime.now(), qrUrl));
-                template.opsForValue().set(username, JSON.toJSONString(aliPay), 30, TimeUnit.MINUTES);
-                Map<String, String> msg = new HashMap<>(
-                        Map.ofEntries(
-                                Map.entry("id", UUID.randomUUID() + "-FAILED"),
-                                Map.entry("outTradeNo", id),
-                                Map.entry("username", username),
-                                Map.entry("time", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
-                        )
-                );
-                messageClient.insertMessageIdLog(msg.get("id"), 0);
-                messageClient.sendDelayedMqMessage("e1", "pay_failed", msg, "1800000"); // 延迟时间 30min
-                return aliPay;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
+        } catch (Exception e) {
+            log.error("支付二维码生成失败，用户：{}", username, e);
+            return null;
         }
+    }
+
+    private boolean isOrderExpired(Order order) {
+        return Duration.between(order.getCreateTime(), LocalDateTime.now()).toMinutes() > 30;
     }
 
     @Override

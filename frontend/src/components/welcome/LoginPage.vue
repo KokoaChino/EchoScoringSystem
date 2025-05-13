@@ -68,7 +68,6 @@ const login = () => {
                 router.push('/index')
             }, () => {
                 store.auth.user = null
-                ElMessage.error('自动登录失败，请重新登录');
             })
         })
     }

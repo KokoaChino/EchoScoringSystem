@@ -1,11 +1,11 @@
 spring:
   mail:
     host: smtp.163.com
-    username: ${SMTP_USERNAME}
-    password: ${SMTP_PASSWORD}
+    username: 17575010142@163.com
+    password: HNXW4LW7ScMycf9R
     port: 465
     properties:
-      from: ${SMTP_USERNAME}
+      from: 17575010142@163.com
       mail:
         smtp:
           socketFactory:

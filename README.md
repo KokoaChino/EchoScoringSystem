@@ -640,7 +640,6 @@ $$
   - **异常处理**：全局异常拦截、Sentinel 限流熔断
   - **服务通信**：Feign 客户端、负载均衡
   - **事务管理**：Spring 事务、Seata 分布式事务
-  - **线程与缓存**：Redis 缓存验证码、线程池（隐式通过 Spring 管理）
 
 ### 前端
 
@@ -666,7 +665,7 @@ $$
 
 ### 后端
 
-#### 1. **云原生微服务架构与全链路治理体系**  
+#### 1. 微服务架构下的云就绪方案
 
 **亮点描述：**  
 
@@ -779,8 +778,6 @@ public class RtGlobalFilter implements GlobalFilter, Ordered { // 链路追踪�
         String uri = request.getURI().toString();
         long start = System.currentTimeMillis();
         log.info("请求 {} 开始", uri); // 请求入口日志
-        // ============================== 以上是前置逻辑 ==============================
-        // ============================== 以下是后置逻辑 ==============================
         return chain.filter(exchange).doFinally((result) -> { // 耗时计算
             long end = System.currentTimeMillis();
             log.info("请求 {} 结束，耗时：{}ms", uri, end - start);
@@ -809,8 +806,8 @@ public class RtGlobalFilter implements GlobalFilter, Ordered { // 链路追踪�
 public class FeignConfig {
     
     @Bean
-    Logger.Level feignLoggerLevel() { // 配置全链路日志记录
-        return Logger.Level.FULL;
+    Logger.Level feignLoggerLevel() {// 仅记录请求方法、URL和响应状态码
+        return Logger.Level.BASIC;
     }
 
     @Bean
@@ -903,10 +900,9 @@ public interface DataGovernanceMapper {
 
 **技术亮点：**
 
-- **RBAC动态权限控制**：通过接口级路径匹配规则实现细粒度鉴权（`/api/auth/**`开放，其余强制认证）
+- **URL级访问控制**：通过接口级路径匹配规则实现细粒度鉴权（`/api/auth/**`开放，其余强制认证）
 - **混合认证状态管理**：Spring Security会话机制 + 拦截器上下文绑定，支持无状态RESTful接口与状态会话共存
 - **持久化双因素验证**：RememberMe功能集成持久化令牌仓库，实现15天有效期的设备记忆验证
-- **防御纵深设计**：关键操作强制身份验证、敏感会话信息服务器托管、认证异常统一拦截处理
 
 **代码片段：**
 
@@ -973,8 +969,7 @@ public class AuthorizeInterceptor implements HandlerInterceptor {
 **亮点描述：**
 
 * **请求幂等性保障**：采用SETNX原子指令构建防重放攻击体系，通过复合键设计(email+sid+状态)实现三维度请求标识
-* **无锁并发控制**：利用Redis单线程特性与StringRedisTemplate的CAS操作，实现200+ TPS的验证码吞吐能力
-* **阶梯式流控策略**：双重时效校验机制（3分钟总窗口期+120秒冷却期）精确管控业务频率
+* **阶梯式流控策略**：双重时效校验机制（3分钟总窗口期+60秒冷却期）精确管控业务频率
 
 **代码描述：**
 
@@ -1004,7 +999,6 @@ public String sendValidateEmail(String email, String sessionId, boolean hasAccou
 
 **亮点描述：**
 
-* **多维度流量控制**：基于Sentinel的热点参数规则防护（资源名动态识别），异常流量精准拦截
 * **服务熔断降级**：FeignClient声明式熔断策略（Fallback自动激活），异常服务返回预设安全值
 * **友好流量治理**：全局流量规则异常处理（429状态码+JSON结构化响应），客户端请求优雅降级
 
@@ -1023,7 +1017,7 @@ public class MyBlockExceptionHandler implements BlockExceptionHandler {
         response.setStatus(429);  // HTTP 429 状态码
         response.setContentType("application/json;charset=utf-8");
         PrintWriter writer = response.getWriter();
-        R error = R.error(500, resourceName + "被Sentinel限制了，原因：" + e.getClass());
+        R error = R.error(429, resourceName + "被Sentinel限制了，原因：" + e.getClass());
         String json = objectMapper.writeValueAsString(error);
         writer.write(json);
         writer.flush();
@@ -1167,7 +1161,7 @@ public Map<String, Number> getEchoPercent(String username, String name, String j
 **亮点描述：**
 
 - **消息投递可靠性保障**：采用消息状态日志表（`message_id_log`）与ACK自动重试机制，通过事务型更新确保至少一次投递（`selectMessageIdLog/updateMessageStatus`）
-- **精准延迟队列实现**：基于TTL+死信路由链式结构（`x-dead-letter-exchange`），实现订单超时场景的毫秒级事件触发（`q2->e2->q3`路由链路）
+- **精准延迟队列实现**：基于TTL+死信路由链式结构（`x-dead-letter-exchange`），实现订单超时场景的毫秒级事件触发（`e1->q2->e2->q3`路由链路）
 - **消费端幂等性控制**：通过全局消息ID状态机（`0/1/2`三态标记），在业务处理前强制校验消息生命周期，规避重复消费风险
 
 **代码片段：**
@@ -1321,9 +1315,9 @@ public class RabbitMQListener {
 
 **亮点描述：**
 
-- **内存级二维码生成技术**：基于ZXing实时生成Base64编码图像，规避文件存储IO瓶颈
-- **双层级订单缓存设计**：未支付订单优先通过Redis缓存响应，超时后自动降级至数据库查询
-- **柔性事务补偿机制**：通过延迟MQ消息（`sendDelayedMqMessage`设置30min延迟）实现支付状态兜底检查，保障最终一致性
+- **动态缓存过期策略与防雪崩设计**：通过为缓存设置随机过期时间（30~33分钟），分散缓存失效峰值，规避数据库雪崩风险
+- **多级支付状态校验与本地状态前置**：优先通过本地VIP状态快速响应支付查询，未命中时再调用支付宝API
+- **零文件IO的内存级二维码生成**：基于ZXing直接生成Base64编码的二维码Data URI，省去文件读写流程
 
 **代码片段：**
 
@@ -1349,42 +1343,59 @@ public class EasyPayServiceImpl implements EasyPayService {
 	
     // 支付主逻辑
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public AliPay pay(String username) { // 生成支付二维码
-        if (Boolean.TRUE.equals(template.hasKey(username))) { // 优先读取Redis热点数据（缓存命中场景）
-            String json = template.opsForValue().get(username);
-            return JSON.parseObject(json, new TypeReference<AliPay>() {});
-        } else { // 数据库兜底查询（缓存穿透处理）
-            Order order = payMapper.findOrderByUsername(username);
-            if (order != null) {
-                if (Duration.between(order.getCreateTime(), LocalDateTime.now()).toMinutes() <= 30)
-                    return new AliPay(order.getId(), username, PayUtil.urlToQrcode(order.getQrUrl()));
+        String lockKey = LOCK_PREFIX + username;
+        try {
+            // 获取分布式锁，防止缓存击穿
+            Boolean isLocked = template.opsForValue().setIfAbsent(lockKey, UUID.randomUUID().toString(), 3, TimeUnit.SECONDS);
+            if (Boolean.TRUE.equals(isLocked)) {
+                try {
+                    if (Boolean.TRUE.equals(template.hasKey(username))) {
+                        String json = template.opsForValue().get(username);
+                        return JSON.parseObject(json, new TypeReference<AliPay>() {});
+                    }
+                    Order existingOrder = payMapper.findOrderByUsername(username);
+                    if (existingOrder != null && !isOrderExpired(existingOrder)) {
+                        return new AliPay(
+                                existingOrder.getId(),
+                                username,
+                                PayUtil.urlToQrcode(existingOrder.getQrUrl())
+                        );
+                    }
+                    String orderId = username + "-" + System.currentTimeMillis();
+                    Factory.setOptions(config);
+                    AlipayTradePrecreateResponse response = Factory.Payment.FaceToFace().preCreate("声骸评分系统VIP", orderId, "39.99");
+                    String httpBody = response.getHttpBody();
+                    JSONObject jsonObject = JSON.parseObject(httpBody);
+                    String qrUrl = jsonObject.getJSONObject("alipay_trade_precreate_response").getString("qr_code");
+                    AliPay aliPay = new AliPay(orderId, username, PayUtil.urlToQrcode(qrUrl));
+                    // 删除旧订单并插入新订单（事务内操作）
+                    payMapper.deleteOrderByUsername(username);
+                    payMapper.insertOrder(new Order(orderId, username, LocalDateTime.now(), qrUrl));
+                    String aliPayJson = JSON.toJSONString(aliPay); // 设置缓存（带随机过期时间，防雪崩）
+                    int expireMinutes = 30 + new Random().nextInt(3);
+                    template.opsForValue().set(username, aliPayJson, expireMinutes, TimeUnit.MINUTES);
+                    // 发送延迟消息（30分钟后检查支付状态）
+                    Map<String, String> msg = new HashMap<>();
+                    msg.put("id", UUID.randomUUID() + "-FAILED");
+                    msg.put("outTradeNo", orderId);
+                    msg.put("username", username);
+                    msg.put("time", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                    messageClient.insertMessageIdLog(msg.get("id"), 0);
+                    messageClient.sendDelayedMqMessage("e1", "pay_failed", msg, "1800000"); // 30分钟延迟
+                    return aliPay;
+                } finally {
+                    template.delete(lockKey); // 释放锁
+                }
+            } else {
+                // 获取锁失败，等待后重试（适用于低并发场景）
+                Thread.sleep(1000);
+                return pay(username);
             }
-            try { // 支付宝预创建流程（内存生成二维码核心逻辑）
-                String id = username + "-" + System.currentTimeMillis();
-                Factory.setOptions(config);
-                AlipayTradePrecreateResponse response = Factory.Payment.FaceToFace().preCreate("声骸评分系统VIP", id, "39.99");
-                String httpBody = response.getHttpBody();
-                JSONObject jsonObject = JSONObject.parseObject(httpBody);
-                String qrUrl = jsonObject.getJSONObject("alipay_trade_precreate_response").get("qr_code").toString();
-                AliPay aliPay = new AliPay(id, username, PayUtil.urlToQrcode(qrUrl));
-                payMapper.deleteOrderByUsername(username); // 数据库与Redis双写（保障数据可靠性）
-                payMapper.insertOrder(new Order(id, username, LocalDateTime.now(), qrUrl));
-                template.opsForValue().set(username, JSON.toJSONString(aliPay), 30, TimeUnit.MINUTES);
-                Map<String, String> msg = new HashMap<>(
-                        Map.ofEntries(
-                                Map.entry("id", UUID.randomUUID() + "-FAILED"),
-                                Map.entry("outTradeNo", id),
-                                Map.entry("username", username),
-                                Map.entry("time", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
-                        )
-                );
-                messageClient.insertMessageIdLog(msg.get("id"), 0); // 延迟消息补偿机制（柔性事务实现）
-                messageClient.sendDelayedMqMessage("e1", "pay_failed", msg, "1800000"); // 延迟时间 30min
-                return aliPay;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
+        } catch (Exception e) {
+            log.error("支付二维码生成失败，用户：{}", username, e);
+            return null;
         }
     }
 	
@@ -1496,19 +1507,19 @@ public class PayUtil {
 
 ## 📊 代码量统计
 
-数据截止至 **v1.6.1**
+数据截止至 **v1.6.2**
 
 （单位：行，不包含文档代码）
 
 |    项目名    | 后端 | 前端 | 总和  |
 | :----------: | :--: | :--: | :---: |
-|   网关服务   | 165  |  -   |  165  |
+|   网关服务   | 187  |  -   |  187  |
 |   认证服务   | 902  |  -   |  902  |
 |   声骸服务   | 1472 |  -   | 1472  |
 |   消息服务   | 696  |  -   |  696  |
-|   支付服务   | 679  |  -   |  679  |
-| （其他代码） | 366  | 5754 | 6090  |
-|   **总和**   | 4280 | 5754 | 10034 |
+|   支付服务   | 706  |  -   |  706  |
+| （其他代码） | 366  | 5727 | 6093  |
+|   **总和**   | 4329 | 5727 | 10056 |
 
 
 
@@ -1892,6 +1903,12 @@ frontend
 * 完善用户认证与记住我功能，减少 401 异常发生
 * 每个微服务修改为拥有独立的数据库，更符合微服务设计的核心原则
 
+**2025-5-13：[1.6.2]**
+
+* 完善用户认证与记住我功能
+* 调整远程调用日志记录级别，提升系统性能
+* 优化了项目文档模块的交互
+
 
 
 
@@ -1937,7 +1954,7 @@ frontend
 
 **Q2：声骸数据需要逐个录入太繁琐，是否有快捷方式？**
 
-我充分理解手动录入的不便，正在积极研究通过「库街区」账号 token 授权同步游戏数据实现一键导入（核心版本迭代）
+我充分理解用户手动录入的不便，正在积极研究通过「库街区」账号 token 授权同步游戏数据实现一键导入（核心版本迭代）
 
 如有紧急问题反映，请通过 [GitHub Issues](https://github.com/KokoaChino/xkql/issues) 或 📧 2178740980@qq.com 联系维护者
 

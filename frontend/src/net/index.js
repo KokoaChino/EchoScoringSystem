@@ -10,7 +10,6 @@ const defaultError = (err) => {
         router.push('/login');
     }
     console.error(err);
-    ElMessage.error('发生了一些错误，请联系作者：星开祈灵')
 }
 const defaultFailure = (message) => ElMessage.warning(message)
 
