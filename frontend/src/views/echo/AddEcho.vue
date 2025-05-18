@@ -75,7 +75,7 @@
                                 </div>
                             </td>
                             <td :style="set_style2(key[0])">
-                                {{ key[0] !== '' ? percent[key[0]] + '%' : '' }}
+                                {{ key[0] !== '' && typeof percent[key[0]] === 'number' ? percent[key[0]] + '%' : '' }}
                             </td>
                         </tr>
                         <tr style="border-top: 2px solid #ccc;">
