@@ -1,11 +1,11 @@
 spring:
   mail:
     host: smtp.163.com
-    username: 17575010142@163.com
-    password: HNXW4LW7ScMycf9R
+    username: [替换为您的邮箱账号]
+    password: [替换为您的邮箱密码]
     port: 465
     properties:
-      from: 17575010142@163.com
+      from: [替换为您的邮箱账号]
       mail:
         smtp:
           socketFactory:

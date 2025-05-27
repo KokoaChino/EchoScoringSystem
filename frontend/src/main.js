@@ -12,7 +12,7 @@ import axios from "axios";
 import { _GET } from "@/net/index.js";
 import { setupPersistedStore, useStore } from './stores/index.js';
 
-axios.defaults.baseURL = 'http://117.72.119.3:4000'
+axios.defaults.baseURL = 'http://localhost:4000'
 
 const pinia = createPinia();
 setupPersistedStore(pinia);
