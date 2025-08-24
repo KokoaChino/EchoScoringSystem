@@ -1,5 +1,6 @@
 package com.echo.service.api;
 
+import com.echo.dto.RoleDTO;
 import com.echo.entity.Echo;
 import com.echo.entity.Weapon;
 import com.echo.entity.Character;
@@ -45,4 +46,6 @@ public interface EchoScoringSystemService {
     List<Map<String, Echo>> getTempDataByScreen(String username, String json);
     void delTempSubEcho(String username, String json, String name); // 移除临时声骸角色
     void delTempEcho(String username, String json); // 移除临时声骸
+
+    void batchImportEcho(String username, List<RoleDTO> roles, Boolean isDelete); // 批量导入声骸
 }

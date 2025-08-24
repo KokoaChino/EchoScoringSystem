@@ -3,15 +3,19 @@ package com.echo.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.echo.dto.EchoPair;
+import com.echo.dto.RoleDTO;
 import com.echo.entity.Echo;
+import com.echo.entity.EchoDO;
 import com.echo.entity.Weapon;
 import com.echo.entity.Character;
 import com.echo.mapper.EchoMapper;
 import com.echo.service.api.EchoScoringSystemService;
+import com.echo.util.EchoConvert;
 import com.echo.util.EchoUtil;
 import jakarta.annotation.Resource;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
 
@@ -283,7 +287,7 @@ public class EchoScoringSystemServiceImpl implements EchoScoringSystemService {
         Echo tmp = JSON.parseObject(json, Echo.class);
         for (EchoPair echoPair: mapper.getEchoAndId(username, name)) {
             if (JSON.parseObject(echoPair.getEcho(), Echo.class).equals(tmp)) {
-                mapper.deleteEcho(echoPair.getId());
+                mapper.deleteEchoById(echoPair.getId());
                 break;
             }
         }
@@ -573,6 +577,75 @@ public class EchoScoringSystemServiceImpl implements EchoScoringSystemService {
                     return;
                 }
             }
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void batchImportEcho(String username, List<RoleDTO> roles, Boolean isDelete) { // 批量导入声骸
+        if (isDelete) {
+            mapper.deleteTempEchoByUsername(username);
+        }
+        else {
+            List<EchoPair> echoPairs = mapper.getEchoAndName(username);
+            if ((echoPairs != null && !echoPairs.isEmpty())) {
+                for (EchoPair echoPair : echoPairs) {
+                    List<String> nameList = List.of(echoPair.getName());
+                    echoPair.setName_list(JSON.toJSONString(nameList));
+                    echoPair.setName(username);
+                }
+                mapper.batchInsertionTempEchos(echoPairs);
+            }
+        }
+        mapper.deleteEchoByUsername(username);
+        List<EchoDO> echos = new ArrayList<>();
+        for (RoleDTO role: roles) {
+            if (role == null) continue;
+            String roleName = role.getRole().getRoleName();
+            if (role.getRole().getIsMainRole()) {
+                roleName = EchoConvert.mainRoleNameMap(role.getRole().getAttributeName());
+            }
+            List<RoleDTO.EquipPhantom> equipPhantomList = role.getPhantomData().getEquipPhantomList();
+            if (equipPhantomList == null) continue;
+            for (RoleDTO.EquipPhantom equipPhantom : equipPhantomList) {
+                if (!EchoUtil.verifyEquipPhantom(equipPhantom)) {
+                    continue;
+                }
+                Integer cost = equipPhantom.getCost();
+                String main = equipPhantom.getMainProps().get(0).getAttributeName();
+                main = EchoConvert.mainAttributeNameMap(main, cost);
+                Map<String, Number> values = new HashMap<>();
+                for (RoleDTO.EquipPhantomAttribute equipPhantomAttribute : equipPhantom.getSubProps()) {
+                    String attributeName = equipPhantomAttribute.getAttributeName();
+                    String attributeValue = equipPhantomAttribute.getAttributeValue();
+                    attributeName = EchoConvert.subAttributeNameMap(attributeName, attributeValue);
+                    attributeValue = EchoConvert.attributeValueMap(attributeValue);
+                    values.put(attributeName, Double.parseDouble(attributeValue));
+                }
+                Map<String, Number> echoPercentMap = getEchoPercent(username, roleName, JSON.toJSONString(values));
+                List<List<String>> echoList = new ArrayList<>();
+                for (String attributeName : values.keySet()) {
+                    String attributeValue = EchoConvert.attributeValueMap(
+                            values.get(attributeName).toString()
+                    );
+                    String attributeScore = EchoConvert.attributeValueMap(
+                            echoPercentMap.get(attributeName).toString()
+                    );
+                    echoList.add(Arrays.asList(attributeName, attributeValue, attributeScore));
+                }
+                echoList.sort(Comparator.comparing((List<String> item) ->
+                                Double.parseDouble(EchoConvert.attributeValueMap(item.get(2))))
+                        .reversed());
+                Echo echo = new Echo(
+                        main, cost.toString(), echoList,
+                        EchoConvert.attributeValueMap(
+                                echoPercentMap.get("总得分").toString()
+                        ));
+                echos.add(new EchoDO(username, roleName, JSON.toJSONString(echo)));
+            }
+        }
+        if (!echos.isEmpty()) {
+            mapper.batchInsertionEcho(echos);
         }
     }
 }

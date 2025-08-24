@@ -1,20 +1,23 @@
 <template>
-    <div class="main-container">
-        <el-tabs v-model="activeName" type="card" class="demo-tabs">
-            <el-tab-pane label="产品使用手册" name="first">
-                <div class="html-md" v-html="html1"></div>
-            </el-tab-pane>
-            <el-tab-pane label="技术开发文档" name="second">
-                <div class="html-md" v-html="html2"></div>
-            </el-tab-pane>
-        </el-tabs>
-    </div>
+    <Template>
+        <div class="main-container">
+            <el-tabs v-model="activeName" type="card" class="demo-tabs">
+                <el-tab-pane label="产品使用手册" name="first">
+                    <div class="html-md" v-html="html1"></div>
+                </el-tab-pane>
+                <el-tab-pane label="技术开发文档" name="second">
+                    <div class="html-md" v-html="html2"></div>
+                </el-tab-pane>
+            </el-tabs>
+        </div>
+    </Template>
 </template>
 
 
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import Template from "@/components/layout/Template.vue";
 
 const activeName = ref('first');
 const html1 = ref(''), html2 = ref('');

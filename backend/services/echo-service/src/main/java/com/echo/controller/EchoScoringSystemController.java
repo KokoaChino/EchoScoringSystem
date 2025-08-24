@@ -1,5 +1,6 @@
 package com.echo.controller;
 
+import com.echo.dto.RoleDTO;
 import com.echo.entity.Echo;
 import com.echo.entity.Character;
 import com.echo.entity.Weapon;
@@ -193,5 +194,12 @@ public class EchoScoringSystemController { // 声骸评分系统控制器
     public void delTempEcho(@RequestParam("username") String username,
                             @RequestParam("json") String json) { // 移除临时声骸
         service.delTempEcho(username, json);
+    }
+
+    @PostMapping("/batch-import-echo")
+    public void batchImportEcho(@RequestParam("username") String username,
+                                @RequestBody List<RoleDTO> roles,
+                                @RequestParam("isDelete") Boolean isDelete) { // 批量导入声骸
+        service.batchImportEcho(username, roles, isDelete);
     }
 }
