@@ -27,7 +27,8 @@
                 </el-button>
                 <template #dropdown>
                     <el-dropdown-menu>
-                        <el-dropdown-item @click="dialogFormVisible = true">修改用户信息</el-dropdown-item>
+                        <el-dropdown-item @click="dialogFormVisible1 = true">修改用户信息</el-dropdown-item>
+                        <el-dropdown-item @click="dialogFormVisible2 = true">导入声骸数据</el-dropdown-item>
                         <el-dropdown-item @click="open">注销用户</el-dropdown-item>
                         <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
                     </el-dropdown-menu>
@@ -35,24 +36,24 @@
             </el-dropdown>
         </div>
     </div>
-    <el-dialog v-model="dialogFormVisible" title="修改用户信息" width="500" v-loading="loading3">
-        <el-form :model="form" :rules="rules" ref="formRef" @validate="onValidate">
+    <el-dialog v-model="dialogFormVisible1" title="修改用户信息" width="500" v-loading="loading3">
+        <el-form :model="form1" :rules="rules1" ref="formRef1" @validate="onValidate">
             <el-form-item label="用户名称" :label-width="formLabelWidth" prop="username">
-                <el-input v-model="form.username" autocomplete="off" :placeholder="store.auth.user.username">
+                <el-input v-model="form1.username" autocomplete="off" :placeholder="store.auth.user.username">
                     <template #prefix>
                         <el-icon><User /></el-icon>
                     </template>
                 </el-input>
             </el-form-item>
             <el-form-item label="用户密码" :label-width="formLabelWidth" prop="password">
-                <el-input v-model="form.password" :maxlength="16" autocomplete="off" placeholder="我也不知道你原本的密码是什么">
+                <el-input v-model="form1.password" :maxlength="16" autocomplete="off" placeholder="我也不知道你原本的密码是什么">
                     <template #prefix>
                         <el-icon><Lock /></el-icon>
                     </template>
                 </el-input>
             </el-form-item>
             <el-form-item label="用户邮箱" :label-width="formLabelWidth" prop="email">
-                <el-input v-model="form.email" autocomplete="off" :placeholder="store.auth.user.email">
+                <el-input v-model="form1.email" autocomplete="off" :placeholder="store.auth.user.email">
                     <template #prefix>
                         <el-icon><Message /></el-icon>
                     </template>
@@ -61,7 +62,7 @@
             <el-form-item label="验证码" :label-width="formLabelWidth" prop="code">
                 <el-row :gutter="10" style="width: 100%">
                     <el-col :span="17">
-                        <el-input v-model="form.code" :maxlength="6" type="text" placeholder="仅在修改邮箱时需要">
+                        <el-input v-model="form1.code" :maxlength="6" type="text" placeholder="仅在修改邮箱时需要">
                             <template #prefix>
                                 <el-icon><EditPen /></el-icon>
                             </template>
@@ -78,10 +79,54 @@
         </el-form>
         <template #footer>
             <div class="dialog-footer">
-                <el-button @click="cancel">
+                <el-button @click="cancel1">
                     取消
                 </el-button>
-                <el-button type="primary" @click="submit">
+                <el-button type="primary" @click="submit1">
+                    提交
+                </el-button>
+            </div>
+        </template>
+    </el-dialog>
+    <el-dialog v-model="dialogFormVisible2" title="导入声骸数据" width="500" v-loading="loading4">
+        <el-form :model="form2" :rules="rules2" ref="formRef2">
+            <el-form-item label="b-at" :label-width="formLabelWidth" prop="bAt">
+                <el-input v-model="form2.bAt" autocomplete="off" placeholder="5a1b2c3d4e5f67890123456789abcdef">
+                    <template #prefix>
+                        <el-icon><Key /></el-icon>
+                    </template>
+                </el-input>
+            </el-form-item>
+            <el-form-item label="serverId" :label-width="formLabelWidth" prop="serverId">
+                <el-input v-model="form2.serverId" autocomplete="off" placeholder="76402e5b20be2c39f095a152090afddc">
+                    <template #prefix>
+                        <el-icon><Monitor /></el-icon>
+                    </template>
+                </el-input>
+            </el-form-item>
+            <el-form-item label="特征码" :label-width="formLabelWidth" prop="userId">
+                <el-input v-model="form2.userId" autocomplete="off" placeholder="123456789">
+                    <template #prefix>
+                        <el-icon><Operation /></el-icon>
+                    </template>
+                </el-input>
+            </el-form-item>
+            <el-form-item label="清空原始数据" :label-width="formLabelWidth" prop="isDelete">
+                <el-switch v-model="form2.isDelete" />
+            </el-form-item>
+        </el-form>
+        <div style="margin: 15px 0; font-size: 14px;">
+            <el-link href="http://8.138.214.176:5173/ProxyPin%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B.html" target="_blank" :underline="false" type="primary">
+                <el-icon style="vertical-align: middle;"><InfoFilled /></el-icon>
+                <span style="margin-left: 5px; vertical-align: middle;">使用教程：如何获取b-at, serverld</span>
+            </el-link>
+        </div>
+        <template #footer>
+            <div class="dialog-footer">
+                <el-button @click="cancel2">
+                    取消
+                </el-button>
+                <el-button type="primary" @click="submit2">
                     提交
                 </el-button>
             </div>
@@ -110,7 +155,7 @@
         </div>
         <div v-else style="display: flex;align-items: center;justify-content: center;">
             <div class="card" v-loading="loading2">
-                <div class="image-container" v-if="loading" v-loading="loading">
+                <div class="image-container" v-if="loading1" v-loading="loading1">
                     <img src="/qrcode.jpg" alt="支付二维码" class="responsive-image">
                 </div>
                 <div class="image-container" v-else>
@@ -129,23 +174,31 @@
 
 
 <script setup>
-import { ElDropdown, ElDropdownMenu, ElDropdownItem, ElButton, ElMessage, ElMessageBox } from 'element-plus';
+import { ElDropdown, ElDropdownMenu, ElDropdownItem, ElButton, ElMessage, ElMessageBox, ElLoading } from 'element-plus';
 import router from "@/router";
-import {_GET, _POST, GET, post, POST} from "@/net/index.js";
+import { getRoleData, getRoleDetail } from '@/net/kurobbsApi.js'
+import { _GET, _POST, GET, post, POST } from "@/net/index.js";
 import { useStore } from "@/stores";
 import { reactive, ref, watch, onMounted } from 'vue'
-import { EditPen, Lock, Message, User } from "@element-plus/icons-vue";
+import { EditPen, InfoFilled, Key, Lock, Message, Monitor, Operation, User } from "@element-plus/icons-vue";
+import axios from "axios";
 
 const store = useStore();
-const dialogFormVisible = ref(false), vipVisible = ref(false)
-const formLabelWidth = '70px'
-const formRef = ref()
+const dialogFormVisible1 = ref(false), dialogFormVisible2 = ref(false), vipVisible = ref(false)
+const formLabelWidth = '100px'
+const formRef1 = ref(), formRef2 = ref()
 const page = ref(1)
-const form = reactive({
+const form1 = reactive({
     username: '',
     password: '',
     email: '',
     code: ''
+})
+const form2 = reactive({
+    bAt: '',
+    serverId: '',
+    userId: '',
+    isDelete: false
 })
 const isEmailValid = ref(false)
 const coldTime = ref(0)
@@ -154,9 +207,10 @@ const aliPay = ref({
     username: "",
     qrcode: ""
 })
-const isVip = ref(false), loading = ref(true), loading2 = ref(false), loading3 = ref(false)
+const isVip = ref(false)
+const loading1 = ref(true), loading2 = ref(false), loading3 = ref(false), loading4 = ref(false)
 
-watch(dialogFormVisible, () => {
+watch(dialogFormVisible1, () => {
     reset()
 })
 
@@ -180,7 +234,7 @@ const validateEmail = (rule, value, callback) => {
 }
 
 const validateCode = (rule, value, callback) => {
-    if (form.email && !value) {
+    if (form1.email && !value) {
         callback(new Error('请输入新邮箱的验证码'));
     } else {
         callback(); // 验证通过
@@ -199,10 +253,10 @@ const pay = async () => {
     if (aliPay.value === "") aliPay.value = null
     if (aliPay.value == null) {
         ElMessage.error('服务器繁忙，请稍后再试！')
-    } else loading.value = false
+    } else loading1.value = false
 }
 
-const rules = {
+const rules1 = {
     username: [
         { validator: validateUsername, trigger: ['blur', 'change'] },
         { min: 2, max: 8, message: '用户名的长度必须在2-8个字符之间', trigger: ['blur', 'change', 'input'] },
@@ -218,18 +272,47 @@ const rules = {
         { validator: validateCode, trigger: ['blur', 'input'] },
     ],
 }
+const rules2 = {
+    bAt: [
+        { required: true, message: '请输入b-at', trigger: 'blur' },
+        { min: 32, max: 32, message: 'b-at长度应为32个字符', trigger: 'blur' },
+        {
+            pattern: /^[a-fA-F0-9]+$/,
+            message: 'b-at只能包含十六进制字符(0-9, a-f, A-F)',
+            trigger: 'blur'
+        }
+    ],
+    userId: [
+        { required: true, message: '请输入特征码', trigger: 'blur' },
+        { len: 9, message: '特征码长度应为9位', trigger: 'blur' },
+        {
+            pattern: /^\d+$/,
+            message: '特征码只能包含数字',
+            trigger: 'blur'
+        }
+    ],
+    serverId: [
+        { required: true, message: '请输入serverId', trigger: 'blur' },
+        { min: 32, max: 32, message: 'serverId长度应为32个字符', trigger: 'blur' },
+        {
+            pattern: /^[a-fA-F0-9]+$/,
+            message: 'serverId只能包含十六进制字符(0-9, a-f, A-F)',
+            trigger: 'blur'
+        }
+    ]
+}
 
 const sendEmail = async () => {
     loading3.value = true
     try {
-        let account = await GET("/api/auth/get-account", { username: form.email })
+        let account = await GET("/api/auth/get-account", { username: form1.email })
         if (!(account === null || account === undefined || account === "")) {
             ElMessage.warning("此邮箱已被注册，请更换邮箱！")
             return
         }
         coldTime.value = 60
         _POST('/api/auth/valid-register-email', {
-            email: form.email
+            email: form1.email
         }, (message) => {
             ElMessage.success(message)
             setInterval(() => coldTime.value--, 1000)
@@ -271,10 +354,10 @@ const open = () => {
 }
 
 const reset = () => {
-    form['username'] = ''
-    form['password'] = ''
-    form['email'] = ''
-    form['code'] = ''
+    form1['username'] = ''
+    form1['password'] = ''
+    form1['email'] = ''
+    form1['code'] = ''
 }
 
 const logout = () => {
@@ -291,8 +374,11 @@ const signout = () => {
     setTimeout(() => location.reload(), 1000)
 }
 
-const cancel = () => {
-    dialogFormVisible.value = false
+const cancel1 = () => {
+    dialogFormVisible1.value = false
+}
+const cancel2 = () => {
+    dialogFormVisible2.value = false
 }
 
 const close = () => {
@@ -302,7 +388,7 @@ const close = () => {
         qrcode: ""
     }
     page.value = 1
-    loading.value = true
+    loading1.value = true
 }
 
 const pay_query = async () => {
@@ -326,32 +412,32 @@ const pay_query = async () => {
     }
 }
 
-const submit = async () => {
-    formRef.value.validate(async (isValid) => {
+const submit1 = async () => {
+    formRef1.value.validate(async (isValid) => {
         if (isValid) {
-            if (form['username']) {
+            if (form1['username']) {
                 await POST('/api/auth/change-username', {
-                    username: form.username,
+                    username: form1.username,
                     email: store.auth.user.email
                 })
             }
-            if (form['password']) {
+            if (form1['password']) {
                 await POST('/api/auth/change-password', {
-                    password: form.password,
+                    password: form1.password,
                     email: store.auth.user.email
                 })
             }
-            let is_P = form['email']
-            if (form['email']) {
-                formRef.value.validate((isValid) => {
+            let is_P = form1['email']
+            if (form1['email']) {
+                formRef1.value.validate((isValid) => {
                     if (isValid) {
                         _POST('/api/auth/validate-email', {
-                            email: form.email,
-                            code: form.code
+                            email: form1.email,
+                            code: form1.code
                         },  async () => {
                             await POST("/api/auth/change-email", {
                                 oldEmail: store.auth.user.email,
-                                newEmail: form.email,
+                                newEmail: form1.email,
                             })
                             is_P = false
                         })
@@ -361,7 +447,7 @@ const submit = async () => {
                     }
                 })
             }
-            if (form.password || form.email || form.username) {
+            if (form1.password || form1.email || form1.username) {
                 const timeout = 10000;
                 const startTime = Date.now();
                 while (is_P) {
@@ -374,7 +460,62 @@ const submit = async () => {
                 logout()
                 setTimeout(() => location.reload(), 1000)
             } else {
-                cancel()
+                cancel1()
+            }
+        } else {
+            ElMessage.warning('表单验证未通过')
+        }
+    })
+}
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
+const submit2 = async () => {
+    formRef2.value.validate(async (isValid) => {
+        if (isValid) {
+            const loadingInstance = ElLoading.service({
+                lock: true,
+                text: '数据提交中...',
+                background: 'rgba(0, 0, 0, 0.7)'
+            })
+            try {
+                loadingInstance.setText(`正在获取角色列表...`)
+                const response = (await getRoleData(form2.bAt, form2.userId, form2.serverId)).data
+                if (response.success) {
+                    const roleList = JSON.parse(response.data)['roleList']
+                    console.log(roleList)
+                    const roleDTOList = []
+                    for (let i = 0; i < roleList.length; i++) {
+                        let role = roleList[i]
+                        loadingInstance.setText(`正在获取角色详情：${i + 1} / ${roleList.length}...`)
+                        await sleep(500 + Math.random() * 500)
+                        let roleDTO = JSON.parse((await getRoleDetail(form2.bAt, form2.userId, form2.serverId, role['roleId'])).data.data)
+                        roleDTOList.push(roleDTO)
+                    }
+                    console.log(roleDTOList)
+                    loadingInstance.setText(`批量导入声骸中...`)
+                    await axios.post("/api/echo/batch-import-echo",
+                        roleDTOList,
+                        {
+                            params: {
+                                username: store.auth.user.username,
+                                isDelete: form2.isDelete
+                            },
+                            withCredentials: true
+                        }
+                    );
+                    ElMessage.success('请求成功')
+                    if (router.currentRoute.value.path === '/index') {
+                        router.go(0)
+                    } else {
+                        await router.push('/index')
+                    }
+                } else {
+                    ElMessage.error(response.msg)
+                }
+            } catch (err) {
+                ElMessage.error('网络请求失败')
+            } finally {
+                loadingInstance.close()
+                cancel2()
             }
         } else {
             ElMessage.warning('表单验证未通过')

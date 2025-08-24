@@ -6,6 +6,7 @@ spring:
     include:
       - datasource
       - seata
+      - redis
   application:
     name: echo-service
   cloud:

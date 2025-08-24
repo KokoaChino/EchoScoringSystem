@@ -1,6 +1,7 @@
 package com.echo.mapper;
 
 import com.echo.dto.EchoPair;
+import com.echo.entity.EchoDO;
 import org.apache.ibatis.annotations.*;
 import java.util.List;
 
@@ -21,8 +22,21 @@ public interface EchoMapper { // 声骸相关的映射器
     @Insert("insert into echos(username, name, echo) values (#{username}, #{name}, #{echo})")
     void insertEcho(String username, String name, String echo);
 
+    @Insert("""
+    <script>
+    INSERT INTO echos (username, name, echo) VALUES
+    <foreach collection='echos' item='echo' separator=','>
+    (#{echo.username}, #{echo.name}, #{echo.echo})
+    </foreach>
+    </script>
+    """)
+    void batchInsertionEcho(@Param("echos") List<EchoDO> echos);
+
     @Delete("delete from echos where id = #{id}")
-    void deleteEcho(int id);
+    void deleteEchoById(int id);
+
+    @Delete("delete from echos where username = #{username}")
+    void deleteEchoByUsername(String username);
 
 
     @Select("select weight from weights where username = #{username} and name = #{name}")
@@ -55,9 +69,22 @@ public interface EchoMapper { // 声骸相关的映射器
     @Insert("insert into temp_echos(username, echo, name_list) values (#{username}, #{echo}, #{nameList})")
     void insertTempEcho(String username, String echo, String nameList);
 
+    @Insert("""
+    <script>
+    INSERT INTO temp_echos (username, echo, name_list) VALUES
+    <foreach collection='echoPairs' item='echoPair' separator=','>
+    (#{echoPair.name}, #{echoPair.echo}, #{echoPair.name_list})
+    </foreach>
+    </script>
+    """)
+    void batchInsertionTempEchos(@Param("echoPairs") List<EchoPair> echoPairs);
+
     @Update("update temp_echos set name_list = #{nameList} where id = #{id}")
     void updateTempEchoList(int id, String nameList);
 
     @Delete("delete from temp_echos where id = #{id}")
     void deleteTempEcho(int id);
+
+    @Delete("delete from temp_echos where username = #{username}")
+    void deleteTempEchoByUsername(String username);
 }
