@@ -56,11 +56,13 @@ public class EchoUtil { // 声骸工具类
         put("苍鳞千嶂", new Weapon("苍鳞千嶂", "长刃", 5, 587));
         put("浩境粼光", new Weapon("浩境粼光", "长刃", 5, 587));
         put("焰痕", new Weapon("焰痕", "长刃", 5, 587));
+        put("驭冕铸雷之权", new Weapon("驭冕铸雷之权", "长刃", 5, 675));
 
         put("诸方玄枢", new Weapon("诸方玄枢", "臂铠", 5, 587));
         put("擎渊怒涛", new Weapon("擎渊怒涛", "臂铠", 5, 587));
         put("悲喜剧", new Weapon("悲喜剧", "臂铠", 5, 587));
         put("焰光裁定", new Weapon("焰光裁定", "臂铠", 5, 587));
+        put("万物持存的注释", new Weapon("万物持存的注释", "臂铠", 5, 500));
 
         put("裁春", new Weapon("裁春", "迅刀", 5, 587));
         put("赫奕流明", new Weapon("赫奕流明", "迅刀", 5, 587));
@@ -88,6 +90,7 @@ public class EchoUtil { // 声骸工具类
         put("永夜长明", new Weapon("永夜长明", "长刃", 4, 337));
         put("东落", new Weapon("东落", "长刃", 4, 412));
         put("容赦的沉思录", new Weapon("容赦的沉思录", "长刃", 4, 462));
+        put("金穹", new Weapon("金穹", "长刃", 4, 412));
 
         put("尘云旋臂", new Weapon("尘云旋臂", "臂铠", 4, 462));
         put("金掌", new Weapon("金掌", "臂铠", 4, 412));
@@ -96,6 +99,7 @@ public class EchoUtil { // 声骸工具类
         put("袍泽之固", new Weapon("袍泽之固", "臂铠", 4, 337));
         put("骇行", new Weapon("骇行", "臂铠", 4, 412));
         put("酩酊的英雄志", new Weapon("酩酊的英雄志", "臂铠", 4, 462));
+        put("凌空", new Weapon("凌空", "臂铠", 4, 412));
 
         put("心之锚", new Weapon("心之锚", "迅刀", 4, 462));
         put("永续坍缩", new Weapon("永续坍缩", "迅刀", 4, 462));
@@ -105,6 +109,7 @@ public class EchoUtil { // 声骸工具类
         put("不归孤军", new Weapon("不归孤军", "迅刀", 4, 412));
         put("西升", new Weapon("西升", "迅刀", 4, 412));
         put("风流的寓言诗", new Weapon("风流的寓言诗", "迅刀", 4, 462));
+        put("翼锋", new Weapon("翼锋", "迅刀", 4, 412));
 
         put("悖论喷流", new Weapon("悖论喷流", "佩枪", 4, 462));
         put("奔雷", new Weapon("奔雷", "佩枪", 4, 387));
@@ -113,6 +118,7 @@ public class EchoUtil { // 声骸工具类
         put("无眠烈火", new Weapon("无眠烈火", "佩枪", 4, 412));
         put("飞逝", new Weapon("飞逝", "佩枪", 4, 412));
         put("叙别的罗曼史", new Weapon("叙别的罗曼史", "佩枪", 4, 462));
+        put("阳焰", new Weapon("阳焰", "佩枪", 4, 412));
 
         put("核熔星盘", new Weapon("核熔星盘", "音感仪", 4, 462));
         put("清音", new Weapon("清音", "音感仪", 4, 412));
@@ -123,6 +129,7 @@ public class EchoUtil { // 声骸工具类
         put("渊海回声", new Weapon("渊海回声", "音感仪", 4, 337));
         put("虚饰的华尔兹", new Weapon("虚饰的华尔兹", "音感仪", 4, 462));
         put("大海的馈赠", new Weapon("大海的馈赠", "音感仪", 4, 462));
+        put("曜光", new Weapon("曜光", "音感仪", 4, 412));
     }};
     public static Map<String, Character> getCharacters () {
         return new LinkedHashMap<>() {{
@@ -150,6 +157,10 @@ public class EchoUtil { // 声骸工具类
             put("弗洛洛", new Character("弗洛洛", "fuluoluo", "湮灭", WEAPONS.get("幽冥的忘忧章"), 5,
                     new int[]{437, 10775, 1136}, new int[]{71, 2, 2, 100, 0, 9, 2, 55, 5}));
             /* 下面的角色权重仅通过搜寻攻略得出 */
+            put("尤诺", new Character("尤诺", "younuo", "气动", WEAPONS.get("万物持存的注释"), 5,
+                    new int[]{450, 10525, 1124}, new int[]{71, 2, 2, 100, 15, 13, 0, 7, 51}));
+            put("奥古斯塔", new Character("奥古斯塔", "aogusita", "导电", WEAPONS.get("驭冕铸雷之权"), 5,
+                    new int[]{462, 10300, 1112}, new int[]{71, 2, 2, 100, 11, 5, 56, 10, 0}));
             put("露帕", new Character("露帕", "lupa", "热熔", WEAPONS.get("焰痕"), 5,
                     new int[]{387, 11912, 1185}, new int[]{71, 2, 2, 100, 10, 3, 3, 20, 45}));
             put("夏空", new Character("夏空", "xiakong", "气动", WEAPONS.get("林间的咏叹调"), 5,
