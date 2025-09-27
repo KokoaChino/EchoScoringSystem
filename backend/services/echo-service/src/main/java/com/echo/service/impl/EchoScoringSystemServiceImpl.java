@@ -4,9 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.echo.dto.EchoPair;
 import com.echo.dto.RoleDTO;
-import com.echo.entity.Echo;
-import com.echo.entity.EchoDO;
-import com.echo.entity.Weapon;
+import com.echo.entity.*;
 import com.echo.entity.Character;
 import com.echo.mapper.EchoMapper;
 import com.echo.service.api.EchoScoringSystemService;
@@ -127,42 +125,70 @@ public class EchoScoringSystemServiceImpl implements EchoScoringSystemService {
     }
 
     @Override
-    public Map<String, ? extends Number> getWeigthsByUsername(String username, String name) { // 获取角色完整副词条权重
+    public Map<String, ? extends Number> getweightsByUsername(String username, String name) { // 获取角色完整副词条权重
         String json = mapper.getWeight(username, name);
         if (json == null) {
             String weapon = mapper.selectWeapon(username, name);
             if (weapon == null) weapon = CHARACTERS.get(name).getWeapon().getName();
-            return EchoUtil.getWeigths(name, weapon);
+            return EchoUtil.getweights(name, weapon);
         }
         return JSON.parseObject(json, new TypeReference<Map<String, ? extends Number>>() {});
     }
 
     @Override
-    public void setWeigths(String username, String name, String json) { // 设置角色副词条权重
+    public Map<String, Map<String, ? extends Number>> getAllweightsByUsername(String username) { // 获取所有角色完整副词条权重
+        List<CharacterConfigDO> dbResults = mapper.getAllWeightsByUsername(username);
+        Map<String, Map<String, ? extends Number>> res = new HashMap<>();
+        for (CharacterConfigDO configDO : dbResults) {
+            res.put(
+                    configDO.getName(),
+                    JSON.parseObject(configDO.getWeight(), new TypeReference<Map<String, ? extends Number>>() {})
+            );
+        }
+        List<String> names = getNames();
+        Map<String, String> weapons = new HashMap<>();
+        for (String name : names) {
+            if (!res.containsKey(name)) {
+                if (weapons.isEmpty()) {
+                    dbResults = mapper.getAllWeaponsByUsername(name);
+                    for (CharacterConfigDO configDO : dbResults) {
+                        weapons.put(configDO.getName(), configDO.getWeapon());
+                    }
+                }
+                String weapon = weapons.get(name);
+                if (weapon == null) weapon = CHARACTERS.get(name).getWeapon().getName();
+                res.put(name, EchoUtil.getweights(name, weapon));
+            }
+        }
+        return res;
+    }
+
+    @Override
+    public void setweights(String username, String name, String json) { // 设置角色副词条权重
         int i = mapper.updateWeight(username, name, json);
         if (i == 0) mapper.insertWeight(username, name, json);
     }
 
     @Override
-    public void reWeigths(String username, String name) { // 重置角色副词条权重
+    public void reweights(String username, String name) { // 重置角色副词条权重
         mapper.deleteWeight(username, name);
     }
 
     @Override
     public Map<String, Number> getEchoPercent(String username, String name, String json) { // 获取声骸评分
         Map<String, Number> values = JSON.parseObject(json, new TypeReference<Map<String, Number>>() {});
-        Map<String, ? extends Number> weigths = getWeigthsByUsername(username, name); // 角色完整副词条权重
+        Map<String, ? extends Number> weights = getweightsByUsername(username, name); // 角色完整副词条权重
         Map<String, Number> res = new LinkedHashMap<>();
         List<Map.Entry<String, Double>> pairs = new ArrayList<>();
         for (String key: ECHO_KEYS) {
-            double value = weigths.get(key).doubleValue() * ECHO_VALUES.get(key)[0] / ECHO_AVERAGE.get(key);
+            double value = weights.get(key).doubleValue() * ECHO_VALUES.get(key)[0] / ECHO_AVERAGE.get(key);
             pairs.add(new AbstractMap.SimpleEntry<>(key, value));
         }
         pairs.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
         double maxScore = pairs.stream().limit(5).mapToDouble(Map.Entry::getValue).sum(); // 理论最大分数
         double myScore = 0; // 实际分数
         for (String key: values.keySet()) {
-            double score = weigths.get(key).doubleValue() * values.get(key).doubleValue() / ECHO_AVERAGE.get(key);
+            double score = weights.get(key).doubleValue() * values.get(key).doubleValue() / ECHO_AVERAGE.get(key);
             myScore += score;
             res.put(key, score);
         }
@@ -423,7 +449,7 @@ public class EchoScoringSystemServiceImpl implements EchoScoringSystemService {
     public Map<String, Double> getWeightKurtosis(String username) { // 获取权重过剩峰度
         Map<String, Double> res = new LinkedHashMap<>();
         for (String name : getNames()) {
-            Map<String, ? extends Number> map = getWeigthsByUsername(username, name);
+            Map<String, ? extends Number> map = getweightsByUsername(username, name);
             DescriptiveStatistics stats = new DescriptiveStatistics();
             for (Number val : map.values()) {
                 stats.addValue(val.doubleValue());

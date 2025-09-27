@@ -157,12 +157,12 @@ import Template from "@/components/layout/Template.vue";
 import { ref, onMounted, watch } from "vue";
 import router from "@/router/index.js";
 import { useStore } from "@/stores/index.js";
-import { post, POST } from "@/net/index.js";
+import { post, POST, GET } from "@/net/index.js";
 import { ElLoading } from "element-plus";
 
 const store = useStore()
 const showContent = ref({}), characters = ref({})
-const data = ref({}), weigths = ref({}), keys = ref([])
+const data = ref({}), weights = ref({}), keys = ref([])
 const scale = ref({
     '长离': '77%',
     '安可': '113%',
@@ -324,8 +324,8 @@ async function del_echo(name, index, k) {
 }
 
 function set_color(name, key) {
-    if (key === '' || !weigths.value || Object.keys(weigths.value).length === 0) return ''
-    let color = '', w = weigths.value[name][key]
+    if (key === '' || !weights.value || Object.keys(weights.value).length === 0) return ''
+    let color = '', w = weights.value[name][key]
     if (w >= 75) {
         color = "red"
     } else if (w >= 40) {
@@ -407,11 +407,10 @@ onMounted(async () => {
         keys.value.sort((a, b) => get_total(b) - get_total(a))
         for (let key of Object.keys(data.value)) {
             showContent.value[key] = new Array(5).fill(false)
-            weigths.value[key] = await POST("/api/echo/get-weigths", {
-                name: key,
-                username: store.auth.user.username,
-            })
         }
+        weights.value = await GET("/api/echo/get-all-weights", {
+            username: store.auth.user.username,
+        })
         characters.value = await POST("/api/echo/get-characters", store.auth.user.username)
         options.value = await store.get_options()
     } catch (e) {

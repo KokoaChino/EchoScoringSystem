@@ -1,6 +1,7 @@
 package com.echo.mapper;
 
 import com.echo.dto.EchoPair;
+import com.echo.entity.CharacterConfigDO;
 import com.echo.entity.EchoDO;
 import org.apache.ibatis.annotations.*;
 import java.util.List;
@@ -42,6 +43,9 @@ public interface EchoMapper { // 声骸相关的映射器
     @Select("select weight from weights where username = #{username} and name = #{name}")
     String getWeight(String username, String name);
 
+    @Select("SELECT name, weight FROM weights WHERE username = #{username}")
+    List<CharacterConfigDO> getAllWeightsByUsername(String username);
+
     @Insert("insert into weights(username, name, weight) values(#{username}, #{name}, #{weight})")
     void insertWeight(String username, String name, String weight);
 
@@ -54,6 +58,9 @@ public interface EchoMapper { // 声骸相关的映射器
 
     @Select("select weapon from weapons where username = #{username} and name = #{name}")
     String selectWeapon(String username, String name);
+
+    @Select("SELECT name, weapon FROM weapons WHERE username = #{username}")
+    List<CharacterConfigDO> getAllWeaponsByUsername(String username);
 
     @Insert("insert into weapons(username, name, weapon) values (#{username}, #{name}, #{weapon}) " +
             "on duplicate key update weapon = #{weapon}")

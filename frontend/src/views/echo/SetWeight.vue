@@ -45,7 +45,7 @@
                 <td :style="set_style3(key)">{{ key }}</td>
                 <td colspan="5" :style="set_style3(key)">
                     <div class="slider-demo-block">
-                        <el-slider v-model="weigths[key]" show-input size="large" :max="100"
+                        <el-slider v-model="weights[key]" show-input size="large" :max="100"
                                    :step="is_one_percent ? 0.01 : 1"/>
                     </div>
                 </td>
@@ -67,7 +67,7 @@ import {ElLoading, ElMessage} from "element-plus";
 const store = useStore()
 const keys = ref([])
 const map = ref({})
-const weigths = ref({})
+const weights = ref({})
 const name = ref('')
 const is_one_percent = ref(false)
 const options = ref([]), selectedValues = ref([])
@@ -77,26 +77,26 @@ watch(selectedValues, (newVal) => {
 })
 
 watch(name, async (newVal) => {
-    weigths.value = await POST("/api/echo/get-weigths", {
+    weights.value = await POST("/api/echo/get-weights", {
         name: newVal,
         username: store.auth.user.username,
     })
 });
 
 watch(is_one_percent, async (newVal) => {
-    weigths.value = await POST("/api/echo/get-weigths", {
+    weights.value = await POST("/api/echo/get-weights", {
         name: name.value,
         username: store.auth.user.username,
     })
     if (!newVal) {
         for (let key of keys.value) {
-            weigths.value[key] = Math.round(weigths.value[key])
+            weights.value[key] = Math.round(weights.value[key])
         }
     }
 });
 
 function set_color(key) {
-    let color, w = weigths.value[key]
+    let color, w = weights.value[key]
     if (w >= 75) {
         color = "red"
     } else if (w >= 40) {
@@ -115,31 +115,31 @@ const set_weights = async () => {
     await POST("/api/echo/set-weights", {
         name: name.value,
         username: store.auth.user.username,
-        json: JSON.stringify(weigths.value)
+        json: JSON.stringify(weights.value)
     })
     await post("/api/echo/re-data", store.auth.user.username)
     ElMessage.success("权重更新成功！")
 }
 
 const re_weights = async () => {
-    await POST("/api/echo/re_weights", {
+    await POST("/api/echo/re-weights", {
         name: name.value,
         username: store.auth.user.username
     })
-    weigths.value = await POST("/api/echo/get-weigths", {
+    weights.value = await POST("/api/echo/get-weights", {
         name: name.value,
         username: store.auth.user.username
     })
     if (!is_one_percent.value) {
         for (let key of keys.value) {
-            weigths.value[key] = Math.round(weigths.value[key])
+            weights.value[key] = Math.round(weights.value[key])
         }
     }
 }
 
 const re_fill = () => {
     for (let key of keys.value) {
-        weigths.value[key] = 0
+        weights.value[key] = 0
     }
 }
 
@@ -161,7 +161,7 @@ onMounted(async () => {
         keys.value = await get("/api/echo/get-echo-keys")
         for (let key of keys.value) {
             map.value[key] = []
-            weigths.value[key] = 0
+            weights.value[key] = 0
         }
         if (store.echo.index === -3) {
             name.value = store.echo.name
@@ -173,7 +173,7 @@ onMounted(async () => {
             map.value[key].unshift(0);
             map.value[key].sort((a, b) => a - b);
         })
-        weigths.value = await POST("/api/echo/get-weigths", {
+        weights.value = await POST("/api/echo/get-weights", {
             name: name.value,
             username: store.auth.user.username,
         })

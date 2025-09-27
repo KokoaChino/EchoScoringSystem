@@ -1094,9 +1094,9 @@ public interface EchoScoringSystemService {
     List<String> getNames(); // 获取角色名称列表
     Map<String, List<String>> getCharacterGroupsByType(); // 获取角色分组
     Map<String, int[]> getCharacterStats(); // 获取角色三维属性
-    Map<String, ? extends Number> getWeigthsByUsername(String username, String name); // 获取角色完整副词条权重
-    void setWeigths(String username, String name, String json); // 设置角色副词条权重
-    void reWeigths(String username, String name); // 重置角色副词条权重
+    Map<String, ? extends Number> getweightsByUsername(String username, String name); // 获取角色完整副词条权重
+    void setweights(String username, String name, String json); // 设置角色副词条权重
+    void reweights(String username, String name); // 重置角色副词条权重
 
     Map<String, Number> getEchoPercent(String username, String name, String json); // 获取声骸评分
 
@@ -1161,18 +1161,18 @@ public class Echo { // 声骸
 @Override
 public Map<String, Number> getEchoPercent(String username, String name, String json) { // 获取声骸评分
     Map<String, Number> values = JSON.parseObject(json, new TypeReference<Map<String, Number>>() {});
-    Map<String, ? extends Number> weigths = getWeigthsByUsername(username, name); // 角色完整副词条权重
+    Map<String, ? extends Number> weights = getweightsByUsername(username, name); // 角色完整副词条权重
     Map<String, Number> res = new LinkedHashMap<>();
     List<Map.Entry<String, Double>> pairs = new ArrayList<>();
     for (String key: ECHO_KEYS) {
-        double value = weigths.get(key).doubleValue() * ECHO_VALUES.get(key)[0] / ECHO_AVERAGE.get(key);
+        double value = weights.get(key).doubleValue() * ECHO_VALUES.get(key)[0] / ECHO_AVERAGE.get(key);
         pairs.add(new AbstractMap.SimpleEntry<>(key, value));
     }
     pairs.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
     double maxScore = pairs.stream().limit(5).mapToDouble(Map.Entry::getValue).sum(); // 理论最大分数
     double myScore = 0; // 实际分数
     for (String key: values.keySet()) {
-        double score = weigths.get(key).doubleValue() * values.get(key).doubleValue() / ECHO_AVERAGE.get(key);
+        double score = weights.get(key).doubleValue() * values.get(key).doubleValue() / ECHO_AVERAGE.get(key);
         myScore += score;
         res.put(key, score);
     }
@@ -1535,7 +1535,7 @@ public class PayUtil {
 
 ## 📊 代码量统计
 
-数据截止至 **v1.7.1**
+数据截止至 **v1.7.2**
 
 （单位：行，不包含文档代码）
 
@@ -1543,11 +1543,11 @@ public class PayUtil {
 | :----------: | :--: | :--: | :---: |
 |   网关服务   | 187  |  -   |  187  |
 |   认证服务   | 902  |  -   |  902  |
-|   声骸服务   | 1901 |  -   | 1901  |
+|   声骸服务   | 1950 |  -   | 1950  |
 |   消息服务   | 696  |  -   |  696  |
 |   支付服务   | 706  |  -   |  706  |
-| （其他代码） | 366  | 5908 | 6274  |
-|   **总和**   | 4758 | 5908 | 10666 |
+| （其他代码） | 366  | 5921 | 6287  |
+|   **总和**   | 4807 | 5921 | 10728 |
 
 
 
@@ -1958,6 +1958,10 @@ frontend
 **2025-9-21：[1.7.1]**
 
 - 新增对鸣潮 2.6 角色和武器的支持
+
+**2025-9-27：[1.7.2]**
+
+- 优化多页面加载性能：合并循环请求为批量接口，图表数据按需懒加载
 
 
 

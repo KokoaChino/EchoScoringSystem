@@ -74,7 +74,8 @@
                             </tbody>
                             <tr>
                                 <td colspan="5" class="img_data" style="height: 470px;">
-                                    <el-radio-group class="select" v-model="select_show[item['角色']]">
+                                    <el-radio-group class="select" :model-value="select_show[item['角色']]"
+                                                    @update:model-value="(val) => switchView(item['角色'], val)">
                                         <el-radio-button label="加点次数" value="加点次数"/>
                                         <el-radio-button label="标准化偏差" value="标准化偏差"/>
                                     </el-radio-group>
@@ -160,6 +161,7 @@ const pies = ref({}), bars = ref({})
 const data = ref([]), select_show = ref({}), characters = ref({})
 const props = { multiple: true }
 const options = ref([]), selectedValues = ref([]), names = ref([])
+const loadedDeviations = ref(new Set())
 
 const handleChange = async (value) => {
     names.value = await value.map((path) => path[path.length - 1]);
@@ -179,6 +181,30 @@ function set_background_color(item, num) {
         backgroundRepeat: 'no-repeat'
     };
 }
+
+const switchView = async (role, value) => {
+    select_show.value[role] = value;
+    if (value === '标准化偏差' && !loadedDeviations.value.has(role)) {
+        const rdmap = await POST("/api/echo/get-echo-relative-deviation-by-name", {
+            username: store.auth.user.username,
+            name: role
+        });
+        let bar = JSON.parse(JSON.stringify(base_bar));
+        bar['series'][0]['itemStyle'] = {
+            normal: {
+                color: function(params) {
+                    return params.value < 0 ? 'red' : 'green';
+                }
+            }
+        };
+        for (let key of Object.keys(rdmap)) {
+            bar['xAxis']['data'].push(key);
+            bar['series'][0]['data'].push(rdmap[key]);
+        }
+        bars.value[role] = bar;
+        loadedDeviations.value.add(role);
+    }
+};
 
 onMounted( async () => {
     const loading = ElLoading.service({
@@ -208,15 +234,6 @@ onMounted( async () => {
             }
             pie['series'][0]['data'] = list.sort((a, b) => b.value - a.value)
             pies.value[item['角色']] = pie
-            let rdmap = await POST("/api/echo/get-echo-relative-deviation-by-name", {
-                username: store.auth.user.username,
-                name: item['角色']
-            })
-            for (let key of Object.keys(rdmap)) {
-                let val = rdmap[key]
-                bar['xAxis']['data'].push(key)
-                bar['series'][0]['data'].push(val)
-            }
             bars.value[item['角色']] = bar
             select_show.value[item['角色']] = '加点次数'
             item['攻击'] = (Number(item['固定攻击']) + Number(item['百分比攻击'] * Number(basics[item['角色']][0]) * 0.01)).toFixed(1)

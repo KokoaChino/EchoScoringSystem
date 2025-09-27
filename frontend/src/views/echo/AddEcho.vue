@@ -13,7 +13,7 @@
                     <tbody>
                     <tr v-for="(key, i) in keys" :key="i">
                         <td :style="set_style3(key)">{{ key }}</td>
-                        <td :style="set_style3(key)">{{ Math.round(weigths[key] * 100) / 100 }}</td>
+                        <td :style="set_style3(key)">{{ Math.round(weights[key] * 100) / 100 }}</td>
                         <td style="border-right: none;">
                             <el-radio-group style="gap: 10px" v-model="radios[i]" size="large">
                                 <div v-for="x in map[key]" :key="x">
@@ -115,7 +115,7 @@ const store = useStore()
 
 const keys = ref([])
 const map = ref({})
-const weigths = ref({})
+const weights = ref({})
 const percent = ref({
     "总得分": 0
 })
@@ -160,7 +160,7 @@ watch(selectedValues, (newVal) => {
 })
 
 watch(name, async (newVal) => {
-    weigths.value = await POST("/api/echo/get-weigths", {
+    weights.value = await POST("/api/echo/get-weights", {
         name: newVal,
         username: store.auth.user.username,
     })
@@ -217,7 +217,7 @@ const add_list = async (key, x) => {
 }
 
 function set_color(key) {
-    let color, w = weigths.value[key]
+    let color, w = weights.value[key]
     if (w >= 75) {
         color = "red"
     } else if (w >= 40) {
@@ -390,7 +390,7 @@ onMounted(async () => {
         keys.value = await get("/api/echo/get-echo-keys")
         for (let key of keys.value) {
             map.value[key] = []
-            weigths.value[key] = 0
+            weights.value[key] = 0
         }
         selectedValues.value = ['热熔', '长离']
         map.value = await get("/api/echo/get-echo-values")
@@ -398,7 +398,7 @@ onMounted(async () => {
             map.value[key].unshift(0);
             map.value[key].sort((a, b) => a - b);
         })
-        weigths.value = await POST("/api/echo/get-weigths", {
+        weights.value = await POST("/api/echo/get-weights", {
             name: name.value,
             username: store.auth.user.username,
         })

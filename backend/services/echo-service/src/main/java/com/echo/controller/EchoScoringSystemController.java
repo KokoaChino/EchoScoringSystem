@@ -77,23 +77,23 @@ public class EchoScoringSystemController { // 声骸评分系统控制器
         return service.getCharacterStats();
     }
 
-    @PostMapping("/get-weigths")
-    public Map<String, ? extends Number> getWeigthsByUsername(@RequestParam("username") String username,
-                                                              @RequestParam("name") String name) { // 获取角色完整副词条权重
-        return service.getWeigthsByUsername(username, name);
+    @GetMapping("/get-all-weights")
+    public Map<String, Map<String, ? extends Number>> getAllWeightsByUsername(
+            @RequestParam("username") String username) { // 获取所有角色完整副词条权重
+        return service.getAllweightsByUsername(username);
     }
 
     @PostMapping("/set-weights")
-    public void setWeigths(@RequestParam("username") String username,
+    public void setweights(@RequestParam("username") String username,
                            @RequestParam("name") String name,
                            @RequestParam("json") String json) { // 设置角色副词条权重
-        service.setWeigths(username, name, json);
+        service.setweights(username, name, json);
     }
 
-    @PostMapping("/re_weights")
-    public void reWeigths(@RequestParam("username") String username,
+    @PostMapping("/re-weights")
+    public void reweights(@RequestParam("username") String username,
                           @RequestParam("name") String name) { // 重置角色副词条权重
-        service.reWeigths(username, name);
+        service.reweights(username, name);
     }
 
     @PostMapping("/get-echo-percent")

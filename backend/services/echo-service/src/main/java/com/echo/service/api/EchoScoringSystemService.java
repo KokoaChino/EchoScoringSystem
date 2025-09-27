@@ -23,9 +23,10 @@ public interface EchoScoringSystemService {
     List<String> getNames(); // 获取角色名称列表
     Map<String, List<String>> getCharacterGroupsByType(); // 获取角色分组
     Map<String, int[]> getCharacterStats(); // 获取角色三维属性
-    Map<String, ? extends Number> getWeigthsByUsername(String username, String name); // 获取角色完整副词条权重
-    void setWeigths(String username, String name, String json); // 设置角色副词条权重
-    void reWeigths(String username, String name); // 重置角色副词条权重
+    Map<String, ? extends Number> getweightsByUsername(String username, String name); // 获取角色完整副词条权重
+    Map<String, Map<String, ? extends Number>> getAllweightsByUsername(String username); // 获取所有角色完整副词条权重
+    void setweights(String username, String name, String json); // 设置角色副词条权重
+    void reweights(String username, String name); // 重置角色副词条权重
 
     Map<String, Number> getEchoPercent(String username, String name, String json); // 获取声骸评分
 

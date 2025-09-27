@@ -94,7 +94,7 @@
 <script setup>
 import Template from "@/components/layout/Template.vue";
 import { ref, onMounted } from "vue";
-import { get, post, POST } from "@/net/index.js";
+import { get, post, GET } from "@/net/index.js";
 import { useStore } from "@/stores/index.js";
 import VChart from "vue-echarts";
 import "echarts";
@@ -201,11 +201,11 @@ onMounted( async () => {
             kurtosis.value[name] = val
             el_kurtosis.value[name] = [Math.max(-2, Math.min(0, val)), Math.min(2, Math.max(0, val))]
         }
+        let weights = await GET("/api/echo/get-all-weights", {
+            username: store.auth.user.username,
+        })
         for (let name of await get("/api/echo/get-names")) {
-            let tmp = await POST("/api/echo/get-weigths", {
-                name: name,
-                username: store.auth.user.username,
-            })
+            let tmp = weights[name]
             let pie = JSON.parse(JSON.stringify(base_pie)), bar = JSON.parse(JSON.stringify(base_bar))
             pies.value[name] = pie
             bars.value[name] = bar

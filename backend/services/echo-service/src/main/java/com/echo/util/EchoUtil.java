@@ -223,7 +223,7 @@ public class EchoUtil { // 声骸工具类
         }};
     }
     public static final Map<String, Character> CHARACTERS = getCharacters(); // 角色
-    public static final Map<String, Map<String, Double>> EX_WEIGTHS = Map.ofEntries( // 特别的角色副词条权重
+    public static final Map<String, Map<String, Double>> EX_weightS = Map.ofEntries( // 特别的角色副词条权重
             Map.entry("守岸人", Map.of("暴击率", 15.0))
     );
 
@@ -231,7 +231,7 @@ public class EchoUtil { // 声骸工具类
         return CHARACTERS.get(name).getPinyin();
     }
 
-    public static Map<String, ? extends Number> getDefaultWeigths(String name, String weapon) { // 获取角色副词条默认权重展开
+    public static Map<String, ? extends Number> getDefaultweights(String name, String weapon) { // 获取角色副词条默认权重展开
         int[] w = CHARACTERS.get(name).getWeight(), s = CHARACTERS.get(name).getStats();
         return Map.ofEntries(
                 Map.entry("固定攻击", Math.round(w[0] * ECHO_AVERAGE.get("固定攻击") * 100 / ECHO_AVERAGE.get("百分比攻击") / (s[0] + WEAPONS.get(weapon).getATH()))),
@@ -249,13 +249,13 @@ public class EchoUtil { // 声骸工具类
                 Map.entry("共鸣解放伤害加成", w[8])
         );
     }
-    public static Map<String, Number> getWeigths(String name, String weapon) { // 获取角色全部副词条权重
+    public static Map<String, Number> getweights(String name, String weapon) { // 获取角色全部副词条权重
         Map<String, Number> res = new LinkedHashMap<>();
         for (String key: ECHO_KEYS) {
             double val;
-            if (EX_WEIGTHS.containsKey(name) && EX_WEIGTHS.get(name).containsKey(key)) {
-                val = EX_WEIGTHS.get(name).get(key);
-            } else val = getDefaultWeigths(name, weapon).get(key).doubleValue();
+            if (EX_weightS.containsKey(name) && EX_weightS.get(name).containsKey(key)) {
+                val = EX_weightS.get(name).get(key);
+            } else val = getDefaultweights(name, weapon).get(key).doubleValue();
             res.put(key, val);
         }
         return res;

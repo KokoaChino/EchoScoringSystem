@@ -172,7 +172,7 @@ import Template from "@/components/layout/Template.vue";
 import { ref, onMounted, watch } from "vue";
 import router from "@/router/index.js";
 import { useStore } from "@/stores/index.js";
-import { post, POST } from "@/net/index.js";
+import { post, POST, GET } from "@/net/index.js";
 import { ElLoading, ElMessage } from "element-plus";
 
 const store = useStore(), loading = ref(false)
@@ -377,12 +377,9 @@ onMounted(async () => {
     })
     try {
         characters.value = await post("/api/echo/get-characters", store.auth.user.username)
-        for (let name of Object.keys(characters.value)) {
-            weights.value[name] = await POST("/api/echo/get-weigths", {
-                username: store.auth.user.username,
-                name: name
-            })
-        }
+        weights.value = await GET("/api/echo/get-all-weights", {
+            username: store.auth.user.username,
+        })
         options.value = await store.get_options()
         await get_temp_data_by_screen()
     } catch (e) {
