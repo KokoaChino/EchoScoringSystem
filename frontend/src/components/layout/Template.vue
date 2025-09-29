@@ -8,7 +8,7 @@
             <el-aside class="sidebar" width="200px">
                 <Sidebar />
             </el-aside>
-            <el-main style="margin-left: 200px; padding: 20px">
+            <el-main class="main-content" style="padding: 20px">
                 <div class="main">
                     <slot></slot>
                 </div>
@@ -47,5 +47,12 @@ body {
     background-color: #f4f4f4;
     position: fixed;
     top: 0;
+    z-index: 1000;
+}
+
+.main-content {
+    margin-left: 200px;
+    min-height: calc(100vh - 60px);
+    padding: 20px 20px 20px 220px;
 }
 </style>

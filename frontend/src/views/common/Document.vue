@@ -3,10 +3,10 @@
         <div class="main-container">
             <el-tabs v-model="activeName" type="card" class="demo-tabs">
                 <el-tab-pane label="产品使用手册" name="first">
-                    <div class="html-md" v-html="html1"></div>
+                    <iframe :srcdoc="html1" class="html-md-iframe"></iframe>
                 </el-tab-pane>
                 <el-tab-pane label="技术开发文档" name="second">
-                    <div class="html-md" v-html="html2"></div>
+                    <iframe :srcdoc="html2" class="html-md-iframe"></iframe>
                 </el-tab-pane>
             </el-tabs>
         </div>
@@ -33,7 +33,10 @@ onMounted(async () => {
 
 
 <style scoped>
-.html-md {
+.html-md-iframe {
+    width: 100%;
+    height: 600px;
+    border: none;
     zoom: 1.5;
 }
 </style>

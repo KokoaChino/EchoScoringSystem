@@ -77,6 +77,12 @@ public class EchoScoringSystemController { // 声骸评分系统控制器
         return service.getCharacterStats();
     }
 
+    @PostMapping("/get-weights")
+    public Map<String, ? extends Number> getWeigthsByUsername(@RequestParam("username") String username,
+                                                              @RequestParam("name") String name) { // 获取角色完整副词条权重
+        return service.getweightsByUsername(username, name);
+    }
+
     @GetMapping("/get-all-weights")
     public Map<String, Map<String, ? extends Number>> getAllWeightsByUsername(
             @RequestParam("username") String username) { // 获取所有角色完整副词条权重
