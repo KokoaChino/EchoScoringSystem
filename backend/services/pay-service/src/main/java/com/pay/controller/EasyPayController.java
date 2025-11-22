@@ -1,5 +1,6 @@
 package com.pay.controller;
 
+import com.common.context.UserContext;
 import com.pay.dto.AliPay;
 import com.pay.service.api.EasyPayService;
 import jakarta.annotation.Resource;
@@ -19,11 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class EasyPayController {
 
     @Resource
-    EasyPayService service;
+    private EasyPayService service;
 
     @PostMapping("/pay")
-    public AliPay pay(@RequestParam("username") String username) { // 生成支付二维码
-        return service.pay(username);
+    public AliPay pay() { // 生成支付二维码
+        return service.pay(UserContext.getUsername());
     }
 
     @PostMapping("/notify")
@@ -32,8 +33,7 @@ public class EasyPayController {
     }
 
     @PostMapping("/query")
-    public int query(@RequestParam("username") String username,
-                     @RequestParam("id") String id) { // 查询支付结果
-        return service.query(username, id);
+    public int query(@RequestParam("id") String id) { // 查询支付结果
+        return service.query(UserContext.getUsername(), id);
     }
 }

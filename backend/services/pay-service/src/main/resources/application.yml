@@ -6,9 +6,6 @@ spring:
     include:
       - datasource
       - alipay
-      - client
-      - redis
-      - seata
   application:
     name: pay-service
   cloud:
@@ -32,6 +29,9 @@ logging:
 spring:
   config:
     import:
+      - nacos:redis.properties
+      - nacos:seata.properties
+      - nacos:client.properties
       - nacos:database.properties?group=pay
     activate:
       on-profile: dev
@@ -39,6 +39,9 @@ spring:
 spring:
   config:
     import:
+      - nacos:redis.properties
+      - nacos:seata.properties
+      - nacos:client.properties
       - nacos:database.properties?group=pay
     activate:
       on-profile: test
@@ -46,6 +49,9 @@ spring:
 spring:
   config:
     import:
+      - nacos:redis.properties
+      - nacos:seata.properties
+      - nacos:client.properties
       - nacos:database.properties?group=pay
     activate:
       on-profile: prod

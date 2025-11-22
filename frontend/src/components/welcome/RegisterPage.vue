@@ -161,8 +161,8 @@ const register = () => {
                 password: form.password,
                 email: form.email,
                 code: form.code
-            }, (message) => {
-                ElMessage.success(message)
+            }, (data) => {
+                ElMessage.success(data)
                 router.push("/")
             })
         } else {
@@ -174,8 +174,7 @@ const register = () => {
 const validateEmail = async () => {
     loading.value = true
     try {
-        let account = await GET("/api/auth/get-account", { username: form.email })
-        if (!(account === null || account === undefined || account === "")) {
+        if ((await GET("/api/auth/check-user", { username: form.email })).data) {
             ElMessage.warning("此邮箱已被注册，请更换邮箱！")
             return
         }
@@ -183,11 +182,11 @@ const validateEmail = async () => {
             coldTime.value = 60
             _POST('/api/auth/valid-register-email', {
                 email: form.email
-            }, (message) => {
-                ElMessage.success(message)
+            }, (data) => {
+                ElMessage.success(data)
                 setInterval(() => coldTime.value--, 1000)
-            }, (message) => {
-                ElMessage.warning(message)
+            }, (data) => {
+                ElMessage.warning(data)
                 coldTime.value = 0
             })
         } else {

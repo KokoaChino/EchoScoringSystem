@@ -139,7 +139,6 @@ const options = ref([]), selectedValues = ref([]), names = ref([])
 const handleChange = async (value) => {
     names.value = await value.map((path) => path[path.length - 1]);
     characters.value = await POST("/api/echo/get-characters-by-screen", {
-        username: store.auth.user.username,
         names: JSON.stringify(names.value)
     })
 };
@@ -176,19 +175,16 @@ const open_drawer = async () => {
 const close_drawer = async () => {
     if (select_weapon.value === '') return
     await POST("/api/echo/set-weapon", {
-        username: store.auth.user.username,
         name: select_character.value['name'],
         weapon: select_weapon.value
     })
     characters.value = await POST("/api/echo/get-characters-by-screen", {
-        username: store.auth.user.username,
         names: JSON.stringify(names.value)
     })
     await POST("/api/echo/re-weights", {
-        name: select_character.value['name'],
-        username: store.auth.user.username
+        name: select_character.value['name']
     })
-    await post("/api/echo/re-data", store.auth.user.username)
+    await post("/api/echo/re-data")
 }
 
 const screen = () => {
@@ -245,7 +241,6 @@ onMounted( async () => {
     try {
         options.value = await store.get_options()
         characters.value = await POST("/api/echo/get-characters-by-screen", {
-            username: store.auth.user.username,
             names: JSON.stringify(names.value)
         })
         weapons.value = await get("/api/echo/get-weapons")

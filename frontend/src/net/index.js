@@ -11,16 +11,16 @@ const defaultError = (err) => {
     }
     console.error(err);
 }
-const defaultFailure = (message) => ElMessage.warning(message)
+const defaultFailure = (data) => ElMessage.warning(data)
 
 function _GET(url, success, failure = defaultFailure, error = defaultError) {
     axios.get(url, {
         withCredentials: true
     }).then(({data}) => {
         if (data.success)
-            success(data.message, data.status)
+            success(data.data, data.status)
         else
-            failure(data.message, data.status)
+            failure(data.data, data.status)
     }).catch(error)
 }
 
@@ -32,9 +32,9 @@ function _POST(url, data, success, failure = defaultFailure, error = defaultErro
         withCredentials: true
     }).then(({data}) => {
         if (data.success)
-            success(data.message, data.status)
+            success(data.data, data.status)
         else
-            failure(data.message, data.status)
+            failure(data.data, data.status)
     }).catch(error)
 }
 

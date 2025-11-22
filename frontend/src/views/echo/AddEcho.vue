@@ -160,13 +160,9 @@ watch(selectedValues, (newVal) => {
 })
 
 watch(name, async (newVal) => {
-    weights.value = await POST("/api/echo/get-weights", {
-        name: newVal,
-        username: store.auth.user.username,
-    })
+    weights.value = await POST("/api/echo/get-weights", {name: newVal})
     percent.value = await POST("/api/echo/get-echo-percent", {
         name: newVal,
-        username: store.auth.user.username,
         values: JSON.stringify(to_map())
     })
     list.value.sort((a, b) => {
@@ -185,7 +181,6 @@ const add_list = async (key, x) => {
             } else list.value[i][1] = x
             percent.value = await POST("/api/echo/get-echo-percent", {
                 name: name.value,
-                username: store.auth.user.username,
                 values: JSON.stringify(to_map())
             })
             list.value.sort((a, b) => {
@@ -205,7 +200,6 @@ const add_list = async (key, x) => {
         list.value[len.value++] = [key, x]
         percent.value = await POST("/api/echo/get-echo-percent", {
             name: name.value,
-            username: store.auth.user.username,
             values: JSON.stringify(to_map())
         })
         list.value.sort((a, b) => {
@@ -247,7 +241,6 @@ async function edit_echo() {
         return
     }
     await POST("/api/echo/del-echo", {
-        username: store.auth.user.username,
         name: store.echo.name,
         index: store.echo.index
     })
@@ -263,7 +256,6 @@ async function edit_echo() {
     }
     data.value = await POST("/api/echo/add-data", {
         name: name.value,
-        username: store.auth.user.username,
         json: JSON.stringify(echoImpl)
     })
     ElMessage.success("修改成功！");
@@ -307,7 +299,6 @@ async function add_echo() {
     }
     data.value = await POST("/api/echo/add-data", {
         name: name.value,
-        username: store.auth.user.username,
         json: JSON.stringify(echoImpl)
     })
     ElMessage.success("添加成功！");
@@ -325,7 +316,6 @@ async function add_temp_echo() {
         echo['echo'].push(item)
     }
     await POST("/api/echo/add-temp-echo", {
-        username: store.auth.user.username,
         echo: JSON.stringify(echo),
         name_list: JSON.stringify([name.value])
     })
@@ -398,11 +388,8 @@ onMounted(async () => {
             map.value[key].unshift(0);
             map.value[key].sort((a, b) => a - b);
         })
-        weights.value = await POST("/api/echo/get-weights", {
-            name: name.value,
-            username: store.auth.user.username,
-        })
-        data.value = await post("/api/echo/get-data", store.auth.user.username)
+        weights.value = await POST("/api/echo/get-weights", {name: name.value})
+        data.value = await post("/api/echo/get-data")
         if (store.echo.name) {
             name.value = store.echo.name;
             cost.value = Number(data.value[store.echo.name][store.echo.index]['cost'])
@@ -413,12 +400,11 @@ onMounted(async () => {
                 radios.value[keys.value.indexOf(echo[i][0])] = Number(echo[i][1])
             }
             len.value = 5
-            let characters = await post("/api/echo/get-characters", store.auth.user.username)
+            let characters = await post("/api/echo/get-characters")
             selectedValues.value = [characters[name.value]['type'], name.value]
         }
         percent.value = await POST("/api/echo/get-echo-percent", {
             name: name.value,
-            username: store.auth.user.username,
             values: JSON.stringify(to_map())
         })
         options.value = await store.get_options()

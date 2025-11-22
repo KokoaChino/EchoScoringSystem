@@ -177,7 +177,7 @@
 import { ElDropdown, ElDropdownMenu, ElDropdownItem, ElButton, ElMessage, ElMessageBox, ElLoading } from 'element-plus';
 import router from "@/router";
 import { getRoleData, getRoleDetail } from '@/net/kurobbsApi.js'
-import { _GET, _POST, GET, post, POST } from "@/net/index.js";
+import { _POST, GET, post, POST } from "@/net/index.js";
 import { useStore } from "@/stores";
 import { reactive, ref, watch, onMounted } from 'vue'
 import { EditPen, InfoFilled, Key, Lock, Message, Monitor, Operation, User } from "@element-plus/icons-vue";
@@ -247,9 +247,7 @@ const onValidate = (prop, isValid) => {
 }
 
 const pay = async () => {
-    aliPay.value = await POST("/api/pay/pay", {
-        username: store.auth.user.username
-    })
+    aliPay.value = await POST("/api/pay/pay")
     if (aliPay.value === "") aliPay.value = null
     if (aliPay.value == null) {
         ElMessage.error('服务器繁忙，请稍后再试！')
@@ -305,16 +303,15 @@ const rules2 = {
 const sendEmail = async () => {
     loading3.value = true
     try {
-        let account = await GET("/api/auth/get-account", { username: form1.email })
-        if (!(account === null || account === undefined || account === "")) {
+        if ((await GET("/api/auth/check-user", { username: form1.email })).data) {
             ElMessage.warning("此邮箱已被注册，请更换邮箱！")
             return
         }
         coldTime.value = 60
         _POST('/api/auth/valid-register-email', {
             email: form1.email
-        }, (message) => {
-            ElMessage.success(message)
+        }, (data) => {
+            ElMessage.success(data)
             setInterval(() => coldTime.value--, 1000)
         }, (message) => {
             ElMessage.warning(message)
@@ -361,15 +358,21 @@ const reset = () => {
 }
 
 const logout = () => {
-    _GET('/api/auth/logout', (message) => {
-        ElMessage.success(message);
+    _POST('/api/auth/logout', {}, () => {
+        ElMessage.success("退出登录成功");
+        store.auth.token = null;
         store.auth.user = null;
+        store.auth.verificationStatus = false;
+        localStorage.removeItem('store');
         router.push('/');
+    }, (err) => {
+        ElMessage.error('登出失败：' + err);
     });
 };
 
+
 const signout = () => {
-    post("/api/auth/signout", store.auth.user.username)
+    post("/api/auth/signout")
     logout()
     setTimeout(() => location.reload(), 1000)
 }
@@ -398,7 +401,6 @@ const pay_query = async () => {
     }
     loading2.value = true
     let res = await POST("/api/pay/query", {
-        username: store.auth.user.username,
         id: aliPay.value.id
     })
     loading2.value = false
@@ -416,6 +418,10 @@ const submit1 = async () => {
     formRef1.value.validate(async (isValid) => {
         if (isValid) {
             if (form1['username']) {
+                if ((await GET("/api/auth/check-user", { username: form1['username'] })).data) {
+                    ElMessage.error("用户名已存在")
+                    return
+                }
                 await POST('/api/auth/change-username', {
                     username: form1.username,
                     email: store.auth.user.email
@@ -481,7 +487,6 @@ const submit2 = async () => {
                 const response = (await getRoleData(form2.bAt, form2.userId, form2.serverId)).data
                 if (response.success) {
                     const roleList = JSON.parse(response.data)['roleList']
-                    console.log(roleList)
                     const roleDTOList = []
                     for (let i = 0; i < roleList.length; i++) {
                         let role = roleList[i]
@@ -490,14 +495,12 @@ const submit2 = async () => {
                         let roleDTO = JSON.parse((await getRoleDetail(form2.bAt, form2.userId, form2.serverId, role['roleId'])).data.data)
                         roleDTOList.push(roleDTO)
                     }
-                    console.log(roleDTOList)
                     loadingInstance.setText(`批量导入声骸中...`)
                     await axios.post("/api/echo/batch-import-echo",
                         roleDTOList,
                         {
                             params: {
-                                username: store.auth.user.username,
-                                isDelete: form2.isDelete
+                                                    isDelete: form2.isDelete
                             },
                             withCredentials: true
                         }
@@ -524,9 +527,7 @@ const submit2 = async () => {
 }
 
 onMounted(async () => {
-    isVip.value = await GET("/api/auth/is-vip", {
-        username: store.auth.user.username
-    })
+    isVip.value = (await GET("/api/auth/get-user-vip", {})).data
 })
 </script>
 

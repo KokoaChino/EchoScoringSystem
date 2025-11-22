@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 本地数据库
+ Source Server         : 113.45.42.133
  Source Server Type    : MySQL
- Source Server Version : 50736
- Source Host           : localhost:3306
+ Source Server Version : 50743
+ Source Host           : 113.45.42.133:3306
  Source Schema         : message_service_db
 
  Target Server Type    : MySQL
- Target Server Version : 50736
+ Target Server Version : 50743
  File Encoding         : 65001
 
- Date: 06/05/2025 13:23:06
+ Date: 22/11/2025 11:27:51
 */
 
 SET NAMES utf8mb4;
@@ -25,8 +25,9 @@ CREATE TABLE `message_id_log`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `message_id` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `status` tinyint(4) NOT NULL,
-  PRIMARY KEY (`id`, `message_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `uk_message_id`(`message_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for undo_log
@@ -43,6 +44,6 @@ CREATE TABLE `undo_log`  (
   `log_modified` datetime NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `ux_undo_log`(`xid`, `branch_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 SET FOREIGN_KEY_CHECKS = 1;

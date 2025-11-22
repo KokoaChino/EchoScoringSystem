@@ -155,8 +155,7 @@ const onValidate = (prop, isValid) => {
 const validateEmail = async () => {
     loading.value = true
     try {
-        let account = await GET("/api/auth/get-account", { username: form.email })
-        if (account === null || account === undefined || account === "") {
+        if (!(await GET("/api/auth/check-user", { username: form.email })).data) {
             ElMessage.warning("邮箱账户不存在！")
             return
         }
@@ -164,11 +163,11 @@ const validateEmail = async () => {
             coldTime.value = 60
             _POST('/api/auth/valid-reset-email', {
                 email: form.email
-            }, (message) => {
-                ElMessage.success(message)
+            }, (data) => {
+                ElMessage.success(data)
                 setInterval(() => coldTime.value--, 1000)
-            }, (message) => {
-                ElMessage.warning(message)
+            }, (data) => {
+                ElMessage.warning(data)
                 coldTime.value = 0
             })
         } else {
@@ -193,6 +192,8 @@ const startReset = () => {
                 code: form.code
             }, () => {
                 active.value++
+            }, (data) => {
+                ElMessage.warning(data)
             })
         } else { // 如果表单验证未通过
             ElMessage.warning('请填写电子邮件地址和验证码')

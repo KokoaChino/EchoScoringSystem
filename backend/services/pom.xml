@@ -19,7 +19,6 @@
     <artifactId>services</artifactId>
 
     <dependencies>
-
         <!-- 公共模块 -->
         <dependency>
             <groupId>com.example</groupId>
@@ -135,7 +134,6 @@
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
         </dependency>
-
     </dependencies>
 
     <properties>

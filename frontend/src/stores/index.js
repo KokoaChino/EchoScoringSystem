@@ -5,14 +5,22 @@ import { get } from "@/net/index.js";
 
 export const useStore = defineStore('store', () => {
     const auth = reactive({
+        token: null,
         user: null,
         verificationStatus: false,
-    })
+    });
     const echo = reactive({
         name: null,
         index: -1
     })
     const options = ref(null)
+
+    const logout = () => {
+        auth.token = null;
+        auth.user = null;
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+    };
     const get_options = async () => {
         if (options.value === null) { // 单例模式
             let g = await get("/api/echo/get-character-groups"), res = []
@@ -28,9 +36,12 @@ export const useStore = defineStore('store', () => {
         }
         return options.value
     }
-    return { auth, echo, get_options }
+    return { auth, echo, get_options, logout };
 }, {
-    persist: true // 持久化
+    persist: {
+        key: 'store',
+        storage: localStorage,
+    }
 })
 
 export function setupPersistedStore(pinia) {

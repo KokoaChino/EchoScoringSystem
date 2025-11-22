@@ -21,7 +21,7 @@ import java.util.*;
 public class EchoScoringSystemServiceImpl implements EchoScoringSystemService {
 
     @Resource
-    EchoMapper mapper;
+    private EchoMapper mapper;
 
     private static final String[] ECHO_KEYS = EchoUtil.ECHO_KEYS; // 副词条名称
     private static final Map<String, double[]> ECHO_VALUES = EchoUtil.ECHO_VALUES; // 副词条取值

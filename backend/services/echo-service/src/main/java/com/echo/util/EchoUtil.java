@@ -57,6 +57,7 @@ public class EchoUtil { // 声骸工具类
         put("浩境粼光", new Weapon("浩境粼光", "长刃", 5, 587));
         put("焰痕", new Weapon("焰痕", "长刃", 5, 587));
         put("驭冕铸雷之权", new Weapon("驭冕铸雷之权", "长刃", 5, 675));
+        put("昙切", new Weapon("昙切", "长刃", 5, 500));
 
         put("诸方玄枢", new Weapon("诸方玄枢", "臂铠", 5, 587));
         put("擎渊怒涛", new Weapon("擎渊怒涛", "臂铠", 5, 587));
@@ -70,10 +71,12 @@ public class EchoUtil { // 声骸工具类
         put("不灭航路", new Weapon("不灭航路", "迅刀", 5, 412));
         put("血誓盟约", new Weapon("血誓盟约", "迅刀", 5, 587));
         put("不屈命定之冠", new Weapon("不屈命定之冠", "迅刀", 5, 412));
+        put("裁竹", new Weapon("裁竹", "迅刀", 5, 587));
 
         put("死与舞", new Weapon("死与舞", "佩枪", 5, 500));
         put("停驻之烟", new Weapon("停驻之烟", "佩枪", 5, 587));
         put("林间的咏叹调", new Weapon("林间的咏叹调", "佩枪", 5, 500));
+        put("光影双生", new Weapon("光影双生", "佩枪", 5, 587));
 
         put("星序协响", new Weapon("星序协响", "音感仪", 5, 412));
         put("琼枝冰绡", new Weapon("琼枝冰绡", "音感仪", 5, 500));
@@ -157,6 +160,10 @@ public class EchoUtil { // 声骸工具类
             put("弗洛洛", new Character("弗洛洛", "fuluoluo", "湮灭", WEAPONS.get("幽冥的忘忧章"), 5,
                     new int[]{437, 10775, 1136}, new int[]{71, 2, 2, 100, 0, 9, 2, 55, 5}));
             /* 下面的角色权重仅通过搜寻攻略得出 */
+            put("千咲", new Character("千咲", "qianxiao", "湮灭", WEAPONS.get("昙切"), 5,
+                    new int[]{437, 10775, 1136}, new int[]{71, 2, 2, 100, 13, 7, 0, 3, 61}));
+            put("嘉贝莉娜", new Character("嘉贝莉娜", "jiabeilina", "热熔", WEAPONS.get("光影双生"), 5,
+                    new int[]{462, 10300, 1105}, new int[]{71, 2, 2, 100, 15, 0, 71, 0, 0}));
             put("尤诺", new Character("尤诺", "younuo", "气动", WEAPONS.get("万物持存的注释"), 5,
                     new int[]{450, 10525, 1124}, new int[]{71, 2, 2, 100, 15, 13, 0, 7, 51}));
             put("奥古斯塔", new Character("奥古斯塔", "aogusita", "导电", WEAPONS.get("驭冕铸雷之权"), 5,
@@ -174,6 +181,8 @@ public class EchoUtil { // 声骸工具类
             put("珂莱塔", new Character("珂莱塔", "kelaita", "冷凝", WEAPONS.get("死与舞"), 5,
                     new int[]{462, 12450, 1197}, new int[]{71, 2, 2, 100, 11, 9, 2, 60, 0}));
             /* 下面的角色权重未进行人工设置，默认权重由 AI 生成 */
+            put("仇远", new Character("仇远", "qiuyuan", "气动", WEAPONS.get("裁竹"), 5,
+                    new int[]{375, 12237, 1197}, new int[]{71, 2, 2, 100, 15, 0, 71, 0, 0}));
             put("漂泊者 - 男 - 气动", new Character("漂泊者 - 男 - 气动", "piaobozhe-nan-qidong", "气动", WEAPONS.get("血誓盟约"), 5,
                     new int[]{437, 10775, 1136}, new int[]{71, 2, 2, 100, 60, 0, 0, 50, 21}));
             put("漂泊者 - 女 - 气动", new Character("漂泊者 - 女 - 气动", "piaobozhe-nv-qidong", "气动", WEAPONS.get("血誓盟约"), 5,

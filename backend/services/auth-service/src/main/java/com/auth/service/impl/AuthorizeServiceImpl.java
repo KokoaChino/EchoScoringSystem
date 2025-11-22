@@ -3,19 +3,24 @@ package com.auth.service.impl;
 import com.auth.client.feign.EchoClient;
 import com.auth.client.feign.MessageClient;
 import com.auth.client.feign.PayClient;
-import com.auth.mapper.DataGovernanceMapper;
 import com.auth.mapper.UserMapper;
 import com.auth.service.api.AuthorizeService;
-import com.common.entity.Account;
+import com.common.constant.Constant;
+import com.common.context.UserContext;
+import com.common.entity.AuthenticationDTO;
+import com.common.entity.RestBean;
+import com.common.entity.User;
+import com.common.mapper.DataGovernanceMapper;
 import jakarta.annotation.Resource;
 import org.apache.seata.spring.annotation.GlobalTransactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -24,50 +29,40 @@ import java.util.concurrent.TimeUnit;
 public class AuthorizeServiceImpl implements AuthorizeService {
 
     @Resource
-    UserMapper userMapper;
+    private UserMapper userMapper;
 
     @Resource
-    DataGovernanceMapper dataGovernanceMapper;
+    private DataGovernanceMapper dataGovernanceMapper;
 
     @Resource
-    MessageClient messageClient;
+    private MessageClient messageClient;
 
     @Resource
-    EchoClient echoClient;
+    private EchoClient echoClient;
 
     @Resource
-    PayClient payClient;
+    private PayClient payClient;
+
+    @Autowired
+    @Qualifier("stringRedisTemplate")
+    private StringRedisTemplate redisTemplate;
 
     @Resource
-    StringRedisTemplate template;
+    private JwtService jwtService;
 
-    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException { // 根据用户名加载用户信息
-        if (username == null)
-            throw new UsernameNotFoundException("用户名不能为空");
-        Account account = userMapper.findAccountByNameOrEmail(username);
-        if (account == null)
-            throw new UsernameNotFoundException("用户名或密码错误");
-        return User
-                .withUsername(account.getUsername())
-                .password(account.getPassword())
-                .roles("user")
-                .build();
-    }
+    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     @Override
     public String sendValidateEmail(String email, String sessionId, boolean hasAccount) { // 发送验证邮件
         String key = "email:" + sessionId + ":" + email + ":" + hasAccount;
-        if (Boolean.TRUE.equals(template.opsForValue().setIfAbsent(key, "pending", 3, TimeUnit.MINUTES))) {
+        if (Boolean.TRUE.equals(redisTemplate.opsForValue().setIfAbsent(key, "pending", 3, TimeUnit.MINUTES))) {
             String code = String.format("%06d", new Random().nextInt(1000000));
-            template.opsForValue().set(key, code, 3, TimeUnit.MINUTES);
+            redisTemplate.opsForValue().set(key, code, 3, TimeUnit.MINUTES);
             messageClient.sendCodeEmail(email, code);
             return null;
         } else {
-            Long expire = template.getExpire(key, TimeUnit.SECONDS);
-            if (expire != null && expire > 120) {
+            Long expire = redisTemplate.getExpire(key, TimeUnit.SECONDS);
+            if (expire > 120) {
                 return "请求过于频繁，请稍后再试";
             }
             return "已有请求正在处理，请勿重复提交";
@@ -77,13 +72,13 @@ public class AuthorizeServiceImpl implements AuthorizeService {
     @Override
     public String validateAndRegister(String username, String password, String email, String code, String sessionId) { // 验证并注册
         String key = "email:" + sessionId + ":" + email + ":false";
-        if (Boolean.TRUE.equals(template.hasKey(key))) {
-            String s = template.opsForValue().get(key);
+        if (Boolean.TRUE.equals(redisTemplate.hasKey(key))) {
+            String s = redisTemplate.opsForValue().get(key);
             if (s == null) return "验证码失效，请重新请求";
             if (s.equals(code)) {
-                Account account = userMapper.findAccountByNameOrEmail(username);
-                if (account != null) return "此用户名已被注册，请更换用户名";
-                template.delete(key);
+                User user = userMapper.findUserByNameOrEmail(username);
+                if (user != null) return "此用户名已被注册，请更换用户名";
+                redisTemplate.delete(key);
                 password = encoder.encode(password);
                 if (userMapper.createAccount(username, password, email) > 0) {
                     return null;
@@ -101,11 +96,11 @@ public class AuthorizeServiceImpl implements AuthorizeService {
     @Override
     public String validateOnly(String email, String code, String sessionId) { // 只验证
         String key = "email:" + sessionId + ":" + email + ":true";
-        if (Boolean.TRUE.equals(template.hasKey(key))) {
-            String s = template.opsForValue().get(key);
+        if (Boolean.TRUE.equals(redisTemplate.hasKey(key))) {
+            String s = redisTemplate.opsForValue().get(key);
             if (s == null) return "验证码失效，请重新请求";
             if (s.equals(code)) {
-                template.delete(key);
+                redisTemplate.delete(key);
                 return null;
             } else {
                 return "验证码错误，请检查后再提交";
@@ -118,11 +113,11 @@ public class AuthorizeServiceImpl implements AuthorizeService {
     @Override
     public String validateOnlyFalse(String email, String code, String sessionId) { // 只验证
         String key = "email:" + sessionId + ":" + email + ":false";
-        if (Boolean.TRUE.equals(template.hasKey(key))) {
-            String s = template.opsForValue().get(key);
+        if (Boolean.TRUE.equals(redisTemplate.hasKey(key))) {
+            String s = redisTemplate.opsForValue().get(key);
             if (s == null) return "验证码失效，请重新请求";
             if (s.equals(code)) {
-                template.delete(key);
+                redisTemplate.delete(key);
                 return null;
             } else {
                 return "验证码错误，请检查后再提交";
@@ -133,19 +128,22 @@ public class AuthorizeServiceImpl implements AuthorizeService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @GlobalTransactional
     public boolean changeUsername(String username, String email) { // 重置名称
-        String oldUsername = userMapper.findAccountByNameOrEmail(email).getUsername();
+        String oldUsername = userMapper.findUserByNameOrEmail(email).getUsername();
         if (oldUsername == null) {
             throw new RuntimeException("原用户名不存在");
         }
         boolean res = userMapper.resetUsernameByEmail(username, email) > 0;
-        for (String table : dataGovernanceMapper.findAllTables()) {
+        for (String table : dataGovernanceMapper.findAllTables(Constant.AUTH_SERVICE_DB)) {
             dataGovernanceMapper.resetUsername(table, username, oldUsername);
         }
-        echoClient.changeUsername(username, oldUsername);
-        payClient.changeUsername(username, oldUsername);
+        AuthenticationDTO dto = new AuthenticationDTO();
+        dto.setUsername(username);
+        dto.setExtra(oldUsername);
+        echoClient.changeUsername(dto);
+        payClient.changeUsername(dto);
         return res;
     }
 
@@ -161,28 +159,66 @@ public class AuthorizeServiceImpl implements AuthorizeService {
     }
 
     @Override
-    @Transactional
+    public RestBean<?> login(User user) { // 用户登录
+        try {
+            User userDetails = userMapper.findUserByNameOrEmail(user.getUsername()); // 查用户详情
+            if (userDetails == null) {
+                return RestBean.failure(401, "用户不存在");
+            }
+            if (!encoder.matches(user.getPassword(), userDetails.getPassword())) { // 验证密码
+                return RestBean.failure(401, "密码错误");
+            }
+            String token = jwtService.generateToken( // 生成 token
+                    userDetails.getUsername(),
+                    userDetails.getId(),
+                    List.of("USER")
+            );
+            return RestBean.success(new HashMap<>(){{
+                put("token", token);
+                put("user", userDetails);
+            }});
+        } catch (Exception e) {
+            return RestBean.failure(500, "系统异常：" + e.getMessage());
+        }
+    }
+
+    @Override
+    public RestBean<?> logout() { // 用户登出
+        String username = UserContext.getUsername();
+        if (username == null) {
+            return RestBean.failure(401, "未登录");
+        }
+        String cacheKey = Constant.USER_CONTEXT_CACHE_KEY_PREFIX + username;
+        redisTemplate.delete(cacheKey);
+        return RestBean.success("退出登录成功");
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     @GlobalTransactional
     public void signout(String username) { // 注销用户
-        for (String tableName : dataGovernanceMapper.findAllTables()) {
+        for (String tableName : dataGovernanceMapper.findAllTables(Constant.AUTH_SERVICE_DB)) {
             dataGovernanceMapper.deleteAccountByUsername(tableName, username);
         }
-        echoClient.signout(username);
-        payClient.signout(username);
+        AuthenticationDTO baseDTO = AuthenticationDTO.getBaseDTO(username);
+        echoClient.signout(baseDTO);
+        payClient.signout(baseDTO);
     }
 
     @Override
-    public Boolean isVip(String username) { // 查询用户是否为 VIP 用户
-        return userMapper.isVipUser(username);
+    public boolean checkUser(String username) { // 检查用户实体
+        return userMapper.findUserByNameOrEmail(username) != null;
     }
 
     @Override
-    public Account getAccount(String username) { // 获取用户实体
-        return userMapper.findAccountByNameOrEmail(username);
+    public User getUser(String username) { // 获取用户实体
+        return userMapper.findUserByNameOrEmail(username);
     }
 
     @Override
     public void updateVipUser(String username) { // 更新用户 VIP
         userMapper.updateVipUser(username);
+        String cacheKey = Constant.USER_CONTEXT_CACHE_KEY_PREFIX + username;
+        redisTemplate.delete(cacheKey);
     }
 }

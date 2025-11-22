@@ -1,7 +1,9 @@
 package com.auth.controller;
 
 import com.auth.service.api.AuthorizeService;
-import com.common.entity.Account;
+import com.common.context.UserContext;
+import com.common.entity.AuthenticationDTO;
+import com.common.entity.User;
 import com.common.entity.RestBean;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpSession;
@@ -14,13 +16,23 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 @RestController
 @RequestMapping("/api/auth")
-public class AuthorizeController { // 处理与身份认证和授权相关的控制器
+public class AuthorizeController {
     
     @Resource
-    AuthorizeService service;
+    private AuthorizeService service;
 
     private final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$";
     private final String USERNAME_REGEX = "^[a-zA-Z0-9一-龥]+$";
+
+    @PostMapping("/login")
+    public RestBean<?> login(@RequestBody User user) { // 用户登录
+        return service.login(user);
+    }
+
+    @PostMapping("/logout")
+    public RestBean<?> logout() { // 用户登出
+        return service.logout();
+    }
 
     @PostMapping("/valid-register-email")
     public RestBean<String> validateRegisterEmail(@Pattern(regexp = EMAIL_REGEX) @RequestParam("email") String email,
@@ -120,23 +132,39 @@ public class AuthorizeController { // 处理与身份认证和授权相关的控
     }
 
     @PostMapping("/signout")
-    public void signout(@RequestBody String username) { // 注销用户
-        username = username.substring(1, username.length() - 1);
-        service.signout(username);
+    public RestBean<Void> signout() { // 注销用户
+        String username = UserContext.getUsername();
+        if (username == null) {
+            throw new SecurityException("用户不存在");
+        }
+        service.signout(UserContext.getUsername());
+        return RestBean.success();
     }
 
-    @GetMapping("/is-vip")
-    public Boolean isVip(@RequestParam("username") String username) { // 查询用户是否为 VIP 用户
-        return service.isVip(username);
+    @GetMapping("/check-user")
+    public RestBean<Boolean> checkUser(@RequestParam String username) { // 检查用户实体
+        return RestBean.success(service.checkUser(username));
     }
 
-    @GetMapping("/get-account")
-    public Account getAccount(@RequestParam("username") String username) { // 获取用户实体
-        return service.getAccount(username);
+    @GetMapping("/get-user-vip")
+    public RestBean<Boolean> getUser() { // 获取用户 VIP 状态
+        User user = UserContext.get();
+        if (user == null) {
+            throw new SecurityException("用户不存在");
+        }
+        return RestBean.success(user.getVip());
+    }
+
+    @PostMapping("/get-user")
+    public RestBean<User> getUser(@RequestBody AuthenticationDTO dto) { // 获取用户实体
+        dto.verify();
+        return RestBean.success(service.getUser(dto.getUsername()));
     }
 
     @PostMapping("/update-vip-user")
-    public void updateVipUser(@RequestParam("username") String username) { // 更新用户 VIP
-        service.updateVipUser(username);
+    public RestBean<Void> updateVipUser(@RequestBody AuthenticationDTO dto) { // 更新用户 VIP
+        dto.verify();
+        service.updateVipUser(dto.getUsername());
+        return RestBean.success();
     }
 }

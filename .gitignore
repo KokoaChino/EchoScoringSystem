@@ -1,0 +1,43 @@
+# Compiled class file
+*.class
+
+# JAR files
+*.jar
+
+# Log files
+*.log
+
+# JVM crash logs
+hs_err_pid*
+
+# Package files
+*.war
+*.ear
+*.nar
+
+# Maven
+target/
+
+# Gradle
+.gradle/
+build/
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Eclipse
+.settings/
+.classpath
+.project
+
+# OS generated
+.DS_Store
+Thumbs.db
+
+# Other temp / cache
+*.tmp
+*.swp
+*~

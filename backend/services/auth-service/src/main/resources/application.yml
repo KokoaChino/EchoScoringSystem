@@ -5,9 +5,6 @@ spring:
     active: dev
     include:
       - datasource
-      - client
-      - seata
-      - redis
   application:
     name: auth-service
   cloud:
@@ -31,6 +28,9 @@ logging:
 spring:
   config:
     import:
+      - nacos:redis.properties
+      - nacos:seata.properties
+      - nacos:client.properties
       - nacos:database.properties?group=auth
     activate:
       on-profile: dev
@@ -38,6 +38,9 @@ spring:
 spring:
   config:
     import:
+      - nacos:redis.properties
+      - nacos:seata.properties
+      - nacos:client.properties
       - nacos:database.properties?group=auth
     activate:
       on-profile: test
@@ -45,6 +48,9 @@ spring:
 spring:
   config:
     import:
+      - nacos:redis.properties
+      - nacos:seata.properties
+      - nacos:client.properties
       - nacos:database.properties?group=auth
     activate:
       on-profile: prod

@@ -1,7 +1,9 @@
 package com.message.service.listener;
 
-import com.common.entity.Account;
-import com.message.client.feign.AuthClient;
+import com.common.client.feign.AuthClient;
+import com.common.entity.AuthenticationDTO;
+import com.common.entity.User;
+import com.message.enums.MessageStatusEnum;
 import com.message.mapper.MqMapper;
 import com.message.service.api.MessageService;
 import jakarta.annotation.Resource;
@@ -16,13 +18,13 @@ import java.util.Map;
 public class RabbitMQListener {
 
     @Resource
-    AuthClient authClient;
+    private AuthClient authClient;
 
     @Resource
-    MessageService messageService;
+    private MessageService messageService;
 
     @Resource
-    MqMapper mqMapper;
+    private MqMapper mqMapper;
 
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(name = "q4", arguments = @Argument(name = "x-queue-mode", value = "lazy")),
@@ -31,12 +33,12 @@ public class RabbitMQListener {
     ))
     public void listenCodeMessage(Map<String, String> msg) { // 发送验证码邮件
         String id = msg.get("id"), email = msg.get("email"), code = msg.get("code");
-        Integer status = mqMapper.selectMessageIdLog(id);
-        if (status != null && status != 0) return;
+        int inserted = mqMapper.insertMessageIdLog(id, MessageStatusEnum.PENDING.getCode());
+        if (inserted == 0) return;
         Boolean res = messageService.sendCodeEmail(email, code);
-        if (res) mqMapper.updateMessageIdLog(id, 1);
+        if (res) mqMapper.updateMessageIdLog(id, MessageStatusEnum.SUCCESS.getCode());
         else {
-            mqMapper.updateMessageIdLog(id, 2);
+            mqMapper.updateMessageIdLog(id, MessageStatusEnum.FAILED.getCode());
             throw new RuntimeException("发送邮件失败");
         }
     }
@@ -48,14 +50,14 @@ public class RabbitMQListener {
     ))
     public void listenPaySuccessMessage(Map<String, String> msg) { // 支付成功通知
         String id = msg.get("id"), username = msg.get("username");
-        Integer status = mqMapper.selectMessageIdLog(id);
-        if (status != null && status != 0) return;
-        Account account = authClient.getAccount(username);
-        String email = account.getEmail();
+        int inserted = mqMapper.insertMessageIdLog(id, MessageStatusEnum.PENDING.getCode());
+        if (inserted == 0) return;
+        User user = authClient.getUser(AuthenticationDTO.getBaseDTO(username)).getData();
+        String email = user.getEmail();
         Boolean res = messageService.sendPaySuccessEmail(email, username);
-        if (res) mqMapper.updateMessageIdLog(id, 1);
+        if (res) mqMapper.updateMessageIdLog(id, MessageStatusEnum.SUCCESS.getCode());
         else {
-            mqMapper.updateMessageIdLog(id, 2);
+            mqMapper.updateMessageIdLog(id, MessageStatusEnum.FAILED.getCode());
             throw new RuntimeException("发送邮件失败");
         }
     }
@@ -63,18 +65,18 @@ public class RabbitMQListener {
     @RabbitListener(queues = "q3")
     public void listenPayFailedMessage(Map<String, String> msg) { // 订单过期通知
         String id = msg.get("id"), outTradeNo = msg.get("outTradeNo"), username = msg.get("username"), time = msg.get("time");
-        Integer status = mqMapper.selectMessageIdLog(id);
-        if (status != null && status != 0) return;
-        if (authClient.isVip(username)) { // 用户已支付
-            mqMapper.updateMessageIdLog(id, 1);
+        int inserted = mqMapper.insertMessageIdLog(id, MessageStatusEnum.PENDING.getCode());
+        if (inserted == 0) return;
+        User user = authClient.getUser(AuthenticationDTO.getBaseDTO(username)).getData();
+        if (user.getVip()) { // 用户已支付
+            mqMapper.updateMessageIdLog(id, MessageStatusEnum.SUCCESS.getCode());
             return;
         }
-        Account account = authClient.getAccount(username);
-        String email = account.getEmail();
+        String email = user.getEmail();
         Boolean res = messageService.sendPayFailedEmail(email, username, time, outTradeNo);
-        if (res) mqMapper.updateMessageIdLog(id, 1);
+        if (res) mqMapper.updateMessageIdLog(id, MessageStatusEnum.SUCCESS.getCode());
         else {
-            mqMapper.updateMessageIdLog(id, 2);
+            mqMapper.updateMessageIdLog(id, MessageStatusEnum.FAILED.getCode());
             throw new RuntimeException("发送邮件失败");
         }
     }

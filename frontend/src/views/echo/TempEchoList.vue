@@ -288,15 +288,13 @@ const flush_data = async () => {
         background: 'rgba(0, 0, 0, 0.7)',
     })
     data.value = await POST("/api/echo/get-temp-data-by-screen", {
-        json: JSON.stringify(get_check()),
-        username: store.auth.user.username
+        json: JSON.stringify(get_check())
     })
     loading.close()
 }
 
 const del_sub_echo = async (name, index) => {
     await POST("/api/echo/del-temp-sub-echo", {
-        username: store.auth.user.username,
         json: JSON.stringify(data.value[index]),
         name: name
     })
@@ -304,7 +302,7 @@ const del_sub_echo = async (name, index) => {
 }
 
 async function add_echo(name, d, index) {
-    let data = await post("/api/echo/get-data", store.auth.user.username)
+    let data = await post("/api/echo/get-data")
     let echo = d['声骸']
     if (Object.keys(data).includes(name)) {
         let len = 0, sum = 0
@@ -325,7 +323,6 @@ async function add_echo(name, d, index) {
     }
     data.value = await POST("/api/echo/add-data", {
         name: name,
-        username: store.auth.user.username,
         json: JSON.stringify(d[name])
     })
     ElMessage.success("添加成功！");
@@ -334,7 +331,6 @@ async function add_echo(name, d, index) {
 
 const del_echo = async (index) => {
     await POST("/api/echo/del-temp-echo", {
-        username: store.auth.user.username,
         json: JSON.stringify(data.value[index]),
     })
     await flush_data()
@@ -363,8 +359,7 @@ const get_temp_data_by_screen = async () => {
         background: 'rgba(0, 0, 0, 0.7)',
     })
     data.value = await POST("/api/echo/get-temp-data-by-screen", {
-        json: JSON.stringify(get_check()),
-        username: store.auth.user.username
+        json: JSON.stringify(get_check())
     })
     loading.close()
 }
@@ -376,10 +371,8 @@ onMounted(async () => {
         background: 'rgba(0, 0, 0, 0.7)',
     })
     try {
-        characters.value = await post("/api/echo/get-characters", store.auth.user.username)
-        weights.value = await GET("/api/echo/get-all-weights", {
-            username: store.auth.user.username,
-        })
+        characters.value = await post("/api/echo/get-characters")
+        weights.value = await GET("/api/echo/get-all-weights")
         options.value = await store.get_options()
         await get_temp_data_by_screen()
     } catch (e) {

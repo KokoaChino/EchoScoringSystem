@@ -7,9 +7,6 @@ spring:
       - datasource
       - email
       - mq
-      - redis
-      - client
-      - seata
   application:
     name: message-service
   cloud:
@@ -33,6 +30,9 @@ logging:
 spring:
   config:
     import:
+      - nacos:redis.properties
+      - nacos:seata.properties
+      - nacos:client.properties
       - nacos:database.properties?group=message
     activate:
       on-profile: dev
@@ -40,6 +40,9 @@ spring:
 spring:
   config:
     import:
+      - nacos:redis.properties
+      - nacos:seata.properties
+      - nacos:client.properties
       - nacos:database.properties?group=message
     activate:
       on-profile: test
@@ -47,6 +50,9 @@ spring:
 spring:
   config:
     import:
+      - nacos:redis.properties
+      - nacos:seata.properties
+      - nacos:client.properties
       - nacos:database.properties?group=message
     activate:
       on-profile: prod

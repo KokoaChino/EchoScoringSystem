@@ -84,7 +84,6 @@ router.beforeEach(async (to, from, next) => {
         if (store.auth.user != null && to.name.startsWith('welcome-')) {
             next('/index')
         } else if (!store.auth.user && !to.name.startsWith('welcome-')) {
-            ElMessage.warning('自动登录失效，请重新登录');
             next('/')
         } else if (to.matched.length === 0) {
             next('/index')

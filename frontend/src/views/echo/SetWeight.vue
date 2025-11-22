@@ -61,7 +61,7 @@ import Template from "@/components/layout/Template.vue";
 import { ref, onMounted, watch } from "vue";
 import { get, post, POST } from "@/net/index.js";
 import { useStore } from "@/stores/index.js";
-import {ElLoading, ElMessage} from "element-plus";
+import { ElLoading, ElMessage } from "element-plus";
 
 
 const store = useStore()
@@ -77,17 +77,11 @@ watch(selectedValues, (newVal) => {
 })
 
 watch(name, async (newVal) => {
-    weights.value = await POST("/api/echo/get-weights", {
-        name: newVal,
-        username: store.auth.user.username,
-    })
+    weights.value = await POST("/api/echo/get-weights", {name: newVal})
 });
 
 watch(is_one_percent, async (newVal) => {
-    weights.value = await POST("/api/echo/get-weights", {
-        name: name.value,
-        username: store.auth.user.username,
-    })
+    weights.value = await POST("/api/echo/get-weights", {name: name.value})
     if (!newVal) {
         for (let key of keys.value) {
             weights.value[key] = Math.round(weights.value[key])
@@ -114,22 +108,17 @@ function set_color(key) {
 const set_weights = async () => {
     await POST("/api/echo/set-weights", {
         name: name.value,
-        username: store.auth.user.username,
         json: JSON.stringify(weights.value)
     })
-    await post("/api/echo/re-data", store.auth.user.username)
+    await post("/api/echo/re-data")
     ElMessage.success("权重更新成功！")
 }
 
 const re_weights = async () => {
     await POST("/api/echo/re-weights", {
-        name: name.value,
-        username: store.auth.user.username
+        name: name.value
     })
-    weights.value = await POST("/api/echo/get-weights", {
-        name: name.value,
-        username: store.auth.user.username
-    })
+    weights.value = await POST("/api/echo/get-weights", {name: name.value})
     if (!is_one_percent.value) {
         for (let key of keys.value) {
             weights.value[key] = Math.round(weights.value[key])
@@ -165,7 +154,7 @@ onMounted(async () => {
         }
         if (store.echo.index === -3) {
             name.value = store.echo.name
-            let characters = await post("/api/echo/get-characters", store.auth.user.username)
+            let characters = await post("/api/echo/get-characters")
             selectedValues.value = [characters[name.value]['type'], name.value]
         }
         map.value = await get("/api/echo/get-echo-values")
@@ -173,10 +162,7 @@ onMounted(async () => {
             map.value[key].unshift(0);
             map.value[key].sort((a, b) => a - b);
         })
-        weights.value = await POST("/api/echo/get-weights", {
-            name: name.value,
-            username: store.auth.user.username,
-        })
+        weights.value = await POST("/api/echo/get-weights", {name: name.value})
     } catch (e) {
         console.error("加载数据失败:", e);
     } finally {

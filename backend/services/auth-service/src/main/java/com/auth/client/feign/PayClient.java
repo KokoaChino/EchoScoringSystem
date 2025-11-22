@@ -1,8 +1,9 @@
 package com.auth.client.feign;
 
+import com.common.entity.AuthenticationDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 
 
 @FeignClient(name = "pay-service",
@@ -10,9 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface PayClient {
 
     @PostMapping("/change-username")
-    void changeUsername(@RequestParam("username") String username,
-                        @RequestParam("oldUsername") String oldUsername); // 重置名称
+    void changeUsername(@RequestBody AuthenticationDTO dto); // 重置名称
 
     @PostMapping("/signout")
-    void signout(@RequestParam("username") String username); // 注销用户
+    void signout(@RequestBody AuthenticationDTO dto); // 注销用户
 }

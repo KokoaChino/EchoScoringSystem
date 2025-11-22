@@ -194,16 +194,14 @@ onMounted( async () => {
     })
     try {
         let keys = await get("/api/echo/get-echo-keys")
-        kurtosis.value = await post("/api/echo/get-weight-kurtosis", store.auth.user.username)
+        kurtosis.value = await post("/api/echo/get-weight-kurtosis")
         for (let name of Object.keys(kurtosis.value)) {
             if (isNaN(kurtosis.value[name])) kurtosis.value[name] = 0;
             let val = kurtosis.value[name].toFixed(2)
             kurtosis.value[name] = val
             el_kurtosis.value[name] = [Math.max(-2, Math.min(0, val)), Math.min(2, Math.max(0, val))]
         }
-        let weights = await GET("/api/echo/get-all-weights", {
-            username: store.auth.user.username,
-        })
+        let weights = await GET("/api/echo/get-all-weights")
         for (let name of await get("/api/echo/get-names")) {
             let tmp = weights[name]
             let pie = JSON.parse(JSON.stringify(base_pie)), bar = JSON.parse(JSON.stringify(base_bar))

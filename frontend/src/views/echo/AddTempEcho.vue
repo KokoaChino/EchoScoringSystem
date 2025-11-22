@@ -187,7 +187,6 @@ const edit_echo = async () => {
         return;
     }
     await POST("/api/echo/del-temp-echo", {
-        username: store.auth.user.username,
         json: store.echo.name
     })
     let data = JSON.parse(store.echo.name)
@@ -198,7 +197,6 @@ const edit_echo = async () => {
     data['声骸']['main'] = main.value
     data['声骸']['cost'] = cost.value
     await POST("/api/echo/add-temp-echo", {
-        username: store.auth.user.username,
         echo: JSON.stringify(data['声骸']),
         name_list: JSON.stringify(name_list.value)
     })
@@ -247,7 +245,6 @@ async function add_temp_echo() {
         echo['echo'].push(item)
     }
     await POST("/api/echo/add-temp-echo", {
-        username: store.auth.user.username,
         echo: JSON.stringify(echo),
         name_list: JSON.stringify(name_list.value)
     })
@@ -282,7 +279,7 @@ onMounted(async () => {
             for (let key of Object.keys(e)) {
                 if (key !== '声骸') name_list.value.push(key)
             }
-            let characters = await post("/api/echo/get-characters", store.auth.user.username)
+            let characters = await post("/api/echo/get-characters")
             for (let name of name_list.value) {
                 selectedValues.value.push([characters[name]['type'], name])
             }

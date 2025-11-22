@@ -8,21 +8,15 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/message")
-public class MessageController { // 有关邮件消息的控制器
+public class MessageController {
 
     @Resource
-    MessageService messageService;
+    private MessageService messageService;
 
     @PostMapping("/send-code-email")
     public void sendCodeEmail(@RequestParam("email") String email,
                                 @RequestParam("code") String code) { // 发送验证码邮件
         messageService.sendCodeMqMessage(email, code);
-    }
-
-    @PostMapping("/insert-message-id-log")
-    public void insertMessageIdLog(@RequestParam("messageId") String messageId,
-                                     @RequestParam("status") int status) { // 插入消息ID日志
-        messageService.insertMessageIdLog(messageId, status);
     }
 
     @PostMapping("/send-mq-message")

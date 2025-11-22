@@ -206,6 +206,9 @@ const scale = ref({
     '弗洛洛': '87%',
     '奥古斯塔': '81%',
     '尤诺': '95%',
+    '嘉贝莉娜': '87%',
+    '仇远': '83%',
+    '千咲': '97%',
 })
 const name_check = ref([]), cost_check = ref({1: false, 3: false, 4: false}), main_check = ref({
     '百分比攻击': false,
@@ -255,7 +258,7 @@ const re_check = async () => {
         echo_check.value[key] = false
     }
     range.value = [0, 100]
-    data.value = await post("/api/echo/get-data", store.auth.user.username)
+    data.value = await post("/api/echo/get-data")
 }
 
 const get_check = () => {
@@ -296,8 +299,7 @@ function set_background_color(item, num) {
 
 const get_data_by_screen = async () => {
     data.value = await POST("/api/echo/get-data-by-screen", {
-        json: JSON.stringify(get_check()),
-        username: store.auth.user.username
+        json: JSON.stringify(get_check())
     })
     keys.value = Object.keys(data.value)
     keys.value.sort((a, b) => get_total(b) - get_total(a))
@@ -312,7 +314,6 @@ async function edit_echo(name, index) {
 async function del_echo(name, index, k) {
     if (k === '') return
     await POST("/api/echo/del-echo", {
-        username: store.auth.user.username,
         name: name,
         index: index
     })
@@ -402,16 +403,14 @@ onMounted(async () => {
         background: 'rgba(0, 0, 0, 0.7)',
     })
     try {
-        data.value = await post("/api/echo/get-data", store.auth.user.username)
+        data.value = await post("/api/echo/get-data")
         keys.value = Object.keys(data.value)
         keys.value.sort((a, b) => get_total(b) - get_total(a))
         for (let key of Object.keys(data.value)) {
             showContent.value[key] = new Array(5).fill(false)
         }
-        weights.value = await GET("/api/echo/get-all-weights", {
-            username: store.auth.user.username,
-        })
-        characters.value = await POST("/api/echo/get-characters", store.auth.user.username)
+        weights.value = await GET("/api/echo/get-all-weights")
+        characters.value = await POST("/api/echo/get-characters")
         options.value = await store.get_options()
     } catch (e) {
         console.error("加载数据失败:", e);

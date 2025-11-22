@@ -186,7 +186,6 @@ const switchView = async (role, value) => {
     select_show.value[role] = value;
     if (value === '标准化偏差' && !loadedDeviations.value.has(role)) {
         const rdmap = await POST("/api/echo/get-echo-relative-deviation-by-name", {
-            username: store.auth.user.username,
             name: role
         });
         let bar = JSON.parse(JSON.stringify(base_bar));
@@ -215,8 +214,8 @@ onMounted( async () => {
     try {
         let average = await get("/api/echo/get-echo-average"),
             basics = await get("/api/echo/get-character-stats")
-        characters.value = await POST("/api/echo/get-characters", store.auth.user.username)
-        data.value = await post("/api/echo/get-echo-stats", store.auth.user.username)
+        characters.value = await POST("/api/echo/get-characters")
+        data.value = await post("/api/echo/get-echo-stats")
         for (let item of Object.values(data.value)) {
             let pie = JSON.parse(JSON.stringify(base_pie)), bar = JSON.parse(JSON.stringify(base_bar)), list = []
             bar['series'][0]['itemStyle'] = {

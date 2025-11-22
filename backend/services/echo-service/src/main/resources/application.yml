@@ -5,8 +5,6 @@ spring:
     active: dev
     include:
       - datasource
-      - seata
-      - redis
   application:
     name: echo-service
   cloud:
@@ -27,6 +25,9 @@ spring:
 spring:
   config:
     import:
+      - nacos:redis.properties
+      - nacos:seata.properties
+      - nacos:client.properties
       - nacos:database.properties?group=echo
     activate:
       on-profile: dev
@@ -34,6 +35,9 @@ spring:
 spring:
   config:
     import:
+      - nacos:redis.properties
+      - nacos:seata.properties
+      - nacos:client.properties
       - nacos:database.properties?group=echo
     activate:
       on-profile: test
@@ -41,6 +45,9 @@ spring:
 spring:
   config:
     import:
+      - nacos:redis.properties
+      - nacos:seata.properties
+      - nacos:client.properties
       - nacos:database.properties?group=echo
     activate:
       on-profile: prod

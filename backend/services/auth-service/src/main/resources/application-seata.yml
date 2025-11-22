@@ -1,8 +1,0 @@
-seata:
-  service:
-    vgroup-mapping:
-      default_tx_group: "default"
-    grouplist:
-      default: "localhost:8091"
-    enable-degrade: false
-    disable-global-transaction: false

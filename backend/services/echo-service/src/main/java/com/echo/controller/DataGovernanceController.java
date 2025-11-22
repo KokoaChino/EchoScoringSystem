@@ -1,11 +1,10 @@
 package com.echo.controller;
 
-import com.echo.service.api.DataGovernanceService;
+import com.common.constant.Constant;
+import com.common.entity.AuthenticationDTO;
+import com.common.service.api.DataGovernanceService;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -13,16 +12,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class DataGovernanceController {
 
     @Resource
-    DataGovernanceService service;
+    private DataGovernanceService service;
 
     @PostMapping("/change-username")
-    public void changeUsername(@RequestParam("username") String username,
-                               @RequestParam("oldUsername") String oldUsername) { // 重置名称
-        service.changeUsername(username, oldUsername);
+    public void changeUsername(@RequestBody AuthenticationDTO dto) { // 重置名称
+        dto.verify();
+        service.changeUsername(Constant.ECHO_SERVICE_DB,
+                dto.getUsername(), (String) dto.getExtra());
     }
 
     @PostMapping("/signout")
-    public void signout(@RequestParam("username") String username) { // 注销用户
-        service.signout(username);
+    public void signout(@RequestBody AuthenticationDTO dto) { // 注销用户
+        dto.verify();
+        service.signout(Constant.ECHO_SERVICE_DB, dto.getUsername());
     }
 }

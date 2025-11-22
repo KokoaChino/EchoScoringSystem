@@ -1,6 +1,5 @@
 package com.message.service.impl;
 
-import com.message.mapper.MqMapper;
 import com.message.service.api.MessageService;
 import jakarta.annotation.Resource;
 import jakarta.mail.MessagingException;
@@ -20,16 +19,13 @@ import java.util.UUID;
 public class MessageServiceImpl implements MessageService {
 
     @Resource
-    JavaMailSender mailSender;
+    private JavaMailSender mailSender;
 
     @Value("${spring.mail.username}")
-    String from; // 邮件发送者的邮箱地址
+    private String from;
 
     @Resource
-    MqMapper mqMapper;
-
-    @Resource
-    RabbitTemplate rabbitTemplate;
+    private RabbitTemplate rabbitTemplate;
 
     @Override
     public Boolean sendCodeEmail(String email, String code) { // 发送验证码邮件
@@ -131,11 +127,6 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public void insertMessageIdLog(String messageId, int status) { // 插入消息ID日志
-        mqMapper.insertMessageIdLog(messageId, status);
-    }
-
-    @Override
     public void sendCodeMqMessage(String email, String code) { // 异步发送验证码消息
         Map<String, String> msg = new HashMap<>(
                 Map.ofEntries(
@@ -144,7 +135,6 @@ public class MessageServiceImpl implements MessageService {
                         Map.entry("code", code)
                 )
         );
-        insertMessageIdLog(msg.get("id"), 0);
         rabbitTemplate.convertAndSend("e1", "code", msg);
     }
 
