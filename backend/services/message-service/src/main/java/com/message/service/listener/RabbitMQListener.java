@@ -73,7 +73,8 @@ public class RabbitMQListener {
             return;
         }
         String email = user.getEmail();
-        Boolean res = messageService.sendPayFailedEmail(email, username, time, outTradeNo);
+        String pureOrderNo = outTradeNo.substring(outTradeNo.lastIndexOf('-') + 1);
+        Boolean res = messageService.sendPayFailedEmail(email, username, time, pureOrderNo);
         if (res) mqMapper.updateMessageIdLog(id, MessageStatusEnum.SUCCESS.getCode());
         else {
             mqMapper.updateMessageIdLog(id, MessageStatusEnum.FAILED.getCode());

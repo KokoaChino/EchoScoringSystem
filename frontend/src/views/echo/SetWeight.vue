@@ -164,7 +164,7 @@ onMounted(async () => {
         })
         weights.value = await POST("/api/echo/get-weights", {name: name.value})
     } catch (e) {
-        console.error("加载数据失败:", e);
+        ElMessage.error("加载数据失败：", e)
     } finally {
         loading.close()
     }

@@ -164,7 +164,7 @@
                 <div class="order-number">
                     订单编号：<span>{{ aliPay.id }}</span>
                 </div>
-                <div class="caption">￥39.99</div>
+                <div class="caption">￥0.01</div>
                 <button class="button" @click="pay_query">我已完成支付</button>
             </div>
         </div>
@@ -247,12 +247,18 @@ const onValidate = (prop, isValid) => {
 }
 
 const pay = async () => {
-    aliPay.value = await POST("/api/pay/pay")
-    if (aliPay.value === "") aliPay.value = null
-    if (aliPay.value == null) {
-        ElMessage.error('服务器繁忙，请稍后再试！')
-    } else loading1.value = false
-}
+    const res = await POST("/api/pay/pay");
+    if (!res?.id) {
+        ElMessage.error('服务器繁忙，请稍后再试！');
+        aliPay.value = null;
+        return;
+    }
+    aliPay.value = {
+        ...res,
+        id: res.id.substring(res.id.lastIndexOf('-') + 1)
+    };
+    loading1.value = false;
+};
 
 const rules1 = {
     username: [
@@ -318,7 +324,7 @@ const sendEmail = async () => {
             coldTime.value = 0
         })
     } catch (e) {
-        console.error("邮件发送失败:", e);
+        ElMessage.error("邮件发送失败：", e)
     } finally {
         loading3.value = false
     }
@@ -401,7 +407,7 @@ const pay_query = async () => {
     }
     loading2.value = true
     let res = await POST("/api/pay/query", {
-        id: aliPay.value.id
+        id: store.auth.user.username + '-' + aliPay.value.id
     })
     loading2.value = false
     if (res === 1) {

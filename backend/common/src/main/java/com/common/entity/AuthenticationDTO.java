@@ -2,7 +2,9 @@ package com.common.entity;
 
 import com.common.constant.Constant;
 import lombok.Data;
-import org.springframework.util.DigestUtils;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.HmacAlgorithms;
+import org.apache.commons.codec.digest.HmacUtils;
 import java.nio.charset.StandardCharsets;
 
 
@@ -22,8 +24,10 @@ public class AuthenticationDTO {
     }
 
     private String generateSignature() {
-        String data = username + "|" + ts + "|" + SECRET;
-        return DigestUtils.md5DigestAsHex(data.getBytes(StandardCharsets.UTF_8));
+        return Hex.encodeHexString(new HmacUtils(HmacAlgorithms.HMAC_SHA_256,
+                SECRET.getBytes(StandardCharsets.UTF_8))
+                .hmac(username + "|" + ts + "|" + SECRET)
+        );
     }
 
     public void verify() {

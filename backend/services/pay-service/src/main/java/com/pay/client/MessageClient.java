@@ -11,11 +11,6 @@ import java.util.Map;
              path = "/api/message")
 public interface MessageClient {
 
-    @PostMapping("/send-mq-message")
-    void sendMqMessage(@RequestParam("exchange") String exchange,
-                       @RequestParam("key") String key,
-                       @RequestBody Map<String, String> msg); // 发送支付成功通知
-
     @PostMapping("/send-delayed-mq-message")
     void sendDelayedMqMessage(@RequestParam("exchange") String exchange,
                               @RequestParam("key") String key,

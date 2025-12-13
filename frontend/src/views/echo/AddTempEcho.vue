@@ -294,7 +294,7 @@ onMounted(async () => {
         }
         name_options.value = await store.get_options()
     } catch (e) {
-        console.error("加载数据失败:", e);
+        ElMessage.error("加载数据失败：", e)
     } finally {
         loading.close()
     }

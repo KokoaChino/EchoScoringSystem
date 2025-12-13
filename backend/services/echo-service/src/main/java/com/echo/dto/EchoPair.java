@@ -8,5 +8,5 @@ public class EchoPair {
     public int id;
     public String name;
     public String echo;
-    public String name_list;
+    public String nameList;
 }

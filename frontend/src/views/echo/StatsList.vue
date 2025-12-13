@@ -52,7 +52,7 @@
                                 </div>
                             </td>
                             <td class="a">攻击</td>
-                            <td>{{ character['stats'][0] + character['weapon']['ath'] }}</td>
+                            <td>{{ character['stats'][0] + character['weapon']['maxAtk'] }}</td>
                         </tr>
                         <tr>
                             <td class="a">生命</td>
@@ -80,8 +80,8 @@
         </div>
         <div class="tag">
             <span>星级：</span>
-            <el-check-tag :disabled="key < 4" v-for="key in Object.keys(check['星级'])"
-                          :title="key < 4 ? `不会吧不会吧，竟然真的还有人在用 ${key} 星武器吗？` : ''"
+            <el-check-tag v-for="key in Object.keys(check['星级'])"
+                          :title="key < 4 ? `不会吧不会吧，竟然真的还有人在用 ${key} 星武器？🤔` : ''"
                           :checked="check['星级'][key]" @change="check['星级'][key] = !check['星级'][key]">
                 {{key}}
             </el-check-tag>
@@ -91,7 +91,7 @@
             <div class="item" v-for="(item, index) in screen_weapons" :key="index"
                  :class="{ selected: item['name'] === select_weapon }"
                  @click="select_weapon = item['name']">
-                <div class="weapon_img" :style="set_weapons_img_and_color(item, 100)" :title="'攻击：' + item['ath']">
+                <div class="weapon_img" :style="set_weapons_img_and_color(item, 100)" :title="'攻击：' + item['maxAtk']">
 
                 </div>
                 <div class="text" >
@@ -109,7 +109,7 @@ import Template from "@/components/layout/Template.vue";
 import { ref, onMounted, watch } from "vue";
 import { get, post, POST } from "@/net/index.js";
 import { useStore } from "@/stores/index.js";
-import {ElLoading} from "element-plus";
+import { ElLoading, ElMessage } from "element-plus";
 
 const store = useStore()
 
@@ -203,14 +203,14 @@ const screen = () => {
 }
 
 function set_characters_img_and_color(item, num) {
-    if (item['lv'] === 5) return {
-        background: `linear-gradient(to top, rgba(255, 215, 0, 0.6) 0%, rgba(0, 0, 0, 0) ${num}%), url('/角色头像/${item['name']}.png')`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
+    const starColorMap = {
+        4: '201, 131, 237',
+        5: '255, 246, 145'
     };
-    else return {
-        background: `linear-gradient(to top, rgba(128, 0, 128, 0.6) 0%, rgba(0, 0, 0, 0) ${num}%), url('/角色头像/${item['name']}.png')`,
+    const star = item['star'];
+    const rgb = starColorMap[star] || '128, 128, 128';
+    return {
+        background: `linear-gradient(to top, rgba(${rgb}, 0.6) 0%, rgba(0, 0, 0, 0) ${num}%), url('${characters.value[item['name']]['avatarUrl']}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
@@ -218,14 +218,17 @@ function set_characters_img_and_color(item, num) {
 }
 
 function set_weapons_img_and_color(item, num) {
-    if (item['lv'] === 5) return {
-        background: `linear-gradient(to top, rgba(255, 215, 0, 0.6) 0%, rgba(0, 0, 0, 0) ${num}%), url('/武器/${item['name']}.png')`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
+    const starColorMap = {
+        1: '222, 222, 222',
+        2: '156, 243, 176',
+        3: '129, 206, 255',
+        4: '201, 131, 237',
+        5: '255, 246, 145'
     };
-    else return {
-        background: `linear-gradient(to top, rgba(128, 0, 128, 0.6) 0%, rgba(0, 0, 0, 0) ${num}%), url('/武器/${item['name']}.png')`,
+    const star = item['star'];
+    const rgb = starColorMap[star] || '128, 128, 128';
+    return {
+        background: `linear-gradient(to top, rgba(${rgb}, 0.6) 0%, rgba(0, 0, 0, 0) ${num}%), url('${weapons.value[item['name']]['imageUrl']}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
@@ -240,12 +243,12 @@ onMounted( async () => {
     })
     try {
         options.value = await store.get_options()
+        weapons.value = await get("/api/echo/get-weapons")
         characters.value = await POST("/api/echo/get-characters-by-screen", {
             names: JSON.stringify(names.value)
         })
-        weapons.value = await get("/api/echo/get-weapons")
     } catch (e) {
-        console.error("加载数据失败:", e);
+        ElMessage.error("加载数据失败：", e)
     } finally {
         loading.close()
     }

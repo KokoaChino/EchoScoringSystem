@@ -178,7 +178,7 @@ const validateEmail = async () => {
             })
         }
     } catch (e) {
-        console.error("邮件发送失败:", e);
+        ElMessage.error("邮件发送失败：", e)
     } finally {
         loading.value = false
     }

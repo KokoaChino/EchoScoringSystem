@@ -376,7 +376,7 @@ onMounted(async () => {
         options.value = await store.get_options()
         await get_temp_data_by_screen()
     } catch (e) {
-        console.error("加载数据失败:", e);
+        ElMessage.error("加载数据失败：", e)
     } finally {
         loading.close()
     }

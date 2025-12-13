@@ -1,10 +1,13 @@
 package com.echo.controller;
 
+import com.common.constant.Constant;
 import com.common.context.UserContext;
 import com.echo.dto.RoleDTO;
 import com.echo.entity.Echo;
 import com.echo.entity.Character;
 import com.echo.entity.Weapon;
+import com.echo.external.service.api.CharacterExtraConfigService;
+import com.echo.external.service.api.GameDataCacheService;
 import com.echo.service.api.EchoScoringSystemService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +21,12 @@ public class EchoScoringSystemController {
 
     @Resource
     private EchoScoringSystemService service;
+
+    @Resource
+    private CharacterExtraConfigService configService;
+
+    @Resource
+    private GameDataCacheService gameDataCacheService;
 
     @GetMapping("/get-echo-keys")
     public String[] getEchoKeys() { // 获取副词条名称
@@ -213,5 +222,20 @@ public class EchoScoringSystemController {
             @RequestParam("isDelete") Boolean isDelete) { // 批量导入声骸
         String username = UserContext.getUsername();
         service.batchImportEcho(username, roles, isDelete);
+    }
+
+    @GetMapping("/refresh-character-config/{secret}/{source}")
+    public String refresh(@PathVariable("secret") String secret, @PathVariable("source") String source) {
+        if (!secret.equals(Constant.SECRET)) {
+            return "校验失败";
+        }
+        if (source.equals("data")) {
+            gameDataCacheService.refreshCache();
+        } else if (source.equals("config")) {
+            configService.reload();
+        } else {
+            return "校验失败";
+        }
+        return "OK";
     }
 }

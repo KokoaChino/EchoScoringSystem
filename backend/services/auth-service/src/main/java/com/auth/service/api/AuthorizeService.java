@@ -2,6 +2,7 @@ package com.auth.service.api;
 
 import com.common.entity.RestBean;
 import com.common.entity.User;
+import java.util.Map;
 
 
 public interface AuthorizeService {
@@ -22,5 +23,5 @@ public interface AuthorizeService {
     boolean checkUser(String username); // 检查用户实体
 
     User getUser(String username); // 获取用户实体
-    void updateVipUser(String username); // 更新用户 VIP
+    Boolean updateVipUser(String username, Map<String, String> msg); // 更新用户 VIP
 }

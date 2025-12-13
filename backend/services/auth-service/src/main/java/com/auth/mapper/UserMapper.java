@@ -23,6 +23,6 @@ public interface UserMapper { // 用户相关的映射器
     @Update("update account set email = #{newEmail} where email = #{oldEmail}")
     int resetEmailByEmail(String oldEmail, String newEmail);
 
-    @Update("update account set vip = 1 where username = #{username}")
-    void updateVipUser(String username);
+    @Update("update account set vip = 1 where username = #{username} and vip = 0")
+    int updateVipUser(String username);
 }

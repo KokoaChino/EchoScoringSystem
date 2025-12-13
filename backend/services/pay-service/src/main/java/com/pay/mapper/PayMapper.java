@@ -7,8 +7,8 @@ import org.apache.ibatis.annotations.*;
 @Mapper
 public interface PayMapper {
 
-    @Select("select * from `order` where username = #{username}")
-    Order findOrderByUsername(String username);
+    @Select("select * from `order` where username = #{username} order by create_time desc limit 1")
+    Order findLatestOrderByUsername(String username);
 
     @Delete("delete from `order` where username = #{username}")
     void deleteOrderByUsername(String username);

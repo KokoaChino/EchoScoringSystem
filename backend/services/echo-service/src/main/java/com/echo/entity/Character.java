@@ -1,17 +1,23 @@
 package com.echo.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class Character { // 角色
-    String name;
-    String pinyin;
-    String type;
-    Weapon weapon;
-    int LV;
-    int[] stats;
-    int[] weight;
+    private String id;
+    private String name;
+    private String type;
+    private String pinyin;
+    private Integer star;
+    private int[] stats;
+    private int[] weight;
+    private Weapon weapon;
+    private String scaleRatio;
+    private String squadFigureUrl;
+    private String avatarUrl;
 }

@@ -107,7 +107,7 @@
 import Template from "@/components/layout/Template.vue";
 import { onMounted, ref, watch } from "vue";
 import { get, post, POST } from "@/net/index.js";
-import {ElLoading, ElMessage} from "element-plus";
+import { ElLoading, ElMessage } from "element-plus";
 import { useStore } from "@/stores/index.js";
 import { onBeforeRouteLeave } from "vue-router"
 
@@ -409,7 +409,7 @@ onMounted(async () => {
         })
         options.value = await store.get_options()
     } catch (e) {
-        console.error("加载数据失败:", e);
+        ElMessage.error("加载数据失败：", e)
     } finally {
         loading.close()
     }

@@ -1,8 +1,8 @@
 package com.echo.mapper;
 
 import com.echo.dto.EchoPair;
-import com.echo.entity.CharacterConfigDO;
-import com.echo.entity.EchoDO;
+import com.echo.mapper.persistence.CharacterConfigDO;
+import com.echo.mapper.persistence.EchoDO;
 import org.apache.ibatis.annotations.*;
 import java.util.List;
 

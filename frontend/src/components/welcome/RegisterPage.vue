@@ -71,7 +71,7 @@ import { EditPen, Lock, Message, User } from "@element-plus/icons-vue";
 import router from "@/router";
 import { onMounted, reactive, ref } from "vue";
 import { ElMessage, ElNotification } from "element-plus";
-import {_POST, GET} from "@/net";
+import { _POST, GET } from "@/net";
 import { useStore } from "@/stores/index.js";
 
 const store = useStore()
@@ -197,7 +197,7 @@ const validateEmail = async () => {
             })
         }
     } catch (e) {
-        console.error("邮件发送失败:", e);
+        ElMessage.error("邮件发送失败：", e)
     } finally {
         loading.value = false
     }

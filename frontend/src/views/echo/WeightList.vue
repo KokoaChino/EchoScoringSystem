@@ -99,7 +99,7 @@ import { useStore } from "@/stores/index.js";
 import VChart from "vue-echarts";
 import "echarts";
 import router from "@/router/index.js";
-import {ElLoading} from "element-plus";
+import { ElLoading, ElMessage } from "element-plus";
 
 const store = useStore()
 const data = ref({})
@@ -226,7 +226,7 @@ onMounted( async () => {
         }
         options.value = await store.get_options()
     } catch (e) {
-        console.error("加载数据失败:", e);
+        ElMessage.error("加载数据失败：", e)
     } finally {
         loading.close()
     }

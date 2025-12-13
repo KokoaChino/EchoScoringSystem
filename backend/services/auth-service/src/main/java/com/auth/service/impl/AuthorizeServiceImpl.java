@@ -19,9 +19,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 
@@ -54,7 +52,7 @@ public class AuthorizeServiceImpl implements AuthorizeService {
 
     @Override
     public String sendValidateEmail(String email, String sessionId, boolean hasAccount) { // 发送验证邮件
-        String key = "email:" + sessionId + ":" + email + ":" + hasAccount;
+        String key = "email：" + sessionId + "：" + email + "：" + hasAccount;
         if (Boolean.TRUE.equals(redisTemplate.opsForValue().setIfAbsent(key, "pending", 3, TimeUnit.MINUTES))) {
             String code = String.format("%06d", new Random().nextInt(1000000));
             redisTemplate.opsForValue().set(key, code, 3, TimeUnit.MINUTES);
@@ -71,7 +69,7 @@ public class AuthorizeServiceImpl implements AuthorizeService {
 
     @Override
     public String validateAndRegister(String username, String password, String email, String code, String sessionId) { // 验证并注册
-        String key = "email:" + sessionId + ":" + email + ":false";
+        String key = "email：" + sessionId + "：" + email + "：false";
         if (Boolean.TRUE.equals(redisTemplate.hasKey(key))) {
             String s = redisTemplate.opsForValue().get(key);
             if (s == null) return "验证码失效，请重新请求";
@@ -95,7 +93,7 @@ public class AuthorizeServiceImpl implements AuthorizeService {
 
     @Override
     public String validateOnly(String email, String code, String sessionId) { // 只验证
-        String key = "email:" + sessionId + ":" + email + ":true";
+        String key = "email：" + sessionId + "：" + email + "：true";
         if (Boolean.TRUE.equals(redisTemplate.hasKey(key))) {
             String s = redisTemplate.opsForValue().get(key);
             if (s == null) return "验证码失效，请重新请求";
@@ -112,7 +110,7 @@ public class AuthorizeServiceImpl implements AuthorizeService {
 
     @Override
     public String validateOnlyFalse(String email, String code, String sessionId) { // 只验证
-        String key = "email:" + sessionId + ":" + email + ":false";
+        String key = "email：" + sessionId + "：" + email + "：false";
         if (Boolean.TRUE.equals(redisTemplate.hasKey(key))) {
             String s = redisTemplate.opsForValue().get(key);
             if (s == null) return "验证码失效，请重新请求";
@@ -216,9 +214,14 @@ public class AuthorizeServiceImpl implements AuthorizeService {
     }
 
     @Override
-    public void updateVipUser(String username) { // 更新用户 VIP
-        userMapper.updateVipUser(username);
-        String cacheKey = Constant.USER_CONTEXT_CACHE_KEY_PREFIX + username;
-        redisTemplate.delete(cacheKey);
+    public Boolean updateVipUser(String username, Map<String, String> msg) { // 更新用户 VIP
+        int row = userMapper.updateVipUser(username);
+        if (row > 0) {
+            String cacheKey = Constant.USER_CONTEXT_CACHE_KEY_PREFIX + username;
+            redisTemplate.delete(cacheKey);
+            messageClient.sendMqMessage("e1", "pay_success", msg);
+            return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
     }
 }

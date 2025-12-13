@@ -95,7 +95,7 @@ import { post } from "@/net/index.js";
 import { useStore } from "@/stores/index.js";
 import VChart from "vue-echarts";
 import "echarts";
-import { ElLoading } from "element-plus";
+import { ElLoading, ElMessage } from "element-plus";
 
 const store = useStore()
 const color = {
@@ -230,7 +230,7 @@ onMounted(async () => {
             }
         }
     } catch (e) {
-        console.error("加载数据失败:", e);
+        ElMessage.error("加载数据失败：", e)
     } finally {
         loading.close()
     }

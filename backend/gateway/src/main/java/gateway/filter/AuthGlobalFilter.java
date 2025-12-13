@@ -27,7 +27,7 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String path = exchange.getRequest().getURI().getPath();
         // 白名单：放行认证和支付回调
-        if ("/api/pay/notify".equals(path)) {
+        if ("/api/pay/notify".equals(path) || path.startsWith("/api/echo/refresh-character-config")) {
             return chain.filter(exchange);
         }
         if (path.startsWith("/api/auth/")) {

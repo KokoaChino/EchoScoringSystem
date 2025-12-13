@@ -1,8 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useStore } from "@/stores";
 import { nextTick } from 'vue';
-import { _GET } from "@/net/index.js";
-import {ElMessage} from "element-plus";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),

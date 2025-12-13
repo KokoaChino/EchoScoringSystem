@@ -72,7 +72,6 @@ const login = async () => {
         store.auth.user = user;
         await router.push('/index');
     } catch (error) {
-        console.error('登录请求失败：', error);
         ElMessage.error('登录失败：' + (error.response?.data?.message || error.message || '未知错误'));
     }
 }

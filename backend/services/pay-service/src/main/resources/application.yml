@@ -21,37 +21,11 @@ spring:
       transport:
         dashboard: localhost:8080
       eager: true
+  config:
+    import:
+      - nacos:redis.properties
+      - nacos:seata.properties
+      - nacos:client.properties
 logging:
   level:
     com.pay.client: info
-
----
-spring:
-  config:
-    import:
-      - nacos:redis.properties
-      - nacos:seata.properties
-      - nacos:client.properties
-      - nacos:database.properties?group=pay
-    activate:
-      on-profile: dev
----
-spring:
-  config:
-    import:
-      - nacos:redis.properties
-      - nacos:seata.properties
-      - nacos:client.properties
-      - nacos:database.properties?group=pay
-    activate:
-      on-profile: test
----
-spring:
-  config:
-    import:
-      - nacos:redis.properties
-      - nacos:seata.properties
-      - nacos:client.properties
-      - nacos:database.properties?group=pay
-    activate:
-      on-profile: prod

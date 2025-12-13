@@ -11,6 +11,7 @@ import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import java.util.Map;
 
 
 @Validated
@@ -162,9 +163,10 @@ public class AuthorizeController {
     }
 
     @PostMapping("/update-vip-user")
-    public RestBean<Void> updateVipUser(@RequestBody AuthenticationDTO dto) { // 更新用户 VIP
+    public RestBean<Boolean> updateVipUser(@RequestBody AuthenticationDTO dto) { // 更新用户 VIP
         dto.verify();
-        service.updateVipUser(dto.getUsername());
-        return RestBean.success();
+        return RestBean.success(
+                service.updateVipUser(dto.getUsername(), (Map<String, String>) dto.getExtra())
+        );
     }
 }

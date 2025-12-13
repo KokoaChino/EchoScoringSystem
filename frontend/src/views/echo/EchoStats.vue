@@ -100,7 +100,7 @@ import { get, post, POST } from "@/net/index.js";
 import "echarts";
 import VChart from "vue-echarts";
 import { useStore } from "@/stores/index.js";
-import { ElLoading } from "element-plus";
+import { ElLoading, ElMessage } from "element-plus";
 
 const store = useStore()
 const base_pie = {
@@ -168,14 +168,14 @@ const handleChange = async (value) => {
 };
 
 function set_background_color(item, num) {
-    if (item['lv'] === 5) return {
-        background: `linear-gradient(to top, rgba(255, 215, 0, 0.6) 0%, rgba(0, 0, 0, 0) ${num}%), url("/角色头像/${item['name']}.png")`,
+    if (item['star'] === 5) return {
+        background: `linear-gradient(to top, rgba(255, 215, 0, 0.6) 0%, rgba(0, 0, 0, 0) ${num}%), url("${characters.value[item['name']]['avatarUrl']}")`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
     };
     else return {
-        background: `linear-gradient(to top, rgba(128, 0, 128, 0.6) 0%, rgba(0, 0, 0, 0) ${num}%), url("/角色头像/${item['name']}.png")`,
+        background: `linear-gradient(to top, rgba(128, 0, 128, 0.6) 0%, rgba(0, 0, 0, 0) ${num}%), url("${characters.value[item['name']]['avatarUrl']}")`,
         backgroundSize: `cover`,
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
@@ -248,7 +248,7 @@ onMounted( async () => {
         }
         options.value = await store.get_options()
     } catch (e) {
-        console.error("加载数据失败:", e);
+        ElMessage.error("加载数据失败：", e)
     } finally {
         loading.close()
     }

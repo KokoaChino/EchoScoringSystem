@@ -22,7 +22,7 @@ public class ResponseTimeLoggingFilter implements GlobalFilter, Ordered {
         log.info("请求 {} 开始", uri);
         return chain.filter(exchange).doFinally((result) -> {
             long end = System.currentTimeMillis();
-            log.info("请求 {} 结束，耗时：{}ms", uri, end - start);
+            log.info("请求 {} 结束，耗时：{} ms", uri, end - start);
         });
     }
 

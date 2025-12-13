@@ -158,58 +158,11 @@ import { ref, onMounted, watch } from "vue";
 import router from "@/router/index.js";
 import { useStore } from "@/stores/index.js";
 import { post, POST, GET } from "@/net/index.js";
-import { ElLoading } from "element-plus";
+import { ElLoading, ElMessage } from "element-plus";
 
 const store = useStore()
 const showContent = ref({}), characters = ref({})
 const data = ref({}), weights = ref({}), keys = ref([])
-const scale = ref({
-    '长离': '77%',
-    '安可': '113%',
-    '丹瑾': '90%',
-    '守岸人': '67%',
-    '维里奈': '98%',
-    '椿': '69%',
-    '秋水': '72%',
-    '散华': '78%',
-    '折枝': '69%',
-    '忌炎': '110%',
-    '今汐': '80%',
-    '炽霞': '88%',
-    '渊武': '80%',
-    '白芷': '80%',
-    '漂泊者 - 女 - 衍射': '85%',
-    '漂泊者 - 男 - 衍射': '80%',
-    '漂泊者 - 男 - 湮灭': '80%',
-    '漂泊者 - 女 - 湮灭': '85%',
-    '漂泊者 - 男 - 气动': '80%',
-    '漂泊者 - 女 - 气动': '85%',
-    '吟霖': '95%',
-    '鉴心': '95%',
-    '莫特斐': '79%',
-    '釉瑚': '68%',
-    '桃祈': '91%',
-    '凌阳': '95%',
-    '灯灯': '60%',
-    '秧秧': '92%',
-    '卡卡罗': '95%',
-    '相里要': '77%',
-    '珂莱塔': '87%',
-    '洛可可': '75%',
-    '菲比': '70%',
-    '布兰特': '77%',
-    '坎特蕾拉': '79%',
-    '赞妮': '73%',
-    '夏空': '72%',
-    '卡提希娅': '76%',
-    '露帕': '91%',
-    '弗洛洛': '87%',
-    '奥古斯塔': '81%',
-    '尤诺': '95%',
-    '嘉贝莉娜': '87%',
-    '仇远': '83%',
-    '千咲': '97%',
-})
 const name_check = ref([]), cost_check = ref({1: false, 3: false, 4: false}), main_check = ref({
     '百分比攻击': false,
     '百分比生命': false,
@@ -283,7 +236,7 @@ const get_check = () => {
 
 function set_background_color(item, num) {
     if (!item) return
-    if (item['lv'] === 5) return {
+    if (item['star'] === 5) return {
         background: `linear-gradient(to top, rgba(255, 215, 0, 0.6) 0%, rgba(0, 0, 0, 0) ${num}%)`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -358,9 +311,8 @@ function set_colorbyw(w) {
 }
 
 function set_img(name) {
-    let sc = ''
-    if (name in scale.value) sc = `background-size: ${scale.value[name]};`
-    return `background-image: url("/角色立绘/${name}.png");image-rendering: smooth;` + sc
+    let sc = `background-size: ${characters.value[name]['scaleRatio']};`
+    return `background-image: url("${characters.value[name]['squadFigureUrl']}");image-rendering: smooth;` + sc
 }
 
 const set_style1 = (name, key) => {
@@ -413,7 +365,7 @@ onMounted(async () => {
         characters.value = await POST("/api/echo/get-characters")
         options.value = await store.get_options()
     } catch (e) {
-        console.error("加载数据失败:", e);
+        ElMessage.error("加载数据失败：", e)
     } finally {
         loading.close()
     }

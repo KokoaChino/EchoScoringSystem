@@ -1,20 +1,41 @@
 package com.echo;
 
-import com.common.constant.Constant;
-import com.common.mapper.DataGovernanceMapper;
+import com.echo.entity.Character;
+import com.echo.entity.Weapon;
+import com.echo.external.service.api.GameDataCacheService;
+import com.echo.external.service.api.GameDataService;
+import com.echo.external.service.api.KujiequApiService;
+import com.echo.util.EchoUtil;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationEventPublisher;
+import java.util.Map;
 
 
 @SpringBootTest
 public class EchoTest {
 
     @Resource
-    private DataGovernanceMapper mapper;
+    GameDataService gameDataService;
+
+    @Resource
+    KujiequApiService kujiequApiService;
+
+    @Resource
+    GameDataCacheService gameDataCacheService;
+
+    @Resource
+    EchoUtil echoUtil;
+
+    @Resource
+    private ApplicationEventPublisher eventPublisher;
 
     @Test
     public void test() {
-        mapper.findAllTables(Constant.ECHO_SERVICE_DB).forEach(System.out::println);
+        Map<String, Weapon> weapons = echoUtil.getWeapons();
+        System.out.println(weapons);
+        Map<String, Character> characters = echoUtil.getCharacters();
+        System.out.println(characters);
     }
 }

@@ -7,6 +7,8 @@ import com.echo.dto.RoleDTO;
 import com.echo.entity.*;
 import com.echo.entity.Character;
 import com.echo.mapper.EchoMapper;
+import com.echo.mapper.persistence.CharacterConfigDO;
+import com.echo.mapper.persistence.EchoDO;
 import com.echo.service.api.EchoScoringSystemService;
 import com.echo.util.EchoConvert;
 import com.echo.util.EchoUtil;
@@ -23,11 +25,12 @@ public class EchoScoringSystemServiceImpl implements EchoScoringSystemService {
     @Resource
     private EchoMapper mapper;
 
+    @Resource
+    private EchoUtil echoUtil;
+
     private static final String[] ECHO_KEYS = EchoUtil.ECHO_KEYS; // 副词条名称
     private static final Map<String, double[]> ECHO_VALUES = EchoUtil.ECHO_VALUES; // 副词条取值
     private static final Map<String, Double> ECHO_AVERAGE = EchoUtil.ECHO_AVERAGE; // 副词条基准值
-    private static final Map<String, Weapon> WEAPONS = EchoUtil.WEAPONS; // 武器
-    private static final Map<String, Character> CHARACTERS = EchoUtil.CHARACTERS; // 角色
 
     @Override
     public String[] getEchoKeys() { // 获取副词条名称
@@ -43,7 +46,7 @@ public class EchoScoringSystemServiceImpl implements EchoScoringSystemService {
     }
     @Override
     public Map<String, Weapon> getWeapons() { // 获取武器
-        return WEAPONS;
+        return echoUtil.getWeapons();
     }
 
     @Override
@@ -53,7 +56,7 @@ public class EchoScoringSystemServiceImpl implements EchoScoringSystemService {
         Set<String> types = new HashSet<>(screen.get("类型"));
         Set<String> lvs = new HashSet<>(screen.get("星级"));
         for (Weapon weapon : getWeapons().values()) {
-            if (lvs.contains(String.valueOf(weapon.getLV())) && types.contains(weapon.getType())) {
+            if (lvs.contains(String.valueOf(weapon.getStar())) && types.contains(weapon.getType())) {
                 res.add(weapon);
             }
         }
@@ -63,17 +66,17 @@ public class EchoScoringSystemServiceImpl implements EchoScoringSystemService {
     @Override
     public void setWeapon(String username, String name, String weapon) { // 设置角色武器
         mapper.updateWeapon(username, name, weapon);
-        if (weapon.equals(CHARACTERS.get(name).getWeapon().getName()))
+        if (weapon.equals(echoUtil.getCharacters().get(name).getWeapon().getName()))
             mapper.deleteWeapon(username, name);
     }
 
     @Override
     public Map<String, Character> getCharacters(String username) { // 获取角色
-        Map<String, Character> res = EchoUtil.getCharacters();
+        Map<String, Character> res = echoUtil.getCharacters();
         for (Character c: res.values()) {
             String weapon = mapper.selectWeapon(username, c.getName());
             if (weapon != null) {
-                c.setWeapon(WEAPONS.get(weapon));
+                c.setWeapon(echoUtil.getWeapons().get(weapon));
             }
         }
         return res;
@@ -93,7 +96,8 @@ public class EchoScoringSystemServiceImpl implements EchoScoringSystemService {
 
     @Override
     public List<String> getNames() { // 获取角色名称列表
-        return CHARACTERS.keySet().stream().sorted(Comparator.comparing(EchoUtil::getPinyin)).toList();
+        return echoUtil.getCharacters().keySet().stream().sorted(
+                Comparator.comparing(c -> echoUtil.getPinyin(c))).toList();
     }
 
     @Override
@@ -106,11 +110,11 @@ public class EchoScoringSystemServiceImpl implements EchoScoringSystemService {
             put("衍射", new ArrayList<>());
             put("湮灭", new ArrayList<>());
         }};
-        for (Character character : CHARACTERS.values()) {
+        for (Character character : echoUtil.getCharacters().values()) {
             res.get(character.getType()).add(character.getName());
         }
         for (List<String> list : res.values()) {
-            list.sort(Comparator.comparing(a -> CHARACTERS.get(a).getPinyin()));
+            list.sort(Comparator.comparing(a -> echoUtil.getCharacters().get(a).getPinyin()));
         }
         return res;
     }
@@ -118,7 +122,7 @@ public class EchoScoringSystemServiceImpl implements EchoScoringSystemService {
     @Override
     public Map<String, int[]> getCharacterStats() { // 获取角色三维属性
         Map<String, int[]> res = new LinkedHashMap<>();
-        for (Character character: CHARACTERS.values()) {
+        for (Character character: echoUtil.getCharacters().values()) {
             res.put(character.getName(), character.getStats());
         }
         return res;
@@ -129,8 +133,8 @@ public class EchoScoringSystemServiceImpl implements EchoScoringSystemService {
         String json = mapper.getWeight(username, name);
         if (json == null) {
             String weapon = mapper.selectWeapon(username, name);
-            if (weapon == null) weapon = CHARACTERS.get(name).getWeapon().getName();
-            return EchoUtil.getweights(name, weapon);
+            if (weapon == null) weapon = echoUtil.getCharacters().get(name).getWeapon().getName();
+            return echoUtil.getweights(name, weapon);
         }
         return JSON.parseObject(json, new TypeReference<Map<String, ? extends Number>>() {});
     }
@@ -156,8 +160,8 @@ public class EchoScoringSystemServiceImpl implements EchoScoringSystemService {
                     }
                 }
                 String weapon = weapons.get(name);
-                if (weapon == null) weapon = CHARACTERS.get(name).getWeapon().getName();
-                res.put(name, EchoUtil.getweights(name, weapon));
+                if (weapon == null) weapon = echoUtil.getCharacters().get(name).getWeapon().getName();
+                res.put(name, echoUtil.getweights(name, weapon));
             }
         }
         return res;
@@ -361,7 +365,8 @@ public class EchoScoringSystemServiceImpl implements EchoScoringSystemService {
     public List<Map<String, String>> getEchoStats(String username) { // 获取声骸属性
         Map<String, List<Echo>> data = getData(username);
         List<Map<String, String>> res = new ArrayList<>(data.size());
-        for (String name: data.keySet().stream().sorted(Comparator.comparing(EchoUtil::getPinyin)).toList()) {
+        for (String name: data.keySet().stream().sorted(
+                Comparator.comparing(c -> echoUtil.getPinyin(c))).toList()) {
             Map<String, Double> compute = new HashMap<>();
             for (String key: ECHO_KEYS) {
                 compute.put(key, 0.0);
@@ -472,7 +477,7 @@ public class EchoScoringSystemServiceImpl implements EchoScoringSystemService {
             Map<String, Echo> item = new LinkedHashMap<>();
             List<Map.Entry<String, Echo>> tmpList = new ArrayList<>();
             Echo e = JSON.parseObject(echoPair.getEcho(), new TypeReference<Echo>() {});
-            List<String> names = JSON.parseObject(echoPair.getName_list(), new TypeReference<List<String>>() {});
+            List<String> names = JSON.parseObject(echoPair.getNameList(), new TypeReference<List<String>>() {});
             Map<String, Number> values = new HashMap<>();
             for (List<String> li: e.getEcho()) {
                 values.put(li.get(0), Double.parseDouble(li.get(1)));
@@ -570,7 +575,7 @@ public class EchoScoringSystemServiceImpl implements EchoScoringSystemService {
             Echo e = JSON.parseObject(echoPair.getEcho(), new TypeReference<Echo>() {});
             e.setScore("0");
             if (e.equals(map.get("声骸"))) {
-                List<String> name_list = JSON.parseObject(echoPair.getName_list(), new TypeReference<List<String>>() {});
+                List<String> name_list = JSON.parseObject(echoPair.getNameList(), new TypeReference<List<String>>() {});
                 name_list.sort(String::compareTo);
                 if (name_list.equals(names)) {
                     names.remove(name);
@@ -596,7 +601,7 @@ public class EchoScoringSystemServiceImpl implements EchoScoringSystemService {
             Echo e = JSON.parseObject(echoPair.getEcho(), new TypeReference<Echo>() {});
             e.setScore("0");
             if (e.equals(map.get("声骸"))) {
-                List<String> name_list = JSON.parseObject(echoPair.getName_list(), new TypeReference<List<String>>() {});
+                List<String> name_list = JSON.parseObject(echoPair.getNameList(), new TypeReference<List<String>>() {});
                 name_list.sort(String::compareTo);
                 if (name_list.equals(names)) {
                     mapper.deleteTempEcho(echoPair.getId());
@@ -617,7 +622,7 @@ public class EchoScoringSystemServiceImpl implements EchoScoringSystemService {
             if ((echoPairs != null && !echoPairs.isEmpty())) {
                 for (EchoPair echoPair : echoPairs) {
                     List<String> nameList = List.of(echoPair.getName());
-                    echoPair.setName_list(JSON.toJSONString(nameList));
+                    echoPair.setNameList(JSON.toJSONString(nameList));
                     echoPair.setName(username);
                 }
                 mapper.batchInsertionTempEchos(echoPairs);
