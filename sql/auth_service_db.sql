@@ -11,7 +11,7 @@
  Target Server Version : 50736
  File Encoding         : 65001
 
- Date: 06/05/2025 13:22:53
+ Date: 23/12/2025 16:30:17
 */
 
 SET NAMES utf8mb4;
@@ -27,6 +27,7 @@ CREATE TABLE `account`  (
   `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `vip` tinyint(1) NOT NULL DEFAULT 0,
+  `last_visited_at` datetime NULL DEFAULT NULL COMMENT '用户最后一次访问时间',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `unique_name`(`username`) USING BTREE,
   UNIQUE INDEX `unique_email`(`email`) USING BTREE

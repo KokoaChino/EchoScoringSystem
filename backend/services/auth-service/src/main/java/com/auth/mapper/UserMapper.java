@@ -25,4 +25,7 @@ public interface UserMapper { // 用户相关的映射器
 
     @Update("update account set vip = 1 where username = #{username} and vip = 0")
     int updateVipUser(String username);
+
+    @Update("UPDATE account SET last_visited_at = NOW() WHERE username = #{username}")
+    void updateLastVisitedByUsername(String username);
 }

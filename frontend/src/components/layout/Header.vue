@@ -6,7 +6,7 @@
                @click="vipVisible = true"
                role="button"
                tabindex="0">
-                点我成为VIP用户（沙箱环境模拟）
+                点我成为VIP用户（支付宝沙箱环境模拟）
             </a>
             <a v-else
                class="vip-link"

@@ -67,6 +67,6 @@ public class EchoConvert { // 声骸转换类
     }
 
     public static String mainRoleNameMap(String attributeName) { // 主角名称映射
-        return "漂泊者 - 男 - " + attributeName;
+        return "漂泊者-男-" + attributeName;
     }
 }

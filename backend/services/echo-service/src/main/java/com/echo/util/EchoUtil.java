@@ -11,6 +11,7 @@ import com.echo.external.dto.CharacterExtraConfigDTO;
 import com.echo.external.service.api.CharacterExtraConfigService;
 import com.echo.external.service.api.GameDataCacheService;
 import com.echo.mapper.persistence.CharacterExtraConfigDO;
+import com.echo.service.api.EchoScoringSystemService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -118,7 +119,7 @@ public class EchoUtil { // 声骸工具类
             character.setPinyin(configDTO.getPinyin());
             character.setWeight(configDTO.getWeight());
             character.setScaleRatio(configDTO.getScaleRatio());
-            if (StringUtil.isBlank(character.getAvatarUrl())) {
+            if (!StringUtil.isBlank(configDTO.getAvatarUrl())) {
                 character.setAvatarUrl(configDTO.getAvatarUrl());
             }
         }
@@ -127,6 +128,10 @@ public class EchoUtil { // 声骸工具类
         ));
         log.info("完整的武器数据缓存已刷新：{}", getWeapons());
         log.info("完整的角色数据缓存已刷新：{}", getCharacters());
+        EchoScoringSystemService echoScoringSystemService =
+                SpringContextHolder.getBean(EchoScoringSystemService.class);
+        echoScoringSystemService.reData();
+        log.info("已重新计算所有声骸数据");
     }
 
     /**

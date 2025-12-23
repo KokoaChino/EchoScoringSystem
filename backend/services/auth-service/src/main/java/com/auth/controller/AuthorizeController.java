@@ -150,9 +150,10 @@ public class AuthorizeController {
     @GetMapping("/get-user-vip")
     public RestBean<Boolean> getUser() { // 获取用户 VIP 状态
         User user = UserContext.get();
-        if (user == null) {
+        if (user == null || user.getUsername() == null) {
             throw new SecurityException("用户不存在");
         }
+        service.updateLastVisited(user.getUsername());
         return RestBean.success(user.getVip());
     }
 

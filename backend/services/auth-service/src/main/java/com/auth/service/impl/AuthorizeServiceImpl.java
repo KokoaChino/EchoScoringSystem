@@ -209,6 +209,11 @@ public class AuthorizeServiceImpl implements AuthorizeService {
     }
 
     @Override
+    public void updateLastVisited(String username) {
+        userMapper.updateLastVisitedByUsername(username);
+    }
+
+    @Override
     public User getUser(String username) { // 获取用户实体
         return userMapper.findUserByNameOrEmail(username);
     }

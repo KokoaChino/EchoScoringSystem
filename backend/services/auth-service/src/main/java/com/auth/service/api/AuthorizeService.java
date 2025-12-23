@@ -21,6 +21,7 @@ public interface AuthorizeService {
     void signout(String username); // 注销用户
 
     boolean checkUser(String username); // 检查用户实体
+    void updateLastVisited(String username); // 更新最近一次访问时间
 
     User getUser(String username); // 获取用户实体
     Boolean updateVipUser(String username, Map<String, String> msg); // 更新用户 VIP

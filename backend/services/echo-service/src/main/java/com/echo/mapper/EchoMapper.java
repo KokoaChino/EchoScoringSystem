@@ -16,6 +16,9 @@ public interface EchoMapper { // 声骸相关的映射器
     @Select("select id, echo from echos where username = #{username} and name = #{name}")
     List<EchoPair> getEchoAndId(String username, String name);
 
+    @Select("select distinct username from echos")
+    List<String> selectDistinctUsernames();
+
 
     @Update("update echos set echo = #{newEcho} where id = #{id}")
     void updateEcho(int id, String newEcho);

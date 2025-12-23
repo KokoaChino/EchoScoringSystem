@@ -60,6 +60,12 @@ public class EchoScoringSystemServiceImpl implements EchoScoringSystemService {
                 res.add(weapon);
             }
         }
+        res.sort(Comparator
+                .comparing(Weapon::getStar, Comparator.nullsLast(Comparator.reverseOrder()))
+                .thenComparing(Weapon::getType, Comparator.nullsLast(Comparator.naturalOrder()))
+                .thenComparing(Weapon::getMaxAtk, Comparator.nullsLast(Comparator.reverseOrder()))
+                .thenComparing(Weapon::getName, Comparator.nullsLast(Comparator.naturalOrder()))
+        );
         return res;
     }
 
@@ -359,6 +365,13 @@ public class EchoScoringSystemServiceImpl implements EchoScoringSystemService {
             }
         }
         return data;
+    }
+
+    @Override
+    public void reData() { // 重新计算所有声骸数据
+        mapper.selectDistinctUsernames().forEach(
+                this::reData
+        );
     }
 
     @Override

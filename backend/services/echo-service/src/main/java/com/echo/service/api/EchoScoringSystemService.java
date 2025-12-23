@@ -35,6 +35,7 @@ public interface EchoScoringSystemService {
     Map<String, List<Echo>> addData(String username, String json, String name); // 添加角色声骸数据
     Map<String, List<Echo>> delEcho(String username, Integer index, String name); // 删除角色声骸数据
     Map<String, List<Echo>> reData(String username); // 重新计算角色声骸数据
+    void reData(); // 重新计算所有声骸数据
     List<Map<String, String>> getEchoStats(String username); // 获取声骸属性
 
     int[] getEchoCnts(String username); // 获取声骸总数
